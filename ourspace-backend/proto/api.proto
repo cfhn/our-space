@@ -1,0 +1,479 @@
+syntax = "proto3";
+
+package ourspace_backend.v1;
+
+// weak, otherwise gnostic imports broken imports for gen-go
+// weak import: proto definition only adds options, no additional messages.
+// buf:lint:ignore IMPORT_NO_WEAK
+import weak "gnostic/openapi/v3/annotations.proto"; // Will not import _ "" in the gen-go files
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "validate/validate.proto";
+
+// Defines the import path that should be used to import the generated package,
+// and the package name.
+option go_package = "github.com/cfhn/our-space/ourspace-backend/pb;pb";
+// These annotations are used when generating the OpenAPI file.
+option (gnostic.openapi.v3.document) = {
+  info: {
+    title: "ourspace-backend-api"
+    version: "1.0"
+    description: "Manage members and their qualifications for Maker Spaces"
+  }
+  servers: {
+    url: "http://localhost:8080"
+    description: "Host Server"
+  }
+};
+
+service MemberService {
+  rpc CreateMember(CreateMemberRequest) returns (Member) {
+    option (google.api.http) = {
+      post: "/v1/members"
+      body: "member"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Create Member"
+      description: "Create Space Member"
+      tags: "Members"
+    };
+  }
+
+  rpc GetMember(GetMemberRequest) returns (Member) {
+    option (google.api.http) = {get: "/v1/members/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Get member"
+      description: "Get member information"
+      tags: "Members"
+    };
+  }
+
+  rpc ListMembers(ListMembersRequest) returns (ListMembersResponse) {
+    option (google.api.http) = {get: "/v1/members"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "List members"
+      description: "List all registered members"
+      tags: "Members"
+    };
+  }
+
+  rpc UpdateMember(UpdateMemberRequest) returns (Member) {
+    option (google.api.http) = {
+      patch: "/v1/members/{member.id}"
+      body: "member"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Update member"
+      description: "Update specified fields of members"
+      tags: "Members"
+    };
+  }
+  rpc DeleteMember(DeleteMemberRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {delete: "/v1/members/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Delete member"
+      description: "Delete the specified member"
+      tags: "Members"
+    };
+  }
+}
+
+message CreateMemberRequest {
+  string member_id = 1;
+  Member member = 2;
+}
+
+message Member {
+  string id = 1;
+  string name = 2;
+  google.protobuf.Timestamp membership_start = 3;
+  google.protobuf.Timestamp membership_end = 4;
+}
+
+message GetMemberRequest {
+  string id = 1;
+}
+
+message ListMembersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListMembersResponse {
+  repeated Member members = 1;
+  string next_page_token = 2;
+}
+
+message PageToken {
+  // ToDo
+}
+
+message UpdateMemberRequest {
+  Member member = 1;
+  google.protobuf.FieldMask field_mask = 2;
+}
+
+message DeleteMemberRequest {
+  string id = 1;
+}
+
+service CardService {
+  rpc CreateCard(CreateCardRequest) returns (Card) {
+    option (google.api.http) = {
+      post: "/v1/cards"
+      body: "card"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Create Card"
+      description: "Create Space Card"
+      tags: "Cards"
+    };
+  }
+
+  rpc GetCard(GetCardRequest) returns (Card) {
+    option (google.api.http) = {get: "/v1/cards/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Get card"
+      description: "Get card information"
+      tags: "Cards"
+    };
+  }
+
+  rpc ListCards(ListCardsRequest) returns (ListCardsResponse) {
+    option (google.api.http) = {get: "/v1/cards"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "List cards"
+      description: "List all registered cards"
+      tags: "Cards"
+    };
+  }
+
+  rpc UpdateCard(UpdateCardRequest) returns (Card) {
+    option (google.api.http) = {
+      patch: "/v1/cards/{card.id}"
+      body: "card"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Update card"
+      description: "Update specified fields of cards"
+      tags: "Cards"
+    };
+  }
+  rpc DeleteCard(DeleteCardRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {delete: "/v1/cards/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Delete card"
+      description: "Delete the specified card"
+      tags: "Cards"
+    };
+  }
+}
+
+message Card {
+  string id = 1;
+  string member_id = 2;
+  bytes rfid_value = 3;
+  google.protobuf.Timestamp valid_from = 4;
+  google.protobuf.Timestamp valid_to = 5;
+}
+
+message CreateCardRequest {
+  string card_id = 1;
+  Card card = 2;
+}
+
+message GetCardRequest {
+  string id = 1;
+}
+
+message ListCardsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListCardsResponse {
+  repeated Card cards = 1;
+  string next_page_token = 2;
+}
+
+message UpdateCardRequest {
+  Card card = 1;
+  google.protobuf.FieldMask field_mask = 2;
+}
+
+message DeleteCardRequest {
+  string id = 1;
+}
+
+service BriefingService {
+  rpc CreateBriefing(CreateBriefingRequest) returns (Briefing) {
+    option (google.api.http) = {
+      post: "/v1/briefings"
+      body: "briefing"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Create Briefing"
+      description: "Create safety briefing"
+      tags: "Briefings"
+    };
+  }
+
+  rpc GetBriefing(GetBriefingRequest) returns (Briefing) {
+    option (google.api.http) = {get: "/v1/briefings/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Get briefing"
+      description: "Get briefing information"
+      tags: "Briefings"
+    };
+  }
+
+  rpc ListBriefings(ListBriefingsRequest) returns (ListBriefingsResponse) {
+    option (google.api.http) = {get: "/v1/briefings"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "List briefings"
+      description: "List all registered briefings"
+      tags: "Briefings"
+    };
+  }
+
+  rpc UpdateBriefing(UpdateBriefingRequest) returns (Briefing) {
+    option (google.api.http) = {
+      patch: "/v1/briefings/{briefing.id}"
+      body: "briefing"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Update briefing"
+      description: "Update specified fields of briefings"
+      tags: "Briefings"
+    };
+  }
+  rpc DeleteBriefing(DeleteBriefingRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {delete: "/v1/briefings/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Delete briefing"
+      description: "Delete the specified briefing"
+      tags: "Briefings"
+    };
+  }
+
+  // Briefing types
+  rpc CreateBriefingType(CreateBriefingTypeRequest) returns (BriefingType) {
+    option (google.api.http) = {
+      post: "/v1/briefing-types"
+      body: "briefing_type"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Create briefing type"
+      description: "Create safety briefing type"
+      tags: "BriefingTypes"
+    };
+  }
+
+  rpc GetBriefingType(GetBriefingTypeRequest) returns (BriefingType) {
+    option (google.api.http) = {get: "/v1/briefing-types/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Get briefing-type"
+      description: "Get briefing type information"
+      tags: "BriefingTypes"
+    };
+  }
+
+  rpc ListBriefingTypes(ListBriefingTypesRequest) returns (ListBriefingTypesResponse) {
+    option (google.api.http) = {get: "/v1/briefing-types"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "List briefing types"
+      description: "List all registered briefing types"
+      tags: "BriefingTypes"
+    };
+  }
+
+  rpc UpdateBriefingType(UpdateBriefingTypeRequest) returns (BriefingType) {
+    option (google.api.http) = {
+      patch: "/v1/briefing-types/{briefing_type.id}"
+      body: "briefing_type"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Update briefing type"
+      description: "Update specified fields of briefing types"
+      tags: "BriefingTypes"
+    };
+  }
+  rpc DeleteBriefingType(DeleteBriefingTypeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {delete: "/v1/briefing-types/{id}"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Delete briefing-type"
+      description: "Delete the specified briefing type"
+      tags: "BriefingTypes"
+    };
+  }
+}
+
+message BriefingType {
+  string id = 1;
+  string display_name = 2;
+  string description = 3;
+  google.protobuf.Duration expires_after = 4;
+}
+
+message CreateBriefingTypeRequest {
+  string briefing_type_id = 1;
+  BriefingType briefing_type = 2;
+}
+
+message GetBriefingTypeRequest {
+  string id = 1;
+}
+
+message ListBriefingTypesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListBriefingTypesResponse {
+  repeated BriefingType briefing_types = 1;
+  string next_page_token = 2;
+}
+
+message UpdateBriefingTypeRequest {
+  BriefingType briefing_type = 1;
+  google.protobuf.FieldMask field_mask = 2;
+}
+
+message DeleteBriefingTypeRequest {
+  string id = 1;
+}
+
+message Briefing {
+  string id = 1;
+  string briefing_type = 2;
+}
+
+message CreateBriefingRequest {
+  string briefing_id = 1;
+  Briefing briefing = 2;
+}
+
+message GetBriefingRequest {
+  string id = 1;
+}
+
+message ListBriefingsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListBriefingsResponse {
+  repeated Briefing briefings = 1;
+  string next_page_token = 2;
+}
+
+message UpdateBriefingRequest {
+  Briefing briefing = 1;
+  google.protobuf.FieldMask field_mask = 2;
+}
+
+message DeleteBriefingRequest {
+  string id = 1;
+}
+
+service PresenceService {
+  rpc ListPresences(ListPrecensesRequest) returns (ListPrecensesResponse) {
+    option(google.api.http) = {
+      get: "/v1/presences"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "List presences"
+      description: "List precenses, where members have checked in/out"
+      tags: "Presences"
+    };
+  }
+  rpc Checkin(CheckinRequest) returns (Presence) {
+    option(google.api.http) = {
+      post: "/v1/presences:checkin"
+      body: "*"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Check in"
+      description: "Check in a member, this creates a new presence"
+      tags: "Presences"
+    };
+  }
+  rpc Checkout(CheckoutRequest) returns (Presence) {
+    option(google.api.http) = {
+      post: "/v1/presences:checkout"
+      body: "*"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Check out"
+      description: "Check out a member, ends an open presence if there is one"
+      tags: "Presences"
+    };
+  }
+  rpc UpdatePresence(UpdatePresenceRequest) returns (Presence) {
+    option(google.api.http) = {
+      post: "/v1/presences/{presence.id}"
+      body: "presence"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Update presence"
+      description: "Updates a presence. Usual operation should be via checkin/checkout instead of update"
+      tags: "Presences"
+    };
+  }
+  rpc DeletePresence(DeletePresenceRequest) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      post: "/v1/presences/{id}"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Delete Presence"
+      description: "Delete a presence record"
+      tags: "Presences"
+    };
+  }
+}
+
+message Presence {
+  string id = 1;
+  string member_id = 2;
+  google.protobuf.Timestamp checkin_time = 3;
+  google.protobuf.Timestamp checkout_time = 4;
+}
+
+message ListPrecensesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+
+  // Filters
+  optional string member_id = 3;
+  optional google.protobuf.Timestamp checkin_time_after = 4;
+  optional google.protobuf.Timestamp checkin_time_before = 5;
+  optional google.protobuf.Timestamp checkout_time_after = 6;
+  optional google.protobuf.Timestamp checkout_time_before = 7;
+}
+
+message ListPrecensesResponse {
+  repeated Presence presence = 1;
+  string next_page_token = 2;
+}
+
+message CheckinRequest {
+  string member_id = 1;
+}
+
+message CheckoutRequest {
+  string member_id = 1;
+}
+
+message UpdatePresenceRequest {
+  Presence presence = 1;
+  google.protobuf.FieldMask field_mask = 2;
+}
+
+message DeletePresenceRequest {
+  string id = 1;
+}
