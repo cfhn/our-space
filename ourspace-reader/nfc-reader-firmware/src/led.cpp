@@ -1,16 +1,18 @@
 #include "led.h"
 
-CRGB leds[NUM_LEDS];
+// CRGB leds[NUM_LEDS];
 uint32_t lastAnimStep = 0, animationTimeout;
 uint8_t animCounter = 0;
 animation_t currentAnimation = ANIM_IDLE, lastAnimation = ANIM_IDLE;
 
-void initLeds() {
-    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-    FastLED.setBrightness(BRIGHTNESS);
+#define HUE_PURPLE (300 * 65535 / 360)
 
-    leds[0] = CRGB::Red;
-    FastLED.show();
+Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRBW + NEO_KHZ800);
+
+void initLeds() {
+    strip.begin();
+    strip.show();
+    strip.setBrightness(BRIGHTNESS);
 
     lastAnimStep = 0;
     animCounter = 0;
@@ -26,14 +28,6 @@ void setAnimation(animation_t anim, uint16_t duration, bool backToPrevious) {
     animationTimeout = millis() + duration;
 
     setAnimation(anim);
-}
-
-void setColor(CRGB::HTMLColorCode color) {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i] = color;
-    }
-
-    FastLED.show();
 }
 
 void animationLoop(bool forceUpdate) {
@@ -55,7 +49,7 @@ void animationLoop(bool forceUpdate) {
 
                 for (uint8_t i = 0; i < NUM_LEDS; i++) {
                     uint8_t hue = (animCounter + (255 / NUM_LEDS) * i) % 256; // hue rainbow
-                    leds[i] = CHSV(hue, 255, val);
+                    strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(hue * 256, 255, val)));
                 }
             }
             break;
@@ -63,16 +57,14 @@ void animationLoop(bool forceUpdate) {
             case ANIM_CARD_PROCESSING: {// blue light chaser
                 bool half = (animCounter % 16) < 8;
                 for (uint8_t i = 0; i < NUM_LEDS; i++) {
-                    leds[i] = (half && i % 2 == 0) ? CRGB::Blue : CRGB::Black;
+                    strip.setPixelColor(i, (half ^ (i % 2 == 0)) ? 0x0000FF : 0x000000);
                 }
             }
             break;
 
             case ANIM_ERROR: {      // red blinking
                 bool blinkOn = (animCounter % 16) < 8;
-                for (uint8_t i = 0; i < NUM_LEDS; i++) {
-                    leds[i] = blinkOn ? CRGB::Red : CRGB::Black;
-                }
+                strip.fill(blinkOn ? 0xFF0000 : 0x000000);
             }
             break;
 
@@ -84,7 +76,7 @@ void animationLoop(bool forceUpdate) {
                     break;
                 }
                 for (uint8_t i = 0; i < NUM_LEDS; i++) {
-                    leds[i] = (i <= progress) ? CRGB::Green : CRGB::Black;
+                    strip.setPixelColor(i, (i <= progress) ? 0x00FF00 : 0x000000);
                 }
             }
             break;
@@ -97,7 +89,7 @@ void animationLoop(bool forceUpdate) {
                     break;
                 }
                 for (uint8_t i = 0; i < NUM_LEDS; i++) {
-                    leds[i] = (i <= (NUM_LEDS-1 - progress)) ? CRGB::Orange : CRGB::Black;
+                    strip.setPixelColor(i, (i <= (NUM_LEDS-1 - progress)) ? 0xFF8000 : 0x000000);
                 }
             }
             break;
@@ -108,28 +100,25 @@ void animationLoop(bool forceUpdate) {
                 if (animCounter >= 20) {
                     setAnimation(ANIM_BLACK, 500);
                 }
-                for (uint8_t i = 0; i < NUM_LEDS; i++) {
-                    leds[i] = CHSV(HUE_PURPLE, 255, val);
-                }
+                strip.fill(strip.gamma32(strip.ColorHSV(HUE_PURPLE)));
             }
             break;
 
             case ANIM_BLACK: {      // black
-                for (uint8_t i = 0; i < NUM_LEDS; i++) {
-                    leds[i] = CRGB::Black;
-                }
+                strip.fill(0);
             }
             break;
+            
             case ANIM_CONNECTING: { // chasing white dot
                 uint8_t ledToLight = (animCounter / 2) % NUM_LEDS;
                 for (uint8_t i = 0; i < NUM_LEDS; i++) {
-                    leds[i] = (i == ledToLight) ? CRGB::White : CRGB::Black;
+                    strip.setPixelColor(i, (i == ledToLight) ? 0xFFFFFF : 0);
                 }
             }
             break;
         }
 
-        FastLED.show();
+        strip.show();
         animCounter++;
     }
 }

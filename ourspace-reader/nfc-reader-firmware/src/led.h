@@ -1,15 +1,14 @@
 #pragma once
 
 #include <Arduino.h>
-#include <FastLED.h>
+#include <Adafruit_NeoPixel.h>
 
-#define LED_PIN     0
-#define NUM_LEDS    12
+#define LED_PIN     2
+#define NUM_LEDS    24
 #define BRIGHTNESS  64
-#define LED_TYPE    WS2811
-#define COLOR_ORDER GRB
+#define LED_TYPE    (NEO_GRBW + NEO_KHZ800)
 #define ANIM_SPEED  25 // animation speed in ms
-#define ANIM_SCALE  64 // pulsing animation scaling
+#define ANIM_SCALE  128 // pulsing animation scaling
 
 typedef enum animationStage {
     ANIM_IDLE,
@@ -23,8 +22,6 @@ typedef enum animationStage {
 } animation_t;
 
 
-extern CRGB leds[NUM_LEDS];
-
 extern uint32_t lastAnimStep;
 extern uint8_t animCounter;
 extern animation_t currentAnimation;
@@ -35,4 +32,3 @@ void animationLoop(bool forceUpdate = false);
 
 void setAnimation(animation_t anim);
 void setAnimation(animation_t anim, uint16_t duration, bool backToPrevious = false);
-void setColor(CRGB::HTMLColorCode color);
