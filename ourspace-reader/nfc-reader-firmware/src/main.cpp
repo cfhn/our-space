@@ -1,211 +1,168 @@
 #include <Arduino.h>
-#include <PN532.h>
-#include <PN532_SPI.h>
 #include <SPI.h>
 #include <Wire.h>
-
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-
-#include <ESP8266HTTPClient.h>
-#include <WiFiClientSecureBearSSL.h>
 
 #include "config.h"
 #include "led.h"
 
-// TODO:
-// - Check-in / check-out / not found animation
+#include <Ethernet.h>
+#include <Dhcp.h>
 
-// If using the breakout with SPI, define the pins for SPI communication.
-#define PN532_SCK (14)
-#define PN532_MOSI (12)
-#define PN532_MISO (13)
-#define PN532_SS (15)
-
-#define PN532_IRQ (2)
-#define PN532_RESET (3)
-
-const char *ssid = CONFIG_WIFI_SSID;
-const char *password = CONFIG_WIFI_PASSWORD;
-const uint8_t fingerprint[20] = CONFIG_SSL_FINGERPRINT;
-const String url_scan = CONFIG_BACKEND_URL;
-const String url_alive = CONFIG_BACKEND_URL_ALIVE;
 const String terminalId = CONFIG_TERMINAL_ID;
 const int heartbeat_intervall = CONFIG_HEARTBEAT_INTERVAL;
+uint8_t macAddr[] = CONFIG_MAC;
 
-ESP8266WiFiMulti WiFiMulti;
-PN532_SPI pn532spi(SPI, PN532_SS);
-PN532 nfc(pn532spi);
-bool disconnected = false;
-ulong lastHeartbeat = 0;
+EthernetClient client;
 
-String uidToString(uint8_t uidArr[], uint8_t uidLength) {
+uint32_t requestSent = 0;
+char responseBuf[512];
+uint16_t responseBufIdx = 0;
 
-    String uid = "";
+void sendUidToServer(const char *uid) {
+    setAnimation(ANIM_CARD_PROCESSING);
+    animationLoop(true);
 
-    for (int i = 0; i < uidLength; i++) {
-        String partial = String(uidArr[i], HEX);
-
-        if (partial.length() < 2)
-            partial = "0" + partial;
-
-        uid += partial;
-        if (i < uidLength - 1) {
-            uid += ":";
-        }
+    requestSent = millis();
+    responseBufIdx = 0;
+    memset(responseBuf, 0, sizeof(responseBuf));
+    
+    if (client.connect(CONFIG_BACKEND_HOST, 80)) {
+        client.println(F("POST " CONFIG_BACKEND_PATH " HTTP/1.1"));
+        client.println(F("Host: " CONFIG_BACKEND_HOST));
+        client.println(F("User-Agent: arduino-ethernet"));
+        client.println(F("Content-Type: application/json"));
+        client.println(F("Connection: close"));
+        client.println();
+        
+        char payload[100] = {0};
+        snprintf_P(payload, sizeof(payload), PSTR("{\"uid\": \"%s\", \"terminalId\": \"%s\"}"), uid, CONFIG_TERMINAL_ID);
+        client.println(payload);
     }
-
-    return uid;
 }
 
-int sendHttpsGet(String url) {
-    Serial.println(url);
-    int httpCode = 0;
-
-    if ((WiFiMulti.run() == WL_CONNECTED)) {
-
-        std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
-        client->setFingerprint(fingerprint);
-
-        HTTPClient https;
-        if (https.begin(*client, url)) {
-            httpCode = https.GET();
+void checkHttpResponse() {
+    while (client.available()) {
+        int bytesToRead = client.available();
+        if (bytesToRead + responseBufIdx < sizeof(responseBuf)) {
+            client.readBytes(responseBuf + responseBufIdx, bytesToRead);
         }
-
-        https.end();
     }
 
-    return httpCode;
+    
+    if (!client.connected() && requestSent != 0) {  // If client got disconnected and a response is expected
+        // handle response
+
+        if (strstr(responseBuf, "added") != NULL) {
+            setAnimation(ANIM_CHECK_IN);
+        } else if (strstr(responseBuf, "removed") != NULL) {
+            setAnimation(ANIM_CHECK_OUT);
+        } else if (strstr(responseBuf, "unknown") != NULL) {
+            setAnimation(ANIM_UNKNOWN_CARD);
+        } else {
+            setAnimation(ANIM_ERROR, 3000, true);
+        }
+        requestSent = 0;    // mark handling done
+    }
 }
 
-bool sendUidToServer(String uid) {
-    // String url = url_scan + uid;
-    // Serial.println(url);
-    bool success = false;
-
-    if ((WiFiMulti.run() == WL_CONNECTED)) {
-
-        std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
-        client->setFingerprint(fingerprint);
-
-        setAnimation(ANIM_CARD_PROCESSING);
-        animationLoop(true);
-
-        HTTPClient https;
-        https.setTimeout(5000);
-        if (https.begin(*client, url_scan)) {
-            https.addHeader("Content-Type", "application/json");
-            char payload[100];
-            snprintf(payload, 100, "{\"uid\": \"%s\", \"terminalId\": \"%s\"}", uid.c_str(), CONFIG_TERMINAL_ID);
-            int httpCode = https.POST(payload);
-            Serial.print("HTTP-Code ");
-            Serial.println(httpCode);
-
-            if (httpCode > 0 && httpCode == HTTP_CODE_OK) {
-                String payload = https.getString();
-                Serial.println(payload);
-                success = true;
-
-                if (payload.indexOf("added") > -1) {
-                    setAnimation(ANIM_CHECK_IN);
-                } else if (payload.indexOf("removed") > -1) {
-                    setAnimation(ANIM_CHECK_OUT);
-                } else if (payload.indexOf("unknown") > -1) {
-                    setAnimation(ANIM_UNKNOWN_CARD);
-                }
-            } else {
-                Serial.printf("[HTTPS] get failed, error: %s\n", https.errorToString(httpCode).c_str());
-                setAnimation(ANIM_ERROR, 800);
-            }
-        }
-
-        https.end();
+#define DBG Serial
+bool ethInit() {
+    bool success = true;
+    Ethernet.init();
+    // DHCP
+    if (Ethernet.begin(macAddr, 10000) == 0) {
+        DBG.println("Failed to configure Ethernet using DHCP");
+        success = false;
     }
+    // Static IP
+    // Ethernet.begin(macAddr, IPAddress(192,168,13,245));
 
+    if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+        DBG.println("Ethernet module was not found.  Sorry, can't run without hardware. :(");
+    } else if (Ethernet.linkStatus() == LinkOFF) {
+        DBG.println("Ethernet cable is not connected.");
+        success = false;
+    }
+    
+    if(success) {
+        // print your local IP address:
+        DBG.print("My IP address: ");
+        DBG.println(Ethernet.localIP());
+    }
     return success;
+
 }
 
-bool sendHeartbeat() {
-    String url = url_alive + terminalId;
-    Serial.println(url);
-    bool success = false;
-    int httpCode = sendHttpsGet(url);
-
-    if (httpCode == HTTP_CODE_OK) {
-        success = true;
-    } else {
-        Serial.printf("[HTTPS] get failed, error: %i\n", httpCode);
+void ethLoop() {
+    int ret = Ethernet.maintain();
+    switch (ret) {
+        case DHCP_CHECK_RENEW_FAIL:
+        case DHCP_CHECK_REBIND_FAIL:
+            setAnimation(ANIM_CONNECTING);
+            break;
+        case DHCP_CHECK_RENEW_OK:
+        case DHCP_CHECK_REBIND_OK:
+            setAnimation(ANIM_IDLE);
+            break;
     }
-
-    return success;
 }
 
-void setup(void) {
-    Serial.begin(115200);
+
+void setup() {
+    Serial.begin(9600);
 
     initLeds();
 
-    WiFi.mode(WIFI_STA);
-    WiFiMulti.addAP(ssid, password);
-
-    nfc.begin();
-
-    uint32_t versiondata = nfc.getFirmwareVersion();
-    if (!versiondata) {
-        Serial.print("Didn't find PN53x board");
-        while (1)
-            ; // halt
-    }
-    // Got ok data, print it out!
-    Serial.print("Found chip PN5");
-    Serial.println((versiondata >> 24) & 0xFF, HEX);
-    Serial.print("Firmware ver. ");
-    Serial.print((versiondata >> 16) & 0xFF, DEC);
-    Serial.print('.');
-    Serial.println((versiondata >> 8) & 0xFF, DEC);
-
-    // configure board to read RFID tags
-    nfc.SAMConfig();
-
-    Serial.println("Waiting for an ISO14443A Card ...");
-}
-
-void loop(void) {
-
-    while (WiFiMulti.run() != WL_CONNECTED) {
-        if (disconnected == false) { // only run once
-            setAnimation(ANIM_CONNECTING);
-            nfc.setRFField(0, 0); // disable NFC field
-        }
-        disconnected = true;
-
-        animationLoop();
-
-        yield(); // feed WDT
-    }
-
-    if (disconnected) {
-        disconnected = false;
-        Serial.print("[WiFi] reconnected. IP: ");
-        Serial.println(WiFi.localIP());
-        nfc.setRFField(0, 1); // enable NFC field
+    // eth init
+    setAnimation(ANIM_CONNECTING);
+    animationLoop(true);
+    if (ethInit()) {
         setAnimation(ANIM_IDLE);
     }
+    else {
+        setAnimation(ANIM_ERROR);
+        animationLoop(true);
+    }
+}
 
-    uint8_t success;
-    uint8_t uidBuf[] = {0, 0, 0, 0, 0, 0, 0}; // Buffer to store the returned UID
-    uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+uint32_t lastSerialRx = 0;
+const int SERIAL_TIMEOUT = 10;
+uint8_t rxBufIdx = 0;
+char rxBuf[64];
 
-    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uidBuf, &uidLength, 30);
+void loop() {
+    ethLoop();
+    animationLoop();
+    checkHttpResponse();
 
-    if (success) {
-        String uid = uidToString(uidBuf, uidLength);
-        nfc.setRFField(0, 0); // disable NFC field
-        sendUidToServer(uid);
-        nfc.setRFField(0, 1); // enable NFC field
+    while (Serial.available()) {
+        if (millis() - lastSerialRx > SERIAL_TIMEOUT) {
+            rxBufIdx = 0;
+            memset(rxBuf, 0, sizeof(rxBuf));
+        }
+
+        lastSerialRx = millis();
+        
+        // read Serial into buffer  
+        int bytesToRead = Serial.available();
+        if (bytesToRead + rxBufIdx+1 > sizeof(rxBuf)) {
+            bytesToRead = sizeof(rxBuf) - rxBufIdx+1;
+        }
+        rxBufIdx += Serial.readBytes(rxBuf + rxBufIdx, bytesToRead); 
+
+        // full UID received from reader (ascii hex encoded UID received from reader (wrong byte order))
+        if (rxBufIdx >= 16) {
+            if (rxBuf[14] == '\r' && rxBuf[15] == '\n') {
+                char uid[15] = {0};
+                for (int i = 0; i < 7; i++) {
+                    uid[12 - i*2] = rxBuf[i*2];
+                    uid[12 - i*2 + 1] = rxBuf[i*2 + 1];
+                } 
+                sendUidToServer(uid);
+            }
+            lastSerialRx = 0;   // force buffer clear (discards spurious data, probably)
+        }
     }
 
-    // sendHeartbeat();
-
-    animationLoop();
+    
 }
