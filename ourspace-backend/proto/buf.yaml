@@ -1,0 +1,14 @@
+version: v1
+breaking:
+  use:
+    - FILE
+deps:
+  - buf.build/envoyproxy/protoc-gen-validate
+  - buf.build/googleapis/googleapis
+  - buf.build/gnostic/gnostic
+lint:
+  use:
+    - DEFAULT
+  except:
+    - RPC_RESPONSE_STANDARD_NAME
+    - RPC_REQUEST_RESPONSE_UNIQUE
