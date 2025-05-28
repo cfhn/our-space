@@ -12,6 +12,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	_ "google.golang.org/protobuf/types/known/anypb"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -29,9 +30,217 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type AgeCategory int32
+
+const (
+	AgeCategory_AGE_CATEGORY_UNKNOWN  AgeCategory = 0
+	AgeCategory_AGE_CATEGORY_UNDERAGE AgeCategory = 1
+	AgeCategory_AGE_CATEGORY_ADULT    AgeCategory = 2
+)
+
+// Enum value maps for AgeCategory.
+var (
+	AgeCategory_name = map[int32]string{
+		0: "AGE_CATEGORY_UNKNOWN",
+		1: "AGE_CATEGORY_UNDERAGE",
+		2: "AGE_CATEGORY_ADULT",
+	}
+	AgeCategory_value = map[string]int32{
+		"AGE_CATEGORY_UNKNOWN":  0,
+		"AGE_CATEGORY_UNDERAGE": 1,
+		"AGE_CATEGORY_ADULT":    2,
+	}
+)
+
+func (x AgeCategory) Enum() *AgeCategory {
+	p := new(AgeCategory)
+	*p = x
+	return p
+}
+
+func (x AgeCategory) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AgeCategory) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_proto_enumTypes[0].Descriptor()
+}
+
+func (AgeCategory) Type() protoreflect.EnumType {
+	return &file_api_proto_enumTypes[0]
+}
+
+func (x AgeCategory) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AgeCategory.Descriptor instead.
+func (AgeCategory) EnumDescriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{0}
+}
+
+type MemberField int32
+
+const (
+	MemberField_MEMBER_FIELD_UNKNOWN          MemberField = 0
+	MemberField_MEMBER_FIELD_ID               MemberField = 1
+	MemberField_MEMBER_FIELD_NAME             MemberField = 2
+	MemberField_MEMBER_FIELD_MEMBERSHIP_START MemberField = 3
+	MemberField_MEMBER_FIELD_MEMBERSHIP_END   MemberField = 4
+)
+
+// Enum value maps for MemberField.
+var (
+	MemberField_name = map[int32]string{
+		0: "MEMBER_FIELD_UNKNOWN",
+		1: "MEMBER_FIELD_ID",
+		2: "MEMBER_FIELD_NAME",
+		3: "MEMBER_FIELD_MEMBERSHIP_START",
+		4: "MEMBER_FIELD_MEMBERSHIP_END",
+	}
+	MemberField_value = map[string]int32{
+		"MEMBER_FIELD_UNKNOWN":          0,
+		"MEMBER_FIELD_ID":               1,
+		"MEMBER_FIELD_NAME":             2,
+		"MEMBER_FIELD_MEMBERSHIP_START": 3,
+		"MEMBER_FIELD_MEMBERSHIP_END":   4,
+	}
+)
+
+func (x MemberField) Enum() *MemberField {
+	p := new(MemberField)
+	*p = x
+	return p
+}
+
+func (x MemberField) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (MemberField) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_proto_enumTypes[1].Descriptor()
+}
+
+func (MemberField) Type() protoreflect.EnumType {
+	return &file_api_proto_enumTypes[1]
+}
+
+func (x MemberField) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use MemberField.Descriptor instead.
+func (MemberField) EnumDescriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{1}
+}
+
+type SortDirection int32
+
+const (
+	SortDirection_SORT_DIRECTION_DEFAULT    SortDirection = 0
+	SortDirection_SORT_DIRECTION_ASCENDING  SortDirection = 1
+	SortDirection_SORT_DIRECTION_DESCENDING SortDirection = 2
+)
+
+// Enum value maps for SortDirection.
+var (
+	SortDirection_name = map[int32]string{
+		0: "SORT_DIRECTION_DEFAULT",
+		1: "SORT_DIRECTION_ASCENDING",
+		2: "SORT_DIRECTION_DESCENDING",
+	}
+	SortDirection_value = map[string]int32{
+		"SORT_DIRECTION_DEFAULT":    0,
+		"SORT_DIRECTION_ASCENDING":  1,
+		"SORT_DIRECTION_DESCENDING": 2,
+	}
+)
+
+func (x SortDirection) Enum() *SortDirection {
+	p := new(SortDirection)
+	*p = x
+	return p
+}
+
+func (x SortDirection) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SortDirection) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_proto_enumTypes[2].Descriptor()
+}
+
+func (SortDirection) Type() protoreflect.EnumType {
+	return &file_api_proto_enumTypes[2]
+}
+
+func (x SortDirection) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SortDirection.Descriptor instead.
+func (SortDirection) EnumDescriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{2}
+}
+
+type CardField int32
+
+const (
+	CardField_CARD_FIELD_UNKNOWN    CardField = 0
+	CardField_CARD_FIELD_ID         CardField = 1
+	CardField_CARD_FIELD_MEMBER_ID  CardField = 2
+	CardField_CARD_FIELD_VALID_FROM CardField = 3
+	CardField_CARD_FIELD_VALID_TO   CardField = 4
+)
+
+// Enum value maps for CardField.
+var (
+	CardField_name = map[int32]string{
+		0: "CARD_FIELD_UNKNOWN",
+		1: "CARD_FIELD_ID",
+		2: "CARD_FIELD_MEMBER_ID",
+		3: "CARD_FIELD_VALID_FROM",
+		4: "CARD_FIELD_VALID_TO",
+	}
+	CardField_value = map[string]int32{
+		"CARD_FIELD_UNKNOWN":    0,
+		"CARD_FIELD_ID":         1,
+		"CARD_FIELD_MEMBER_ID":  2,
+		"CARD_FIELD_VALID_FROM": 3,
+		"CARD_FIELD_VALID_TO":   4,
+	}
+)
+
+func (x CardField) Enum() *CardField {
+	p := new(CardField)
+	*p = x
+	return p
+}
+
+func (x CardField) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CardField) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_proto_enumTypes[3].Descriptor()
+}
+
+func (CardField) Type() protoreflect.EnumType {
+	return &file_api_proto_enumTypes[3]
+}
+
+func (x CardField) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CardField.Descriptor instead.
+func (CardField) EnumDescriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{3}
+}
+
 type CreateMemberRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,proto3" json:"member_id,omitempty"`
 	Member        *Member                `protobuf:"bytes,2,opt,name=member,proto3" json:"member,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -85,8 +294,10 @@ type Member struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name            string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	MembershipStart *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=membership_start,json=membershipStart,proto3" json:"membership_start,omitempty"`
-	MembershipEnd   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=membership_end,json=membershipEnd,proto3" json:"membership_end,omitempty"`
+	MembershipStart *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=membership_start,proto3" json:"membership_start,omitempty"`
+	MembershipEnd   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=membership_end,proto3" json:"membership_end,omitempty"`
+	AgeCategory     AgeCategory            `protobuf:"varint,5,opt,name=age_category,proto3,enum=ourspace_backend.v1.AgeCategory" json:"age_category,omitempty"`
+	Tags            []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -149,6 +360,20 @@ func (x *Member) GetMembershipEnd() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Member) GetAgeCategory() AgeCategory {
+	if x != nil {
+		return x.AgeCategory
+	}
+	return AgeCategory_AGE_CATEGORY_UNKNOWN
+}
+
+func (x *Member) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
 type GetMemberRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -194,11 +419,20 @@ func (x *GetMemberRequest) GetId() string {
 }
 
 type ListMembersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	PageSize              int32                  `protobuf:"varint,1,opt,name=page_size,proto3" json:"page_size,omitempty"`
+	PageToken             string                 `protobuf:"bytes,2,opt,name=page_token,proto3" json:"page_token,omitempty"`
+	SortBy                MemberField            `protobuf:"varint,3,opt,name=sort_by,proto3,enum=ourspace_backend.v1.MemberField" json:"sort_by,omitempty"`
+	SortDirection         SortDirection          `protobuf:"varint,4,opt,name=sort_direction,proto3,enum=ourspace_backend.v1.SortDirection" json:"sort_direction,omitempty"`
+	NameContains          *string                `protobuf:"bytes,5,opt,name=name_contains,proto3,oneof" json:"name_contains,omitempty"`
+	MembershipStartAfter  *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=membership_start_after,proto3,oneof" json:"membership_start_after,omitempty"`
+	MembershipStartBefore *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=membership_start_before,proto3,oneof" json:"membership_start_before,omitempty"`
+	MembershipEndAfter    *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=membership_end_after,proto3,oneof" json:"membership_end_after,omitempty"`
+	MembershipEndBefore   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=membership_end_before,proto3,oneof" json:"membership_end_before,omitempty"`
+	AgeCategoryEquals     *AgeCategory           `protobuf:"varint,10,opt,name=age_category_equals,proto3,enum=ourspace_backend.v1.AgeCategory,oneof" json:"age_category_equals,omitempty"`
+	TagContains           []string               `protobuf:"bytes,11,rep,name=tag_contains,proto3" json:"tag_contains,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *ListMembersRequest) Reset() {
@@ -245,10 +479,73 @@ func (x *ListMembersRequest) GetPageToken() string {
 	return ""
 }
 
+func (x *ListMembersRequest) GetSortBy() MemberField {
+	if x != nil {
+		return x.SortBy
+	}
+	return MemberField_MEMBER_FIELD_UNKNOWN
+}
+
+func (x *ListMembersRequest) GetSortDirection() SortDirection {
+	if x != nil {
+		return x.SortDirection
+	}
+	return SortDirection_SORT_DIRECTION_DEFAULT
+}
+
+func (x *ListMembersRequest) GetNameContains() string {
+	if x != nil && x.NameContains != nil {
+		return *x.NameContains
+	}
+	return ""
+}
+
+func (x *ListMembersRequest) GetMembershipStartAfter() *timestamppb.Timestamp {
+	if x != nil {
+		return x.MembershipStartAfter
+	}
+	return nil
+}
+
+func (x *ListMembersRequest) GetMembershipStartBefore() *timestamppb.Timestamp {
+	if x != nil {
+		return x.MembershipStartBefore
+	}
+	return nil
+}
+
+func (x *ListMembersRequest) GetMembershipEndAfter() *timestamppb.Timestamp {
+	if x != nil {
+		return x.MembershipEndAfter
+	}
+	return nil
+}
+
+func (x *ListMembersRequest) GetMembershipEndBefore() *timestamppb.Timestamp {
+	if x != nil {
+		return x.MembershipEndBefore
+	}
+	return nil
+}
+
+func (x *ListMembersRequest) GetAgeCategoryEquals() AgeCategory {
+	if x != nil && x.AgeCategoryEquals != nil {
+		return *x.AgeCategoryEquals
+	}
+	return AgeCategory_AGE_CATEGORY_UNKNOWN
+}
+
+func (x *ListMembersRequest) GetTagContains() []string {
+	if x != nil {
+		return x.TagContains
+	}
+	return nil
+}
+
 type ListMembersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Members       []*Member              `protobuf:"bytes,1,rep,name=members,proto3" json:"members,omitempty"`
-	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -297,26 +594,30 @@ func (x *ListMembersResponse) GetNextPageToken() string {
 	return ""
 }
 
-type PageToken struct {
+type MemberPageToken struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Field         MemberField            `protobuf:"varint,1,opt,name=field,proto3,enum=ourspace_backend.v1.MemberField" json:"field,omitempty"`
+	LastValue     string                 `protobuf:"bytes,2,opt,name=last_value,proto3" json:"last_value,omitempty"`
+	Direction     SortDirection          `protobuf:"varint,3,opt,name=direction,proto3,enum=ourspace_backend.v1.SortDirection" json:"direction,omitempty"`
+	LastId        string                 `protobuf:"bytes,4,opt,name=last_id,proto3" json:"last_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PageToken) Reset() {
-	*x = PageToken{}
+func (x *MemberPageToken) Reset() {
+	*x = MemberPageToken{}
 	mi := &file_api_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PageToken) String() string {
+func (x *MemberPageToken) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PageToken) ProtoMessage() {}
+func (*MemberPageToken) ProtoMessage() {}
 
-func (x *PageToken) ProtoReflect() protoreflect.Message {
+func (x *MemberPageToken) ProtoReflect() protoreflect.Message {
 	mi := &file_api_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -328,15 +629,43 @@ func (x *PageToken) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageToken.ProtoReflect.Descriptor instead.
-func (*PageToken) Descriptor() ([]byte, []int) {
+// Deprecated: Use MemberPageToken.ProtoReflect.Descriptor instead.
+func (*MemberPageToken) Descriptor() ([]byte, []int) {
 	return file_api_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *MemberPageToken) GetField() MemberField {
+	if x != nil {
+		return x.Field
+	}
+	return MemberField_MEMBER_FIELD_UNKNOWN
+}
+
+func (x *MemberPageToken) GetLastValue() string {
+	if x != nil {
+		return x.LastValue
+	}
+	return ""
+}
+
+func (x *MemberPageToken) GetDirection() SortDirection {
+	if x != nil {
+		return x.Direction
+	}
+	return SortDirection_SORT_DIRECTION_DEFAULT
+}
+
+func (x *MemberPageToken) GetLastId() string {
+	if x != nil {
+		return x.LastId
+	}
+	return ""
 }
 
 type UpdateMemberRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Member        *Member                `protobuf:"bytes,1,opt,name=member,proto3" json:"member,omitempty"`
-	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,json=fieldMask,proto3" json:"field_mask,omitempty"`
+	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,proto3" json:"field_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -432,10 +761,10 @@ func (x *DeleteMemberRequest) GetId() string {
 type Card struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	MemberId      string                 `protobuf:"bytes,2,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
-	RfidValue     []byte                 `protobuf:"bytes,3,opt,name=rfid_value,json=rfidValue,proto3" json:"rfid_value,omitempty"`
-	ValidFrom     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=valid_from,json=validFrom,proto3" json:"valid_from,omitempty"`
-	ValidTo       *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=valid_to,json=validTo,proto3" json:"valid_to,omitempty"`
+	MemberId      string                 `protobuf:"bytes,2,opt,name=member_id,proto3" json:"member_id,omitempty"`
+	RfidValue     []byte                 `protobuf:"bytes,3,opt,name=rfid_value,proto3" json:"rfid_value,omitempty"`
+	ValidFrom     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=valid_from,proto3" json:"valid_from,omitempty"`
+	ValidTo       *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=valid_to,proto3" json:"valid_to,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -505,9 +834,77 @@ func (x *Card) GetValidTo() *timestamppb.Timestamp {
 	return nil
 }
 
+type CardPageToken struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Field         CardField              `protobuf:"varint,1,opt,name=field,proto3,enum=ourspace_backend.v1.CardField" json:"field,omitempty"`
+	LastValue     string                 `protobuf:"bytes,2,opt,name=last_value,proto3" json:"last_value,omitempty"`
+	Direction     SortDirection          `protobuf:"varint,3,opt,name=direction,proto3,enum=ourspace_backend.v1.SortDirection" json:"direction,omitempty"`
+	LastId        string                 `protobuf:"bytes,4,opt,name=last_id,proto3" json:"last_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CardPageToken) Reset() {
+	*x = CardPageToken{}
+	mi := &file_api_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CardPageToken) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CardPageToken) ProtoMessage() {}
+
+func (x *CardPageToken) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CardPageToken.ProtoReflect.Descriptor instead.
+func (*CardPageToken) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CardPageToken) GetField() CardField {
+	if x != nil {
+		return x.Field
+	}
+	return CardField_CARD_FIELD_UNKNOWN
+}
+
+func (x *CardPageToken) GetLastValue() string {
+	if x != nil {
+		return x.LastValue
+	}
+	return ""
+}
+
+func (x *CardPageToken) GetDirection() SortDirection {
+	if x != nil {
+		return x.Direction
+	}
+	return SortDirection_SORT_DIRECTION_DEFAULT
+}
+
+func (x *CardPageToken) GetLastId() string {
+	if x != nil {
+		return x.LastId
+	}
+	return ""
+}
+
 type CreateCardRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CardId        string                 `protobuf:"bytes,1,opt,name=card_id,json=cardId,proto3" json:"card_id,omitempty"`
+	CardId        string                 `protobuf:"bytes,1,opt,name=card_id,proto3" json:"card_id,omitempty"`
 	Card          *Card                  `protobuf:"bytes,2,opt,name=card,proto3" json:"card,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -515,7 +912,7 @@ type CreateCardRequest struct {
 
 func (x *CreateCardRequest) Reset() {
 	*x = CreateCardRequest{}
-	mi := &file_api_proto_msgTypes[9]
+	mi := &file_api_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -527,7 +924,7 @@ func (x *CreateCardRequest) String() string {
 func (*CreateCardRequest) ProtoMessage() {}
 
 func (x *CreateCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[9]
+	mi := &file_api_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -540,7 +937,7 @@ func (x *CreateCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCardRequest.ProtoReflect.Descriptor instead.
 func (*CreateCardRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{9}
+	return file_api_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CreateCardRequest) GetCardId() string {
@@ -566,7 +963,7 @@ type GetCardRequest struct {
 
 func (x *GetCardRequest) Reset() {
 	*x = GetCardRequest{}
-	mi := &file_api_proto_msgTypes[10]
+	mi := &file_api_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -578,7 +975,7 @@ func (x *GetCardRequest) String() string {
 func (*GetCardRequest) ProtoMessage() {}
 
 func (x *GetCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[10]
+	mi := &file_api_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -591,7 +988,7 @@ func (x *GetCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCardRequest.ProtoReflect.Descriptor instead.
 func (*GetCardRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{10}
+	return file_api_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetCardRequest) GetId() string {
@@ -603,15 +1000,20 @@ func (x *GetCardRequest) GetId() string {
 
 type ListCardsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,proto3" json:"page_size,omitempty"`
+	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,proto3" json:"page_token,omitempty"`
+	SortBy        CardField              `protobuf:"varint,3,opt,name=sort_by,proto3,enum=ourspace_backend.v1.CardField" json:"sort_by,omitempty"`
+	SortDirection SortDirection          `protobuf:"varint,4,opt,name=sort_direction,proto3,enum=ourspace_backend.v1.SortDirection" json:"sort_direction,omitempty"`
+	MemberId      string                 `protobuf:"bytes,5,opt,name=member_id,proto3" json:"member_id,omitempty"`
+	ValidOn       *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=valid_on,proto3" json:"valid_on,omitempty"`
+	RfidValue     []byte                 `protobuf:"bytes,7,opt,name=rfid_value,proto3" json:"rfid_value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListCardsRequest) Reset() {
 	*x = ListCardsRequest{}
-	mi := &file_api_proto_msgTypes[11]
+	mi := &file_api_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -623,7 +1025,7 @@ func (x *ListCardsRequest) String() string {
 func (*ListCardsRequest) ProtoMessage() {}
 
 func (x *ListCardsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[11]
+	mi := &file_api_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -636,7 +1038,7 @@ func (x *ListCardsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCardsRequest.ProtoReflect.Descriptor instead.
 func (*ListCardsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{11}
+	return file_api_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListCardsRequest) GetPageSize() int32 {
@@ -653,17 +1055,52 @@ func (x *ListCardsRequest) GetPageToken() string {
 	return ""
 }
 
+func (x *ListCardsRequest) GetSortBy() CardField {
+	if x != nil {
+		return x.SortBy
+	}
+	return CardField_CARD_FIELD_UNKNOWN
+}
+
+func (x *ListCardsRequest) GetSortDirection() SortDirection {
+	if x != nil {
+		return x.SortDirection
+	}
+	return SortDirection_SORT_DIRECTION_DEFAULT
+}
+
+func (x *ListCardsRequest) GetMemberId() string {
+	if x != nil {
+		return x.MemberId
+	}
+	return ""
+}
+
+func (x *ListCardsRequest) GetValidOn() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ValidOn
+	}
+	return nil
+}
+
+func (x *ListCardsRequest) GetRfidValue() []byte {
+	if x != nil {
+		return x.RfidValue
+	}
+	return nil
+}
+
 type ListCardsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Cards         []*Card                `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
-	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListCardsResponse) Reset() {
 	*x = ListCardsResponse{}
-	mi := &file_api_proto_msgTypes[12]
+	mi := &file_api_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -675,7 +1112,7 @@ func (x *ListCardsResponse) String() string {
 func (*ListCardsResponse) ProtoMessage() {}
 
 func (x *ListCardsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[12]
+	mi := &file_api_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -688,7 +1125,7 @@ func (x *ListCardsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCardsResponse.ProtoReflect.Descriptor instead.
 func (*ListCardsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{12}
+	return file_api_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListCardsResponse) GetCards() []*Card {
@@ -708,14 +1145,14 @@ func (x *ListCardsResponse) GetNextPageToken() string {
 type UpdateCardRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Card          *Card                  `protobuf:"bytes,1,opt,name=card,proto3" json:"card,omitempty"`
-	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,json=fieldMask,proto3" json:"field_mask,omitempty"`
+	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,proto3" json:"field_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateCardRequest) Reset() {
 	*x = UpdateCardRequest{}
-	mi := &file_api_proto_msgTypes[13]
+	mi := &file_api_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -727,7 +1164,7 @@ func (x *UpdateCardRequest) String() string {
 func (*UpdateCardRequest) ProtoMessage() {}
 
 func (x *UpdateCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[13]
+	mi := &file_api_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -740,7 +1177,7 @@ func (x *UpdateCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCardRequest.ProtoReflect.Descriptor instead.
 func (*UpdateCardRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{13}
+	return file_api_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateCardRequest) GetCard() *Card {
@@ -766,7 +1203,7 @@ type DeleteCardRequest struct {
 
 func (x *DeleteCardRequest) Reset() {
 	*x = DeleteCardRequest{}
-	mi := &file_api_proto_msgTypes[14]
+	mi := &file_api_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -778,7 +1215,7 @@ func (x *DeleteCardRequest) String() string {
 func (*DeleteCardRequest) ProtoMessage() {}
 
 func (x *DeleteCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[14]
+	mi := &file_api_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -791,7 +1228,7 @@ func (x *DeleteCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCardRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCardRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{14}
+	return file_api_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *DeleteCardRequest) GetId() string {
@@ -804,16 +1241,16 @@ func (x *DeleteCardRequest) GetId() string {
 type BriefingType struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,proto3" json:"display_name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	ExpiresAfter  *durationpb.Duration   `protobuf:"bytes,4,opt,name=expires_after,json=expiresAfter,proto3" json:"expires_after,omitempty"`
+	ExpiresAfter  *durationpb.Duration   `protobuf:"bytes,4,opt,name=expires_after,proto3" json:"expires_after,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BriefingType) Reset() {
 	*x = BriefingType{}
-	mi := &file_api_proto_msgTypes[15]
+	mi := &file_api_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -825,7 +1262,7 @@ func (x *BriefingType) String() string {
 func (*BriefingType) ProtoMessage() {}
 
 func (x *BriefingType) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[15]
+	mi := &file_api_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -838,7 +1275,7 @@ func (x *BriefingType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BriefingType.ProtoReflect.Descriptor instead.
 func (*BriefingType) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{15}
+	return file_api_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *BriefingType) GetId() string {
@@ -871,15 +1308,15 @@ func (x *BriefingType) GetExpiresAfter() *durationpb.Duration {
 
 type CreateBriefingTypeRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	BriefingTypeId string                 `protobuf:"bytes,1,opt,name=briefing_type_id,json=briefingTypeId,proto3" json:"briefing_type_id,omitempty"`
-	BriefingType   *BriefingType          `protobuf:"bytes,2,opt,name=briefing_type,json=briefingType,proto3" json:"briefing_type,omitempty"`
+	BriefingTypeId string                 `protobuf:"bytes,1,opt,name=briefing_type_id,proto3" json:"briefing_type_id,omitempty"`
+	BriefingType   *BriefingType          `protobuf:"bytes,2,opt,name=briefing_type,proto3" json:"briefing_type,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateBriefingTypeRequest) Reset() {
 	*x = CreateBriefingTypeRequest{}
-	mi := &file_api_proto_msgTypes[16]
+	mi := &file_api_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -891,7 +1328,7 @@ func (x *CreateBriefingTypeRequest) String() string {
 func (*CreateBriefingTypeRequest) ProtoMessage() {}
 
 func (x *CreateBriefingTypeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[16]
+	mi := &file_api_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -904,7 +1341,7 @@ func (x *CreateBriefingTypeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBriefingTypeRequest.ProtoReflect.Descriptor instead.
 func (*CreateBriefingTypeRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{16}
+	return file_api_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CreateBriefingTypeRequest) GetBriefingTypeId() string {
@@ -930,7 +1367,7 @@ type GetBriefingTypeRequest struct {
 
 func (x *GetBriefingTypeRequest) Reset() {
 	*x = GetBriefingTypeRequest{}
-	mi := &file_api_proto_msgTypes[17]
+	mi := &file_api_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -942,7 +1379,7 @@ func (x *GetBriefingTypeRequest) String() string {
 func (*GetBriefingTypeRequest) ProtoMessage() {}
 
 func (x *GetBriefingTypeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[17]
+	mi := &file_api_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -955,7 +1392,7 @@ func (x *GetBriefingTypeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBriefingTypeRequest.ProtoReflect.Descriptor instead.
 func (*GetBriefingTypeRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{17}
+	return file_api_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetBriefingTypeRequest) GetId() string {
@@ -967,15 +1404,15 @@ func (x *GetBriefingTypeRequest) GetId() string {
 
 type ListBriefingTypesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,proto3" json:"page_size,omitempty"`
+	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListBriefingTypesRequest) Reset() {
 	*x = ListBriefingTypesRequest{}
-	mi := &file_api_proto_msgTypes[18]
+	mi := &file_api_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -987,7 +1424,7 @@ func (x *ListBriefingTypesRequest) String() string {
 func (*ListBriefingTypesRequest) ProtoMessage() {}
 
 func (x *ListBriefingTypesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[18]
+	mi := &file_api_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1000,7 +1437,7 @@ func (x *ListBriefingTypesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBriefingTypesRequest.ProtoReflect.Descriptor instead.
 func (*ListBriefingTypesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{18}
+	return file_api_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ListBriefingTypesRequest) GetPageSize() int32 {
@@ -1019,15 +1456,15 @@ func (x *ListBriefingTypesRequest) GetPageToken() string {
 
 type ListBriefingTypesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BriefingTypes []*BriefingType        `protobuf:"bytes,1,rep,name=briefing_types,json=briefingTypes,proto3" json:"briefing_types,omitempty"`
-	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	BriefingTypes []*BriefingType        `protobuf:"bytes,1,rep,name=briefing_types,proto3" json:"briefing_types,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListBriefingTypesResponse) Reset() {
 	*x = ListBriefingTypesResponse{}
-	mi := &file_api_proto_msgTypes[19]
+	mi := &file_api_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1039,7 +1476,7 @@ func (x *ListBriefingTypesResponse) String() string {
 func (*ListBriefingTypesResponse) ProtoMessage() {}
 
 func (x *ListBriefingTypesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[19]
+	mi := &file_api_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1052,7 +1489,7 @@ func (x *ListBriefingTypesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBriefingTypesResponse.ProtoReflect.Descriptor instead.
 func (*ListBriefingTypesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{19}
+	return file_api_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListBriefingTypesResponse) GetBriefingTypes() []*BriefingType {
@@ -1071,15 +1508,15 @@ func (x *ListBriefingTypesResponse) GetNextPageToken() string {
 
 type UpdateBriefingTypeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BriefingType  *BriefingType          `protobuf:"bytes,1,opt,name=briefing_type,json=briefingType,proto3" json:"briefing_type,omitempty"`
-	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,json=fieldMask,proto3" json:"field_mask,omitempty"`
+	BriefingType  *BriefingType          `protobuf:"bytes,1,opt,name=briefing_type,proto3" json:"briefing_type,omitempty"`
+	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,proto3" json:"field_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateBriefingTypeRequest) Reset() {
 	*x = UpdateBriefingTypeRequest{}
-	mi := &file_api_proto_msgTypes[20]
+	mi := &file_api_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1091,7 +1528,7 @@ func (x *UpdateBriefingTypeRequest) String() string {
 func (*UpdateBriefingTypeRequest) ProtoMessage() {}
 
 func (x *UpdateBriefingTypeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[20]
+	mi := &file_api_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1104,7 +1541,7 @@ func (x *UpdateBriefingTypeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBriefingTypeRequest.ProtoReflect.Descriptor instead.
 func (*UpdateBriefingTypeRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{20}
+	return file_api_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *UpdateBriefingTypeRequest) GetBriefingType() *BriefingType {
@@ -1130,7 +1567,7 @@ type DeleteBriefingTypeRequest struct {
 
 func (x *DeleteBriefingTypeRequest) Reset() {
 	*x = DeleteBriefingTypeRequest{}
-	mi := &file_api_proto_msgTypes[21]
+	mi := &file_api_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1142,7 +1579,7 @@ func (x *DeleteBriefingTypeRequest) String() string {
 func (*DeleteBriefingTypeRequest) ProtoMessage() {}
 
 func (x *DeleteBriefingTypeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[21]
+	mi := &file_api_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1155,7 +1592,7 @@ func (x *DeleteBriefingTypeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBriefingTypeRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBriefingTypeRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{21}
+	return file_api_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DeleteBriefingTypeRequest) GetId() string {
@@ -1168,14 +1605,14 @@ func (x *DeleteBriefingTypeRequest) GetId() string {
 type Briefing struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	BriefingType  string                 `protobuf:"bytes,2,opt,name=briefing_type,json=briefingType,proto3" json:"briefing_type,omitempty"`
+	BriefingType  string                 `protobuf:"bytes,2,opt,name=briefing_type,proto3" json:"briefing_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Briefing) Reset() {
 	*x = Briefing{}
-	mi := &file_api_proto_msgTypes[22]
+	mi := &file_api_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1187,7 +1624,7 @@ func (x *Briefing) String() string {
 func (*Briefing) ProtoMessage() {}
 
 func (x *Briefing) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[22]
+	mi := &file_api_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1200,7 +1637,7 @@ func (x *Briefing) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Briefing.ProtoReflect.Descriptor instead.
 func (*Briefing) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{22}
+	return file_api_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *Briefing) GetId() string {
@@ -1219,7 +1656,7 @@ func (x *Briefing) GetBriefingType() string {
 
 type CreateBriefingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BriefingId    string                 `protobuf:"bytes,1,opt,name=briefing_id,json=briefingId,proto3" json:"briefing_id,omitempty"`
+	BriefingId    string                 `protobuf:"bytes,1,opt,name=briefing_id,proto3" json:"briefing_id,omitempty"`
 	Briefing      *Briefing              `protobuf:"bytes,2,opt,name=briefing,proto3" json:"briefing,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1227,7 +1664,7 @@ type CreateBriefingRequest struct {
 
 func (x *CreateBriefingRequest) Reset() {
 	*x = CreateBriefingRequest{}
-	mi := &file_api_proto_msgTypes[23]
+	mi := &file_api_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1239,7 +1676,7 @@ func (x *CreateBriefingRequest) String() string {
 func (*CreateBriefingRequest) ProtoMessage() {}
 
 func (x *CreateBriefingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[23]
+	mi := &file_api_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1252,7 +1689,7 @@ func (x *CreateBriefingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBriefingRequest.ProtoReflect.Descriptor instead.
 func (*CreateBriefingRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{23}
+	return file_api_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateBriefingRequest) GetBriefingId() string {
@@ -1278,7 +1715,7 @@ type GetBriefingRequest struct {
 
 func (x *GetBriefingRequest) Reset() {
 	*x = GetBriefingRequest{}
-	mi := &file_api_proto_msgTypes[24]
+	mi := &file_api_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1290,7 +1727,7 @@ func (x *GetBriefingRequest) String() string {
 func (*GetBriefingRequest) ProtoMessage() {}
 
 func (x *GetBriefingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[24]
+	mi := &file_api_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1303,7 +1740,7 @@ func (x *GetBriefingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBriefingRequest.ProtoReflect.Descriptor instead.
 func (*GetBriefingRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{24}
+	return file_api_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetBriefingRequest) GetId() string {
@@ -1315,15 +1752,15 @@ func (x *GetBriefingRequest) GetId() string {
 
 type ListBriefingsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,proto3" json:"page_size,omitempty"`
+	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListBriefingsRequest) Reset() {
 	*x = ListBriefingsRequest{}
-	mi := &file_api_proto_msgTypes[25]
+	mi := &file_api_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1335,7 +1772,7 @@ func (x *ListBriefingsRequest) String() string {
 func (*ListBriefingsRequest) ProtoMessage() {}
 
 func (x *ListBriefingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[25]
+	mi := &file_api_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1348,7 +1785,7 @@ func (x *ListBriefingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBriefingsRequest.ProtoReflect.Descriptor instead.
 func (*ListBriefingsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{25}
+	return file_api_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ListBriefingsRequest) GetPageSize() int32 {
@@ -1368,14 +1805,14 @@ func (x *ListBriefingsRequest) GetPageToken() string {
 type ListBriefingsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Briefings     []*Briefing            `protobuf:"bytes,1,rep,name=briefings,proto3" json:"briefings,omitempty"`
-	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListBriefingsResponse) Reset() {
 	*x = ListBriefingsResponse{}
-	mi := &file_api_proto_msgTypes[26]
+	mi := &file_api_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1387,7 +1824,7 @@ func (x *ListBriefingsResponse) String() string {
 func (*ListBriefingsResponse) ProtoMessage() {}
 
 func (x *ListBriefingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[26]
+	mi := &file_api_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1400,7 +1837,7 @@ func (x *ListBriefingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBriefingsResponse.ProtoReflect.Descriptor instead.
 func (*ListBriefingsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{26}
+	return file_api_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListBriefingsResponse) GetBriefings() []*Briefing {
@@ -1420,14 +1857,14 @@ func (x *ListBriefingsResponse) GetNextPageToken() string {
 type UpdateBriefingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Briefing      *Briefing              `protobuf:"bytes,1,opt,name=briefing,proto3" json:"briefing,omitempty"`
-	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,json=fieldMask,proto3" json:"field_mask,omitempty"`
+	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,proto3" json:"field_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateBriefingRequest) Reset() {
 	*x = UpdateBriefingRequest{}
-	mi := &file_api_proto_msgTypes[27]
+	mi := &file_api_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1439,7 +1876,7 @@ func (x *UpdateBriefingRequest) String() string {
 func (*UpdateBriefingRequest) ProtoMessage() {}
 
 func (x *UpdateBriefingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[27]
+	mi := &file_api_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1452,7 +1889,7 @@ func (x *UpdateBriefingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBriefingRequest.ProtoReflect.Descriptor instead.
 func (*UpdateBriefingRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{27}
+	return file_api_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *UpdateBriefingRequest) GetBriefing() *Briefing {
@@ -1478,7 +1915,7 @@ type DeleteBriefingRequest struct {
 
 func (x *DeleteBriefingRequest) Reset() {
 	*x = DeleteBriefingRequest{}
-	mi := &file_api_proto_msgTypes[28]
+	mi := &file_api_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1490,7 +1927,7 @@ func (x *DeleteBriefingRequest) String() string {
 func (*DeleteBriefingRequest) ProtoMessage() {}
 
 func (x *DeleteBriefingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[28]
+	mi := &file_api_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1503,7 +1940,7 @@ func (x *DeleteBriefingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBriefingRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBriefingRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{28}
+	return file_api_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *DeleteBriefingRequest) GetId() string {
@@ -1516,16 +1953,16 @@ func (x *DeleteBriefingRequest) GetId() string {
 type Presence struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	MemberId      string                 `protobuf:"bytes,2,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
-	CheckinTime   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=checkin_time,json=checkinTime,proto3" json:"checkin_time,omitempty"`
-	CheckoutTime  *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=checkout_time,json=checkoutTime,proto3" json:"checkout_time,omitempty"`
+	MemberId      string                 `protobuf:"bytes,2,opt,name=member_id,proto3" json:"member_id,omitempty"`
+	CheckinTime   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=checkin_time,proto3" json:"checkin_time,omitempty"`
+	CheckoutTime  *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=checkout_time,proto3" json:"checkout_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Presence) Reset() {
 	*x = Presence{}
-	mi := &file_api_proto_msgTypes[29]
+	mi := &file_api_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1537,7 +1974,7 @@ func (x *Presence) String() string {
 func (*Presence) ProtoMessage() {}
 
 func (x *Presence) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[29]
+	mi := &file_api_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1550,7 +1987,7 @@ func (x *Presence) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Presence.ProtoReflect.Descriptor instead.
 func (*Presence) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{29}
+	return file_api_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *Presence) GetId() string {
@@ -1583,21 +2020,21 @@ func (x *Presence) GetCheckoutTime() *timestamppb.Timestamp {
 
 type ListPrecensesRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	PageSize  int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken string                 `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageSize  int32                  `protobuf:"varint,1,opt,name=page_size,proto3" json:"page_size,omitempty"`
+	PageToken string                 `protobuf:"bytes,2,opt,name=page_token,proto3" json:"page_token,omitempty"`
 	// Filters
-	MemberId           *string                `protobuf:"bytes,3,opt,name=member_id,json=memberId,proto3,oneof" json:"member_id,omitempty"`
-	CheckinTimeAfter   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=checkin_time_after,json=checkinTimeAfter,proto3,oneof" json:"checkin_time_after,omitempty"`
-	CheckinTimeBefore  *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=checkin_time_before,json=checkinTimeBefore,proto3,oneof" json:"checkin_time_before,omitempty"`
-	CheckoutTimeAfter  *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=checkout_time_after,json=checkoutTimeAfter,proto3,oneof" json:"checkout_time_after,omitempty"`
-	CheckoutTimeBefore *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=checkout_time_before,json=checkoutTimeBefore,proto3,oneof" json:"checkout_time_before,omitempty"`
+	MemberId           *string                `protobuf:"bytes,3,opt,name=member_id,proto3,oneof" json:"member_id,omitempty"`
+	CheckinTimeAfter   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=checkin_time_after,proto3,oneof" json:"checkin_time_after,omitempty"`
+	CheckinTimeBefore  *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=checkin_time_before,proto3,oneof" json:"checkin_time_before,omitempty"`
+	CheckoutTimeAfter  *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=checkout_time_after,proto3,oneof" json:"checkout_time_after,omitempty"`
+	CheckoutTimeBefore *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=checkout_time_before,proto3,oneof" json:"checkout_time_before,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ListPrecensesRequest) Reset() {
 	*x = ListPrecensesRequest{}
-	mi := &file_api_proto_msgTypes[30]
+	mi := &file_api_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1609,7 +2046,7 @@ func (x *ListPrecensesRequest) String() string {
 func (*ListPrecensesRequest) ProtoMessage() {}
 
 func (x *ListPrecensesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[30]
+	mi := &file_api_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1622,7 +2059,7 @@ func (x *ListPrecensesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPrecensesRequest.ProtoReflect.Descriptor instead.
 func (*ListPrecensesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{30}
+	return file_api_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ListPrecensesRequest) GetPageSize() int32 {
@@ -1677,14 +2114,14 @@ func (x *ListPrecensesRequest) GetCheckoutTimeBefore() *timestamppb.Timestamp {
 type ListPrecensesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Presence      []*Presence            `protobuf:"bytes,1,rep,name=presence,proto3" json:"presence,omitempty"`
-	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListPrecensesResponse) Reset() {
 	*x = ListPrecensesResponse{}
-	mi := &file_api_proto_msgTypes[31]
+	mi := &file_api_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1696,7 +2133,7 @@ func (x *ListPrecensesResponse) String() string {
 func (*ListPrecensesResponse) ProtoMessage() {}
 
 func (x *ListPrecensesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[31]
+	mi := &file_api_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1709,7 +2146,7 @@ func (x *ListPrecensesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPrecensesResponse.ProtoReflect.Descriptor instead.
 func (*ListPrecensesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{31}
+	return file_api_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListPrecensesResponse) GetPresence() []*Presence {
@@ -1728,14 +2165,14 @@ func (x *ListPrecensesResponse) GetNextPageToken() string {
 
 type CheckinRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,proto3" json:"member_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CheckinRequest) Reset() {
 	*x = CheckinRequest{}
-	mi := &file_api_proto_msgTypes[32]
+	mi := &file_api_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1747,7 +2184,7 @@ func (x *CheckinRequest) String() string {
 func (*CheckinRequest) ProtoMessage() {}
 
 func (x *CheckinRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[32]
+	mi := &file_api_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1760,7 +2197,7 @@ func (x *CheckinRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckinRequest.ProtoReflect.Descriptor instead.
 func (*CheckinRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{32}
+	return file_api_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *CheckinRequest) GetMemberId() string {
@@ -1772,14 +2209,14 @@ func (x *CheckinRequest) GetMemberId() string {
 
 type CheckoutRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,proto3" json:"member_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CheckoutRequest) Reset() {
 	*x = CheckoutRequest{}
-	mi := &file_api_proto_msgTypes[33]
+	mi := &file_api_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1791,7 +2228,7 @@ func (x *CheckoutRequest) String() string {
 func (*CheckoutRequest) ProtoMessage() {}
 
 func (x *CheckoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[33]
+	mi := &file_api_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1804,7 +2241,7 @@ func (x *CheckoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckoutRequest.ProtoReflect.Descriptor instead.
 func (*CheckoutRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{33}
+	return file_api_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CheckoutRequest) GetMemberId() string {
@@ -1817,14 +2254,14 @@ func (x *CheckoutRequest) GetMemberId() string {
 type UpdatePresenceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Presence      *Presence              `protobuf:"bytes,1,opt,name=presence,proto3" json:"presence,omitempty"`
-	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,json=fieldMask,proto3" json:"field_mask,omitempty"`
+	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=field_mask,proto3" json:"field_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdatePresenceRequest) Reset() {
 	*x = UpdatePresenceRequest{}
-	mi := &file_api_proto_msgTypes[34]
+	mi := &file_api_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1836,7 +2273,7 @@ func (x *UpdatePresenceRequest) String() string {
 func (*UpdatePresenceRequest) ProtoMessage() {}
 
 func (x *UpdatePresenceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[34]
+	mi := &file_api_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1849,7 +2286,7 @@ func (x *UpdatePresenceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePresenceRequest.ProtoReflect.Descriptor instead.
 func (*UpdatePresenceRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{34}
+	return file_api_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *UpdatePresenceRequest) GetPresence() *Presence {
@@ -1875,7 +2312,7 @@ type DeletePresenceRequest struct {
 
 func (x *DeletePresenceRequest) Reset() {
 	*x = DeletePresenceRequest{}
-	mi := &file_api_proto_msgTypes[35]
+	mi := &file_api_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1887,7 +2324,7 @@ func (x *DeletePresenceRequest) String() string {
 func (*DeletePresenceRequest) ProtoMessage() {}
 
 func (x *DeletePresenceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[35]
+	mi := &file_api_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1900,7 +2337,7 @@ func (x *DeletePresenceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePresenceRequest.ProtoReflect.Descriptor instead.
 func (*DeletePresenceRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{35}
+	return file_api_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *DeletePresenceRequest) GetId() string {
@@ -1914,135 +2351,204 @@ var File_api_proto protoreflect.FileDescriptor
 
 const file_api_proto_rawDesc = "" +
 	"\n" +
-	"\tapi.proto\x12\x13ourspace_backend.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x17validate/validate.proto\"g\n" +
-	"\x13CreateMemberRequest\x12\x1b\n" +
-	"\tmember_id\x18\x01 \x01(\tR\bmemberId\x123\n" +
-	"\x06member\x18\x02 \x01(\v2\x1b.ourspace_backend.v1.MemberR\x06member\"\xb6\x01\n" +
-	"\x06Member\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12E\n" +
-	"\x10membership_start\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0fmembershipStart\x12A\n" +
-	"\x0emembership_end\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\rmembershipEnd\"\"\n" +
+	"\tapi.proto\x12\x13ourspace_backend.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x17validate/validate.proto\"h\n" +
+	"\x13CreateMemberRequest\x12\x1c\n" +
+	"\tmember_id\x18\x01 \x01(\tR\tmember_id\x123\n" +
+	"\x06member\x18\x02 \x01(\v2\x1b.ourspace_backend.v1.MemberR\x06member\"\x97\x02\n" +
+	"\x06Member\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\tB\x03\xe0A\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12F\n" +
+	"\x10membership_start\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x10membership_start\x12B\n" +
+	"\x0emembership_end\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0emembership_end\x12D\n" +
+	"\fage_category\x18\x05 \x01(\x0e2 .ourspace_backend.v1.AgeCategoryR\fage_category\x12\x12\n" +
+	"\x04tags\x18\x06 \x03(\tR\x04tags\"\"\n" +
 	"\x10GetMemberRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"P\n" +
-	"\x12ListMembersRequest\x12\x1b\n" +
-	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xf6\x06\n" +
+	"\x12ListMembersRequest\x12\x1c\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"t\n" +
+	"page_token\x18\x02 \x01(\tR\n" +
+	"page_token\x12:\n" +
+	"\asort_by\x18\x03 \x01(\x0e2 .ourspace_backend.v1.MemberFieldR\asort_by\x12J\n" +
+	"\x0esort_direction\x18\x04 \x01(\x0e2\".ourspace_backend.v1.SortDirectionR\x0esort_direction\x12)\n" +
+	"\rname_contains\x18\x05 \x01(\tH\x00R\rname_contains\x88\x01\x01\x12W\n" +
+	"\x16membership_start_after\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\x16membership_start_after\x88\x01\x01\x12Y\n" +
+	"\x17membership_start_before\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x17membership_start_before\x88\x01\x01\x12S\n" +
+	"\x14membership_end_after\x18\b \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x14membership_end_after\x88\x01\x01\x12U\n" +
+	"\x15membership_end_before\x18\t \x01(\v2\x1a.google.protobuf.TimestampH\x04R\x15membership_end_before\x88\x01\x01\x12W\n" +
+	"\x13age_category_equals\x18\n" +
+	" \x01(\x0e2 .ourspace_backend.v1.AgeCategoryH\x05R\x13age_category_equals\x88\x01\x01\x12\"\n" +
+	"\ftag_contains\x18\v \x03(\tR\ftag_containsB\x10\n" +
+	"\x0e_name_containsB\x19\n" +
+	"\x17_membership_start_afterB\x1a\n" +
+	"\x18_membership_start_beforeB\x17\n" +
+	"\x15_membership_end_afterB\x18\n" +
+	"\x16_membership_end_beforeB\x16\n" +
+	"\x14_age_category_equals\"v\n" +
 	"\x13ListMembersResponse\x125\n" +
-	"\amembers\x18\x01 \x03(\v2\x1b.ourspace_backend.v1.MemberR\amembers\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\v\n" +
-	"\tPageToken\"\x85\x01\n" +
+	"\amembers\x18\x01 \x03(\v2\x1b.ourspace_backend.v1.MemberR\amembers\x12(\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\"\xc5\x01\n" +
+	"\x0fMemberPageToken\x126\n" +
+	"\x05field\x18\x01 \x01(\x0e2 .ourspace_backend.v1.MemberFieldR\x05field\x12\x1e\n" +
+	"\n" +
+	"last_value\x18\x02 \x01(\tR\n" +
+	"last_value\x12@\n" +
+	"\tdirection\x18\x03 \x01(\x0e2\".ourspace_backend.v1.SortDirectionR\tdirection\x12\x18\n" +
+	"\alast_id\x18\x04 \x01(\tR\alast_id\"\x86\x01\n" +
 	"\x13UpdateMemberRequest\x123\n" +
-	"\x06member\x18\x01 \x01(\v2\x1b.ourspace_backend.v1.MemberR\x06member\x129\n" +
+	"\x06member\x18\x01 \x01(\v2\x1b.ourspace_backend.v1.MemberR\x06member\x12:\n" +
 	"\n" +
-	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\tfieldMask\"%\n" +
+	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"field_mask\"%\n" +
 	"\x13DeleteMemberRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xc4\x01\n" +
-	"\x04Card\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
-	"\tmember_id\x18\x02 \x01(\tR\bmemberId\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xcd\x01\n" +
+	"\x04Card\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\tB\x03\xe0A\x03R\x02id\x12\x1c\n" +
+	"\tmember_id\x18\x02 \x01(\tR\tmember_id\x12\x1e\n" +
 	"\n" +
-	"rfid_value\x18\x03 \x01(\fR\trfidValue\x129\n" +
+	"rfid_value\x18\x03 \x01(\fR\n" +
+	"rfid_value\x12:\n" +
 	"\n" +
-	"valid_from\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tvalidFrom\x125\n" +
-	"\bvalid_to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\avalidTo\"[\n" +
-	"\x11CreateCardRequest\x12\x17\n" +
-	"\acard_id\x18\x01 \x01(\tR\x06cardId\x12-\n" +
+	"valid_from\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"valid_from\x126\n" +
+	"\bvalid_to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\bvalid_to\"\xc1\x01\n" +
+	"\rCardPageToken\x124\n" +
+	"\x05field\x18\x01 \x01(\x0e2\x1e.ourspace_backend.v1.CardFieldR\x05field\x12\x1e\n" +
+	"\n" +
+	"last_value\x18\x02 \x01(\tR\n" +
+	"last_value\x12@\n" +
+	"\tdirection\x18\x03 \x01(\x0e2\".ourspace_backend.v1.SortDirectionR\tdirection\x12\x18\n" +
+	"\alast_id\x18\x04 \x01(\tR\alast_id\"\\\n" +
+	"\x11CreateCardRequest\x12\x18\n" +
+	"\acard_id\x18\x01 \x01(\tR\acard_id\x12-\n" +
 	"\x04card\x18\x02 \x01(\v2\x19.ourspace_backend.v1.CardR\x04card\" \n" +
 	"\x0eGetCardRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"N\n" +
-	"\x10ListCardsRequest\x12\x1b\n" +
-	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xcc\x02\n" +
+	"\x10ListCardsRequest\x12\x1c\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"l\n" +
+	"page_token\x18\x02 \x01(\tR\n" +
+	"page_token\x128\n" +
+	"\asort_by\x18\x03 \x01(\x0e2\x1e.ourspace_backend.v1.CardFieldR\asort_by\x12J\n" +
+	"\x0esort_direction\x18\x04 \x01(\x0e2\".ourspace_backend.v1.SortDirectionR\x0esort_direction\x12\x1c\n" +
+	"\tmember_id\x18\x05 \x01(\tR\tmember_id\x126\n" +
+	"\bvalid_on\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bvalid_on\x12\x1e\n" +
+	"\n" +
+	"rfid_value\x18\a \x01(\fR\n" +
+	"rfid_value\"n\n" +
 	"\x11ListCardsResponse\x12/\n" +
-	"\x05cards\x18\x01 \x03(\v2\x19.ourspace_backend.v1.CardR\x05cards\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"}\n" +
+	"\x05cards\x18\x01 \x03(\v2\x19.ourspace_backend.v1.CardR\x05cards\x12(\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\"~\n" +
 	"\x11UpdateCardRequest\x12-\n" +
-	"\x04card\x18\x01 \x01(\v2\x19.ourspace_backend.v1.CardR\x04card\x129\n" +
+	"\x04card\x18\x01 \x01(\v2\x19.ourspace_backend.v1.CardR\x04card\x12:\n" +
 	"\n" +
-	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\tfieldMask\"#\n" +
+	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"field_mask\"#\n" +
 	"\x11DeleteCardRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xa3\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xa5\x01\n" +
 	"\fBriefingType\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12>\n" +
-	"\rexpires_after\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\fexpiresAfter\"\x8d\x01\n" +
-	"\x19CreateBriefingTypeRequest\x12(\n" +
-	"\x10briefing_type_id\x18\x01 \x01(\tR\x0ebriefingTypeId\x12F\n" +
-	"\rbriefing_type\x18\x02 \x01(\v2!.ourspace_backend.v1.BriefingTypeR\fbriefingType\"(\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\"\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\fdisplay_name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12?\n" +
+	"\rexpires_after\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\rexpires_after\"\x90\x01\n" +
+	"\x19CreateBriefingTypeRequest\x12*\n" +
+	"\x10briefing_type_id\x18\x01 \x01(\tR\x10briefing_type_id\x12G\n" +
+	"\rbriefing_type\x18\x02 \x01(\v2!.ourspace_backend.v1.BriefingTypeR\rbriefing_type\"(\n" +
 	"\x16GetBriefingTypeRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"V\n" +
-	"\x18ListBriefingTypesRequest\x12\x1b\n" +
-	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"X\n" +
+	"\x18ListBriefingTypesRequest\x12\x1c\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"\x8d\x01\n" +
-	"\x19ListBriefingTypesResponse\x12H\n" +
-	"\x0ebriefing_types\x18\x01 \x03(\v2!.ourspace_backend.v1.BriefingTypeR\rbriefingTypes\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x9e\x01\n" +
-	"\x19UpdateBriefingTypeRequest\x12F\n" +
-	"\rbriefing_type\x18\x01 \x01(\v2!.ourspace_backend.v1.BriefingTypeR\fbriefingType\x129\n" +
+	"page_token\x18\x02 \x01(\tR\n" +
+	"page_token\"\x90\x01\n" +
+	"\x19ListBriefingTypesResponse\x12I\n" +
+	"\x0ebriefing_types\x18\x01 \x03(\v2!.ourspace_backend.v1.BriefingTypeR\x0ebriefing_types\x12(\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\"\xa0\x01\n" +
+	"\x19UpdateBriefingTypeRequest\x12G\n" +
+	"\rbriefing_type\x18\x01 \x01(\v2!.ourspace_backend.v1.BriefingTypeR\rbriefing_type\x12:\n" +
 	"\n" +
-	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\tfieldMask\"+\n" +
+	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"field_mask\"+\n" +
 	"\x19DeleteBriefingTypeRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"?\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"@\n" +
 	"\bBriefing\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
-	"\rbriefing_type\x18\x02 \x01(\tR\fbriefingType\"s\n" +
-	"\x15CreateBriefingRequest\x12\x1f\n" +
-	"\vbriefing_id\x18\x01 \x01(\tR\n" +
-	"briefingId\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12$\n" +
+	"\rbriefing_type\x18\x02 \x01(\tR\rbriefing_type\"t\n" +
+	"\x15CreateBriefingRequest\x12 \n" +
+	"\vbriefing_id\x18\x01 \x01(\tR\vbriefing_id\x129\n" +
 	"\bbriefing\x18\x02 \x01(\v2\x1d.ourspace_backend.v1.BriefingR\bbriefing\"$\n" +
 	"\x12GetBriefingRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
-	"\x14ListBriefingsRequest\x12\x1b\n" +
-	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"T\n" +
+	"\x14ListBriefingsRequest\x12\x1c\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"|\n" +
+	"page_token\x18\x02 \x01(\tR\n" +
+	"page_token\"~\n" +
 	"\x15ListBriefingsResponse\x12;\n" +
-	"\tbriefings\x18\x01 \x03(\v2\x1d.ourspace_backend.v1.BriefingR\tbriefings\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x8d\x01\n" +
+	"\tbriefings\x18\x01 \x03(\v2\x1d.ourspace_backend.v1.BriefingR\tbriefings\x12(\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\"\x8e\x01\n" +
 	"\x15UpdateBriefingRequest\x129\n" +
-	"\bbriefing\x18\x01 \x01(\v2\x1d.ourspace_backend.v1.BriefingR\bbriefing\x129\n" +
+	"\bbriefing\x18\x01 \x01(\v2\x1d.ourspace_backend.v1.BriefingR\bbriefing\x12:\n" +
 	"\n" +
-	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\tfieldMask\"'\n" +
+	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"field_mask\"'\n" +
 	"\x15DeleteBriefingRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xb7\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xba\x01\n" +
 	"\bPresence\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
-	"\tmember_id\x18\x02 \x01(\tR\bmemberId\x12=\n" +
-	"\fcheckin_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vcheckinTime\x12?\n" +
-	"\rcheckout_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\fcheckoutTime\"\xa6\x04\n" +
-	"\x14ListPrecensesRequest\x12\x1b\n" +
-	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
+	"\tmember_id\x18\x02 \x01(\tR\tmember_id\x12>\n" +
+	"\fcheckin_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fcheckin_time\x12@\n" +
+	"\rcheckout_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\rcheckout_time\"\xb1\x04\n" +
+	"\x14ListPrecensesRequest\x12\x1c\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\x12 \n" +
-	"\tmember_id\x18\x03 \x01(\tH\x00R\bmemberId\x88\x01\x01\x12M\n" +
-	"\x12checkin_time_after\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\x10checkinTimeAfter\x88\x01\x01\x12O\n" +
-	"\x13checkin_time_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x11checkinTimeBefore\x88\x01\x01\x12O\n" +
-	"\x13checkout_time_after\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x11checkoutTimeAfter\x88\x01\x01\x12Q\n" +
-	"\x14checkout_time_before\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x04R\x12checkoutTimeBefore\x88\x01\x01B\f\n" +
+	"page_token\x18\x02 \x01(\tR\n" +
+	"page_token\x12!\n" +
+	"\tmember_id\x18\x03 \x01(\tH\x00R\tmember_id\x88\x01\x01\x12O\n" +
+	"\x12checkin_time_after\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\x12checkin_time_after\x88\x01\x01\x12Q\n" +
+	"\x13checkin_time_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x13checkin_time_before\x88\x01\x01\x12Q\n" +
+	"\x13checkout_time_after\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x13checkout_time_after\x88\x01\x01\x12S\n" +
+	"\x14checkout_time_before\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x04R\x14checkout_time_before\x88\x01\x01B\f\n" +
 	"\n" +
 	"_member_idB\x15\n" +
 	"\x13_checkin_time_afterB\x16\n" +
 	"\x14_checkin_time_beforeB\x16\n" +
 	"\x14_checkout_time_afterB\x17\n" +
-	"\x15_checkout_time_before\"z\n" +
+	"\x15_checkout_time_before\"|\n" +
 	"\x15ListPrecensesResponse\x129\n" +
-	"\bpresence\x18\x01 \x03(\v2\x1d.ourspace_backend.v1.PresenceR\bpresence\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"-\n" +
-	"\x0eCheckinRequest\x12\x1b\n" +
-	"\tmember_id\x18\x01 \x01(\tR\bmemberId\".\n" +
-	"\x0fCheckoutRequest\x12\x1b\n" +
-	"\tmember_id\x18\x01 \x01(\tR\bmemberId\"\x8d\x01\n" +
+	"\bpresence\x18\x01 \x03(\v2\x1d.ourspace_backend.v1.PresenceR\bpresence\x12(\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\".\n" +
+	"\x0eCheckinRequest\x12\x1c\n" +
+	"\tmember_id\x18\x01 \x01(\tR\tmember_id\"/\n" +
+	"\x0fCheckoutRequest\x12\x1c\n" +
+	"\tmember_id\x18\x01 \x01(\tR\tmember_id\"\x8e\x01\n" +
 	"\x15UpdatePresenceRequest\x129\n" +
-	"\bpresence\x18\x01 \x01(\v2\x1d.ourspace_backend.v1.PresenceR\bpresence\x129\n" +
+	"\bpresence\x18\x01 \x01(\v2\x1d.ourspace_backend.v1.PresenceR\bpresence\x12:\n" +
 	"\n" +
-	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\tfieldMask\"'\n" +
+	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"field_mask\"'\n" +
 	"\x15DeletePresenceRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id2\xe4\x06\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id*Z\n" +
+	"\vAgeCategory\x12\x18\n" +
+	"\x14AGE_CATEGORY_UNKNOWN\x10\x00\x12\x19\n" +
+	"\x15AGE_CATEGORY_UNDERAGE\x10\x01\x12\x16\n" +
+	"\x12AGE_CATEGORY_ADULT\x10\x02*\x97\x01\n" +
+	"\vMemberField\x12\x18\n" +
+	"\x14MEMBER_FIELD_UNKNOWN\x10\x00\x12\x13\n" +
+	"\x0fMEMBER_FIELD_ID\x10\x01\x12\x15\n" +
+	"\x11MEMBER_FIELD_NAME\x10\x02\x12!\n" +
+	"\x1dMEMBER_FIELD_MEMBERSHIP_START\x10\x03\x12\x1f\n" +
+	"\x1bMEMBER_FIELD_MEMBERSHIP_END\x10\x04*h\n" +
+	"\rSortDirection\x12\x1a\n" +
+	"\x16SORT_DIRECTION_DEFAULT\x10\x00\x12\x1c\n" +
+	"\x18SORT_DIRECTION_ASCENDING\x10\x01\x12\x1d\n" +
+	"\x19SORT_DIRECTION_DESCENDING\x10\x02*\x84\x01\n" +
+	"\tCardField\x12\x16\n" +
+	"\x12CARD_FIELD_UNKNOWN\x10\x00\x12\x11\n" +
+	"\rCARD_FIELD_ID\x10\x01\x12\x18\n" +
+	"\x14CARD_FIELD_MEMBER_ID\x10\x02\x12\x19\n" +
+	"\x15CARD_FIELD_VALID_FROM\x10\x03\x12\x17\n" +
+	"\x13CARD_FIELD_VALID_TO\x10\x042\xe4\x06\n" +
 	"\rMemberService\x12\xa2\x01\n" +
 	"\fCreateMember\x12(.ourspace_backend.v1.CreateMemberRequest\x1a\x1b.ourspace_backend.v1.Member\"K\xbaG-\n" +
 	"\aMembers\x12\rCreate Member\x1a\x13Create Space Member\x82\xd3\xe4\x93\x02\x15:\x06member\"\v/v1/members\x12\x99\x01\n" +
@@ -2101,7 +2607,7 @@ const file_api_proto_rawDesc = "" +
 	"\x0eUpdatePresence\x12*.ourspace_backend.v1.UpdatePresenceRequest\x1a\x1d.ourspace_backend.v1.Presence\"\xa2\x01\xbaGr\n" +
 	"\tPresences\x12\x0fUpdate presence\x1aTUpdates a presence. Usual operation should be via checkin/checkout instead of update\x82\xd3\xe4\x93\x02':\bpresence\"\x1b/v1/presences/{presence.id}\x12\xa9\x01\n" +
 	"\x0eDeletePresence\x12*.ourspace_backend.v1.DeletePresenceRequest\x1a\x16.google.protobuf.Empty\"S\xbaG6\n" +
-	"\tPresences\x12\x0fDelete Presence\x1a\x18Delete a presence record\x82\xd3\xe4\x93\x02\x14\"\x12/v1/presences/{id}B\xb2\x01\xbaG}\x12U\n" +
+	"\tPresences\x12\x0fDelete Presence\x1a\x18Delete a presence record\x82\xd3\xe4\x93\x02\x14*\x12/v1/presences/{id}B\xb2\x01\xbaG}\x12U\n" +
 	"\x14ourspace-backend-api\x128Manage members and their qualifications for Maker Spaces2\x031.0\x1a$\n" +
 	"\x15http://localhost:8080\x12\vHost ServerZ0github.com/cfhn/our-space/ourspace-backend/pb;pbX\x00b\x06proto3"
 
@@ -2117,135 +2623,156 @@ func file_api_proto_rawDescGZIP() []byte {
 	return file_api_proto_rawDescData
 }
 
-var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
+var file_api_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_api_proto_goTypes = []any{
-	(*CreateMemberRequest)(nil),       // 0: ourspace_backend.v1.CreateMemberRequest
-	(*Member)(nil),                    // 1: ourspace_backend.v1.Member
-	(*GetMemberRequest)(nil),          // 2: ourspace_backend.v1.GetMemberRequest
-	(*ListMembersRequest)(nil),        // 3: ourspace_backend.v1.ListMembersRequest
-	(*ListMembersResponse)(nil),       // 4: ourspace_backend.v1.ListMembersResponse
-	(*PageToken)(nil),                 // 5: ourspace_backend.v1.PageToken
-	(*UpdateMemberRequest)(nil),       // 6: ourspace_backend.v1.UpdateMemberRequest
-	(*DeleteMemberRequest)(nil),       // 7: ourspace_backend.v1.DeleteMemberRequest
-	(*Card)(nil),                      // 8: ourspace_backend.v1.Card
-	(*CreateCardRequest)(nil),         // 9: ourspace_backend.v1.CreateCardRequest
-	(*GetCardRequest)(nil),            // 10: ourspace_backend.v1.GetCardRequest
-	(*ListCardsRequest)(nil),          // 11: ourspace_backend.v1.ListCardsRequest
-	(*ListCardsResponse)(nil),         // 12: ourspace_backend.v1.ListCardsResponse
-	(*UpdateCardRequest)(nil),         // 13: ourspace_backend.v1.UpdateCardRequest
-	(*DeleteCardRequest)(nil),         // 14: ourspace_backend.v1.DeleteCardRequest
-	(*BriefingType)(nil),              // 15: ourspace_backend.v1.BriefingType
-	(*CreateBriefingTypeRequest)(nil), // 16: ourspace_backend.v1.CreateBriefingTypeRequest
-	(*GetBriefingTypeRequest)(nil),    // 17: ourspace_backend.v1.GetBriefingTypeRequest
-	(*ListBriefingTypesRequest)(nil),  // 18: ourspace_backend.v1.ListBriefingTypesRequest
-	(*ListBriefingTypesResponse)(nil), // 19: ourspace_backend.v1.ListBriefingTypesResponse
-	(*UpdateBriefingTypeRequest)(nil), // 20: ourspace_backend.v1.UpdateBriefingTypeRequest
-	(*DeleteBriefingTypeRequest)(nil), // 21: ourspace_backend.v1.DeleteBriefingTypeRequest
-	(*Briefing)(nil),                  // 22: ourspace_backend.v1.Briefing
-	(*CreateBriefingRequest)(nil),     // 23: ourspace_backend.v1.CreateBriefingRequest
-	(*GetBriefingRequest)(nil),        // 24: ourspace_backend.v1.GetBriefingRequest
-	(*ListBriefingsRequest)(nil),      // 25: ourspace_backend.v1.ListBriefingsRequest
-	(*ListBriefingsResponse)(nil),     // 26: ourspace_backend.v1.ListBriefingsResponse
-	(*UpdateBriefingRequest)(nil),     // 27: ourspace_backend.v1.UpdateBriefingRequest
-	(*DeleteBriefingRequest)(nil),     // 28: ourspace_backend.v1.DeleteBriefingRequest
-	(*Presence)(nil),                  // 29: ourspace_backend.v1.Presence
-	(*ListPrecensesRequest)(nil),      // 30: ourspace_backend.v1.ListPrecensesRequest
-	(*ListPrecensesResponse)(nil),     // 31: ourspace_backend.v1.ListPrecensesResponse
-	(*CheckinRequest)(nil),            // 32: ourspace_backend.v1.CheckinRequest
-	(*CheckoutRequest)(nil),           // 33: ourspace_backend.v1.CheckoutRequest
-	(*UpdatePresenceRequest)(nil),     // 34: ourspace_backend.v1.UpdatePresenceRequest
-	(*DeletePresenceRequest)(nil),     // 35: ourspace_backend.v1.DeletePresenceRequest
-	(*timestamppb.Timestamp)(nil),     // 36: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),     // 37: google.protobuf.FieldMask
-	(*durationpb.Duration)(nil),       // 38: google.protobuf.Duration
-	(*emptypb.Empty)(nil),             // 39: google.protobuf.Empty
+	(AgeCategory)(0),                  // 0: ourspace_backend.v1.AgeCategory
+	(MemberField)(0),                  // 1: ourspace_backend.v1.MemberField
+	(SortDirection)(0),                // 2: ourspace_backend.v1.SortDirection
+	(CardField)(0),                    // 3: ourspace_backend.v1.CardField
+	(*CreateMemberRequest)(nil),       // 4: ourspace_backend.v1.CreateMemberRequest
+	(*Member)(nil),                    // 5: ourspace_backend.v1.Member
+	(*GetMemberRequest)(nil),          // 6: ourspace_backend.v1.GetMemberRequest
+	(*ListMembersRequest)(nil),        // 7: ourspace_backend.v1.ListMembersRequest
+	(*ListMembersResponse)(nil),       // 8: ourspace_backend.v1.ListMembersResponse
+	(*MemberPageToken)(nil),           // 9: ourspace_backend.v1.MemberPageToken
+	(*UpdateMemberRequest)(nil),       // 10: ourspace_backend.v1.UpdateMemberRequest
+	(*DeleteMemberRequest)(nil),       // 11: ourspace_backend.v1.DeleteMemberRequest
+	(*Card)(nil),                      // 12: ourspace_backend.v1.Card
+	(*CardPageToken)(nil),             // 13: ourspace_backend.v1.CardPageToken
+	(*CreateCardRequest)(nil),         // 14: ourspace_backend.v1.CreateCardRequest
+	(*GetCardRequest)(nil),            // 15: ourspace_backend.v1.GetCardRequest
+	(*ListCardsRequest)(nil),          // 16: ourspace_backend.v1.ListCardsRequest
+	(*ListCardsResponse)(nil),         // 17: ourspace_backend.v1.ListCardsResponse
+	(*UpdateCardRequest)(nil),         // 18: ourspace_backend.v1.UpdateCardRequest
+	(*DeleteCardRequest)(nil),         // 19: ourspace_backend.v1.DeleteCardRequest
+	(*BriefingType)(nil),              // 20: ourspace_backend.v1.BriefingType
+	(*CreateBriefingTypeRequest)(nil), // 21: ourspace_backend.v1.CreateBriefingTypeRequest
+	(*GetBriefingTypeRequest)(nil),    // 22: ourspace_backend.v1.GetBriefingTypeRequest
+	(*ListBriefingTypesRequest)(nil),  // 23: ourspace_backend.v1.ListBriefingTypesRequest
+	(*ListBriefingTypesResponse)(nil), // 24: ourspace_backend.v1.ListBriefingTypesResponse
+	(*UpdateBriefingTypeRequest)(nil), // 25: ourspace_backend.v1.UpdateBriefingTypeRequest
+	(*DeleteBriefingTypeRequest)(nil), // 26: ourspace_backend.v1.DeleteBriefingTypeRequest
+	(*Briefing)(nil),                  // 27: ourspace_backend.v1.Briefing
+	(*CreateBriefingRequest)(nil),     // 28: ourspace_backend.v1.CreateBriefingRequest
+	(*GetBriefingRequest)(nil),        // 29: ourspace_backend.v1.GetBriefingRequest
+	(*ListBriefingsRequest)(nil),      // 30: ourspace_backend.v1.ListBriefingsRequest
+	(*ListBriefingsResponse)(nil),     // 31: ourspace_backend.v1.ListBriefingsResponse
+	(*UpdateBriefingRequest)(nil),     // 32: ourspace_backend.v1.UpdateBriefingRequest
+	(*DeleteBriefingRequest)(nil),     // 33: ourspace_backend.v1.DeleteBriefingRequest
+	(*Presence)(nil),                  // 34: ourspace_backend.v1.Presence
+	(*ListPrecensesRequest)(nil),      // 35: ourspace_backend.v1.ListPrecensesRequest
+	(*ListPrecensesResponse)(nil),     // 36: ourspace_backend.v1.ListPrecensesResponse
+	(*CheckinRequest)(nil),            // 37: ourspace_backend.v1.CheckinRequest
+	(*CheckoutRequest)(nil),           // 38: ourspace_backend.v1.CheckoutRequest
+	(*UpdatePresenceRequest)(nil),     // 39: ourspace_backend.v1.UpdatePresenceRequest
+	(*DeletePresenceRequest)(nil),     // 40: ourspace_backend.v1.DeletePresenceRequest
+	(*timestamppb.Timestamp)(nil),     // 41: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),     // 42: google.protobuf.FieldMask
+	(*durationpb.Duration)(nil),       // 43: google.protobuf.Duration
+	(*emptypb.Empty)(nil),             // 44: google.protobuf.Empty
 }
 var file_api_proto_depIdxs = []int32{
-	1,  // 0: ourspace_backend.v1.CreateMemberRequest.member:type_name -> ourspace_backend.v1.Member
-	36, // 1: ourspace_backend.v1.Member.membership_start:type_name -> google.protobuf.Timestamp
-	36, // 2: ourspace_backend.v1.Member.membership_end:type_name -> google.protobuf.Timestamp
-	1,  // 3: ourspace_backend.v1.ListMembersResponse.members:type_name -> ourspace_backend.v1.Member
-	1,  // 4: ourspace_backend.v1.UpdateMemberRequest.member:type_name -> ourspace_backend.v1.Member
-	37, // 5: ourspace_backend.v1.UpdateMemberRequest.field_mask:type_name -> google.protobuf.FieldMask
-	36, // 6: ourspace_backend.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
-	36, // 7: ourspace_backend.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
-	8,  // 8: ourspace_backend.v1.CreateCardRequest.card:type_name -> ourspace_backend.v1.Card
-	8,  // 9: ourspace_backend.v1.ListCardsResponse.cards:type_name -> ourspace_backend.v1.Card
-	8,  // 10: ourspace_backend.v1.UpdateCardRequest.card:type_name -> ourspace_backend.v1.Card
-	37, // 11: ourspace_backend.v1.UpdateCardRequest.field_mask:type_name -> google.protobuf.FieldMask
-	38, // 12: ourspace_backend.v1.BriefingType.expires_after:type_name -> google.protobuf.Duration
-	15, // 13: ourspace_backend.v1.CreateBriefingTypeRequest.briefing_type:type_name -> ourspace_backend.v1.BriefingType
-	15, // 14: ourspace_backend.v1.ListBriefingTypesResponse.briefing_types:type_name -> ourspace_backend.v1.BriefingType
-	15, // 15: ourspace_backend.v1.UpdateBriefingTypeRequest.briefing_type:type_name -> ourspace_backend.v1.BriefingType
-	37, // 16: ourspace_backend.v1.UpdateBriefingTypeRequest.field_mask:type_name -> google.protobuf.FieldMask
-	22, // 17: ourspace_backend.v1.CreateBriefingRequest.briefing:type_name -> ourspace_backend.v1.Briefing
-	22, // 18: ourspace_backend.v1.ListBriefingsResponse.briefings:type_name -> ourspace_backend.v1.Briefing
-	22, // 19: ourspace_backend.v1.UpdateBriefingRequest.briefing:type_name -> ourspace_backend.v1.Briefing
-	37, // 20: ourspace_backend.v1.UpdateBriefingRequest.field_mask:type_name -> google.protobuf.FieldMask
-	36, // 21: ourspace_backend.v1.Presence.checkin_time:type_name -> google.protobuf.Timestamp
-	36, // 22: ourspace_backend.v1.Presence.checkout_time:type_name -> google.protobuf.Timestamp
-	36, // 23: ourspace_backend.v1.ListPrecensesRequest.checkin_time_after:type_name -> google.protobuf.Timestamp
-	36, // 24: ourspace_backend.v1.ListPrecensesRequest.checkin_time_before:type_name -> google.protobuf.Timestamp
-	36, // 25: ourspace_backend.v1.ListPrecensesRequest.checkout_time_after:type_name -> google.protobuf.Timestamp
-	36, // 26: ourspace_backend.v1.ListPrecensesRequest.checkout_time_before:type_name -> google.protobuf.Timestamp
-	29, // 27: ourspace_backend.v1.ListPrecensesResponse.presence:type_name -> ourspace_backend.v1.Presence
-	29, // 28: ourspace_backend.v1.UpdatePresenceRequest.presence:type_name -> ourspace_backend.v1.Presence
-	37, // 29: ourspace_backend.v1.UpdatePresenceRequest.field_mask:type_name -> google.protobuf.FieldMask
-	0,  // 30: ourspace_backend.v1.MemberService.CreateMember:input_type -> ourspace_backend.v1.CreateMemberRequest
-	2,  // 31: ourspace_backend.v1.MemberService.GetMember:input_type -> ourspace_backend.v1.GetMemberRequest
-	3,  // 32: ourspace_backend.v1.MemberService.ListMembers:input_type -> ourspace_backend.v1.ListMembersRequest
-	6,  // 33: ourspace_backend.v1.MemberService.UpdateMember:input_type -> ourspace_backend.v1.UpdateMemberRequest
-	7,  // 34: ourspace_backend.v1.MemberService.DeleteMember:input_type -> ourspace_backend.v1.DeleteMemberRequest
-	9,  // 35: ourspace_backend.v1.CardService.CreateCard:input_type -> ourspace_backend.v1.CreateCardRequest
-	10, // 36: ourspace_backend.v1.CardService.GetCard:input_type -> ourspace_backend.v1.GetCardRequest
-	11, // 37: ourspace_backend.v1.CardService.ListCards:input_type -> ourspace_backend.v1.ListCardsRequest
-	13, // 38: ourspace_backend.v1.CardService.UpdateCard:input_type -> ourspace_backend.v1.UpdateCardRequest
-	14, // 39: ourspace_backend.v1.CardService.DeleteCard:input_type -> ourspace_backend.v1.DeleteCardRequest
-	23, // 40: ourspace_backend.v1.BriefingService.CreateBriefing:input_type -> ourspace_backend.v1.CreateBriefingRequest
-	24, // 41: ourspace_backend.v1.BriefingService.GetBriefing:input_type -> ourspace_backend.v1.GetBriefingRequest
-	25, // 42: ourspace_backend.v1.BriefingService.ListBriefings:input_type -> ourspace_backend.v1.ListBriefingsRequest
-	27, // 43: ourspace_backend.v1.BriefingService.UpdateBriefing:input_type -> ourspace_backend.v1.UpdateBriefingRequest
-	28, // 44: ourspace_backend.v1.BriefingService.DeleteBriefing:input_type -> ourspace_backend.v1.DeleteBriefingRequest
-	16, // 45: ourspace_backend.v1.BriefingService.CreateBriefingType:input_type -> ourspace_backend.v1.CreateBriefingTypeRequest
-	17, // 46: ourspace_backend.v1.BriefingService.GetBriefingType:input_type -> ourspace_backend.v1.GetBriefingTypeRequest
-	18, // 47: ourspace_backend.v1.BriefingService.ListBriefingTypes:input_type -> ourspace_backend.v1.ListBriefingTypesRequest
-	20, // 48: ourspace_backend.v1.BriefingService.UpdateBriefingType:input_type -> ourspace_backend.v1.UpdateBriefingTypeRequest
-	21, // 49: ourspace_backend.v1.BriefingService.DeleteBriefingType:input_type -> ourspace_backend.v1.DeleteBriefingTypeRequest
-	30, // 50: ourspace_backend.v1.PresenceService.ListPresences:input_type -> ourspace_backend.v1.ListPrecensesRequest
-	32, // 51: ourspace_backend.v1.PresenceService.Checkin:input_type -> ourspace_backend.v1.CheckinRequest
-	33, // 52: ourspace_backend.v1.PresenceService.Checkout:input_type -> ourspace_backend.v1.CheckoutRequest
-	34, // 53: ourspace_backend.v1.PresenceService.UpdatePresence:input_type -> ourspace_backend.v1.UpdatePresenceRequest
-	35, // 54: ourspace_backend.v1.PresenceService.DeletePresence:input_type -> ourspace_backend.v1.DeletePresenceRequest
-	1,  // 55: ourspace_backend.v1.MemberService.CreateMember:output_type -> ourspace_backend.v1.Member
-	1,  // 56: ourspace_backend.v1.MemberService.GetMember:output_type -> ourspace_backend.v1.Member
-	4,  // 57: ourspace_backend.v1.MemberService.ListMembers:output_type -> ourspace_backend.v1.ListMembersResponse
-	1,  // 58: ourspace_backend.v1.MemberService.UpdateMember:output_type -> ourspace_backend.v1.Member
-	39, // 59: ourspace_backend.v1.MemberService.DeleteMember:output_type -> google.protobuf.Empty
-	8,  // 60: ourspace_backend.v1.CardService.CreateCard:output_type -> ourspace_backend.v1.Card
-	8,  // 61: ourspace_backend.v1.CardService.GetCard:output_type -> ourspace_backend.v1.Card
-	12, // 62: ourspace_backend.v1.CardService.ListCards:output_type -> ourspace_backend.v1.ListCardsResponse
-	8,  // 63: ourspace_backend.v1.CardService.UpdateCard:output_type -> ourspace_backend.v1.Card
-	39, // 64: ourspace_backend.v1.CardService.DeleteCard:output_type -> google.protobuf.Empty
-	22, // 65: ourspace_backend.v1.BriefingService.CreateBriefing:output_type -> ourspace_backend.v1.Briefing
-	22, // 66: ourspace_backend.v1.BriefingService.GetBriefing:output_type -> ourspace_backend.v1.Briefing
-	26, // 67: ourspace_backend.v1.BriefingService.ListBriefings:output_type -> ourspace_backend.v1.ListBriefingsResponse
-	22, // 68: ourspace_backend.v1.BriefingService.UpdateBriefing:output_type -> ourspace_backend.v1.Briefing
-	39, // 69: ourspace_backend.v1.BriefingService.DeleteBriefing:output_type -> google.protobuf.Empty
-	15, // 70: ourspace_backend.v1.BriefingService.CreateBriefingType:output_type -> ourspace_backend.v1.BriefingType
-	15, // 71: ourspace_backend.v1.BriefingService.GetBriefingType:output_type -> ourspace_backend.v1.BriefingType
-	19, // 72: ourspace_backend.v1.BriefingService.ListBriefingTypes:output_type -> ourspace_backend.v1.ListBriefingTypesResponse
-	15, // 73: ourspace_backend.v1.BriefingService.UpdateBriefingType:output_type -> ourspace_backend.v1.BriefingType
-	39, // 74: ourspace_backend.v1.BriefingService.DeleteBriefingType:output_type -> google.protobuf.Empty
-	31, // 75: ourspace_backend.v1.PresenceService.ListPresences:output_type -> ourspace_backend.v1.ListPrecensesResponse
-	29, // 76: ourspace_backend.v1.PresenceService.Checkin:output_type -> ourspace_backend.v1.Presence
-	29, // 77: ourspace_backend.v1.PresenceService.Checkout:output_type -> ourspace_backend.v1.Presence
-	29, // 78: ourspace_backend.v1.PresenceService.UpdatePresence:output_type -> ourspace_backend.v1.Presence
-	39, // 79: ourspace_backend.v1.PresenceService.DeletePresence:output_type -> google.protobuf.Empty
-	55, // [55:80] is the sub-list for method output_type
-	30, // [30:55] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	5,  // 0: ourspace_backend.v1.CreateMemberRequest.member:type_name -> ourspace_backend.v1.Member
+	41, // 1: ourspace_backend.v1.Member.membership_start:type_name -> google.protobuf.Timestamp
+	41, // 2: ourspace_backend.v1.Member.membership_end:type_name -> google.protobuf.Timestamp
+	0,  // 3: ourspace_backend.v1.Member.age_category:type_name -> ourspace_backend.v1.AgeCategory
+	1,  // 4: ourspace_backend.v1.ListMembersRequest.sort_by:type_name -> ourspace_backend.v1.MemberField
+	2,  // 5: ourspace_backend.v1.ListMembersRequest.sort_direction:type_name -> ourspace_backend.v1.SortDirection
+	41, // 6: ourspace_backend.v1.ListMembersRequest.membership_start_after:type_name -> google.protobuf.Timestamp
+	41, // 7: ourspace_backend.v1.ListMembersRequest.membership_start_before:type_name -> google.protobuf.Timestamp
+	41, // 8: ourspace_backend.v1.ListMembersRequest.membership_end_after:type_name -> google.protobuf.Timestamp
+	41, // 9: ourspace_backend.v1.ListMembersRequest.membership_end_before:type_name -> google.protobuf.Timestamp
+	0,  // 10: ourspace_backend.v1.ListMembersRequest.age_category_equals:type_name -> ourspace_backend.v1.AgeCategory
+	5,  // 11: ourspace_backend.v1.ListMembersResponse.members:type_name -> ourspace_backend.v1.Member
+	1,  // 12: ourspace_backend.v1.MemberPageToken.field:type_name -> ourspace_backend.v1.MemberField
+	2,  // 13: ourspace_backend.v1.MemberPageToken.direction:type_name -> ourspace_backend.v1.SortDirection
+	5,  // 14: ourspace_backend.v1.UpdateMemberRequest.member:type_name -> ourspace_backend.v1.Member
+	42, // 15: ourspace_backend.v1.UpdateMemberRequest.field_mask:type_name -> google.protobuf.FieldMask
+	41, // 16: ourspace_backend.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
+	41, // 17: ourspace_backend.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
+	3,  // 18: ourspace_backend.v1.CardPageToken.field:type_name -> ourspace_backend.v1.CardField
+	2,  // 19: ourspace_backend.v1.CardPageToken.direction:type_name -> ourspace_backend.v1.SortDirection
+	12, // 20: ourspace_backend.v1.CreateCardRequest.card:type_name -> ourspace_backend.v1.Card
+	3,  // 21: ourspace_backend.v1.ListCardsRequest.sort_by:type_name -> ourspace_backend.v1.CardField
+	2,  // 22: ourspace_backend.v1.ListCardsRequest.sort_direction:type_name -> ourspace_backend.v1.SortDirection
+	41, // 23: ourspace_backend.v1.ListCardsRequest.valid_on:type_name -> google.protobuf.Timestamp
+	12, // 24: ourspace_backend.v1.ListCardsResponse.cards:type_name -> ourspace_backend.v1.Card
+	12, // 25: ourspace_backend.v1.UpdateCardRequest.card:type_name -> ourspace_backend.v1.Card
+	42, // 26: ourspace_backend.v1.UpdateCardRequest.field_mask:type_name -> google.protobuf.FieldMask
+	43, // 27: ourspace_backend.v1.BriefingType.expires_after:type_name -> google.protobuf.Duration
+	20, // 28: ourspace_backend.v1.CreateBriefingTypeRequest.briefing_type:type_name -> ourspace_backend.v1.BriefingType
+	20, // 29: ourspace_backend.v1.ListBriefingTypesResponse.briefing_types:type_name -> ourspace_backend.v1.BriefingType
+	20, // 30: ourspace_backend.v1.UpdateBriefingTypeRequest.briefing_type:type_name -> ourspace_backend.v1.BriefingType
+	42, // 31: ourspace_backend.v1.UpdateBriefingTypeRequest.field_mask:type_name -> google.protobuf.FieldMask
+	27, // 32: ourspace_backend.v1.CreateBriefingRequest.briefing:type_name -> ourspace_backend.v1.Briefing
+	27, // 33: ourspace_backend.v1.ListBriefingsResponse.briefings:type_name -> ourspace_backend.v1.Briefing
+	27, // 34: ourspace_backend.v1.UpdateBriefingRequest.briefing:type_name -> ourspace_backend.v1.Briefing
+	42, // 35: ourspace_backend.v1.UpdateBriefingRequest.field_mask:type_name -> google.protobuf.FieldMask
+	41, // 36: ourspace_backend.v1.Presence.checkin_time:type_name -> google.protobuf.Timestamp
+	41, // 37: ourspace_backend.v1.Presence.checkout_time:type_name -> google.protobuf.Timestamp
+	41, // 38: ourspace_backend.v1.ListPrecensesRequest.checkin_time_after:type_name -> google.protobuf.Timestamp
+	41, // 39: ourspace_backend.v1.ListPrecensesRequest.checkin_time_before:type_name -> google.protobuf.Timestamp
+	41, // 40: ourspace_backend.v1.ListPrecensesRequest.checkout_time_after:type_name -> google.protobuf.Timestamp
+	41, // 41: ourspace_backend.v1.ListPrecensesRequest.checkout_time_before:type_name -> google.protobuf.Timestamp
+	34, // 42: ourspace_backend.v1.ListPrecensesResponse.presence:type_name -> ourspace_backend.v1.Presence
+	34, // 43: ourspace_backend.v1.UpdatePresenceRequest.presence:type_name -> ourspace_backend.v1.Presence
+	42, // 44: ourspace_backend.v1.UpdatePresenceRequest.field_mask:type_name -> google.protobuf.FieldMask
+	4,  // 45: ourspace_backend.v1.MemberService.CreateMember:input_type -> ourspace_backend.v1.CreateMemberRequest
+	6,  // 46: ourspace_backend.v1.MemberService.GetMember:input_type -> ourspace_backend.v1.GetMemberRequest
+	7,  // 47: ourspace_backend.v1.MemberService.ListMembers:input_type -> ourspace_backend.v1.ListMembersRequest
+	10, // 48: ourspace_backend.v1.MemberService.UpdateMember:input_type -> ourspace_backend.v1.UpdateMemberRequest
+	11, // 49: ourspace_backend.v1.MemberService.DeleteMember:input_type -> ourspace_backend.v1.DeleteMemberRequest
+	14, // 50: ourspace_backend.v1.CardService.CreateCard:input_type -> ourspace_backend.v1.CreateCardRequest
+	15, // 51: ourspace_backend.v1.CardService.GetCard:input_type -> ourspace_backend.v1.GetCardRequest
+	16, // 52: ourspace_backend.v1.CardService.ListCards:input_type -> ourspace_backend.v1.ListCardsRequest
+	18, // 53: ourspace_backend.v1.CardService.UpdateCard:input_type -> ourspace_backend.v1.UpdateCardRequest
+	19, // 54: ourspace_backend.v1.CardService.DeleteCard:input_type -> ourspace_backend.v1.DeleteCardRequest
+	28, // 55: ourspace_backend.v1.BriefingService.CreateBriefing:input_type -> ourspace_backend.v1.CreateBriefingRequest
+	29, // 56: ourspace_backend.v1.BriefingService.GetBriefing:input_type -> ourspace_backend.v1.GetBriefingRequest
+	30, // 57: ourspace_backend.v1.BriefingService.ListBriefings:input_type -> ourspace_backend.v1.ListBriefingsRequest
+	32, // 58: ourspace_backend.v1.BriefingService.UpdateBriefing:input_type -> ourspace_backend.v1.UpdateBriefingRequest
+	33, // 59: ourspace_backend.v1.BriefingService.DeleteBriefing:input_type -> ourspace_backend.v1.DeleteBriefingRequest
+	21, // 60: ourspace_backend.v1.BriefingService.CreateBriefingType:input_type -> ourspace_backend.v1.CreateBriefingTypeRequest
+	22, // 61: ourspace_backend.v1.BriefingService.GetBriefingType:input_type -> ourspace_backend.v1.GetBriefingTypeRequest
+	23, // 62: ourspace_backend.v1.BriefingService.ListBriefingTypes:input_type -> ourspace_backend.v1.ListBriefingTypesRequest
+	25, // 63: ourspace_backend.v1.BriefingService.UpdateBriefingType:input_type -> ourspace_backend.v1.UpdateBriefingTypeRequest
+	26, // 64: ourspace_backend.v1.BriefingService.DeleteBriefingType:input_type -> ourspace_backend.v1.DeleteBriefingTypeRequest
+	35, // 65: ourspace_backend.v1.PresenceService.ListPresences:input_type -> ourspace_backend.v1.ListPrecensesRequest
+	37, // 66: ourspace_backend.v1.PresenceService.Checkin:input_type -> ourspace_backend.v1.CheckinRequest
+	38, // 67: ourspace_backend.v1.PresenceService.Checkout:input_type -> ourspace_backend.v1.CheckoutRequest
+	39, // 68: ourspace_backend.v1.PresenceService.UpdatePresence:input_type -> ourspace_backend.v1.UpdatePresenceRequest
+	40, // 69: ourspace_backend.v1.PresenceService.DeletePresence:input_type -> ourspace_backend.v1.DeletePresenceRequest
+	5,  // 70: ourspace_backend.v1.MemberService.CreateMember:output_type -> ourspace_backend.v1.Member
+	5,  // 71: ourspace_backend.v1.MemberService.GetMember:output_type -> ourspace_backend.v1.Member
+	8,  // 72: ourspace_backend.v1.MemberService.ListMembers:output_type -> ourspace_backend.v1.ListMembersResponse
+	5,  // 73: ourspace_backend.v1.MemberService.UpdateMember:output_type -> ourspace_backend.v1.Member
+	44, // 74: ourspace_backend.v1.MemberService.DeleteMember:output_type -> google.protobuf.Empty
+	12, // 75: ourspace_backend.v1.CardService.CreateCard:output_type -> ourspace_backend.v1.Card
+	12, // 76: ourspace_backend.v1.CardService.GetCard:output_type -> ourspace_backend.v1.Card
+	17, // 77: ourspace_backend.v1.CardService.ListCards:output_type -> ourspace_backend.v1.ListCardsResponse
+	12, // 78: ourspace_backend.v1.CardService.UpdateCard:output_type -> ourspace_backend.v1.Card
+	44, // 79: ourspace_backend.v1.CardService.DeleteCard:output_type -> google.protobuf.Empty
+	27, // 80: ourspace_backend.v1.BriefingService.CreateBriefing:output_type -> ourspace_backend.v1.Briefing
+	27, // 81: ourspace_backend.v1.BriefingService.GetBriefing:output_type -> ourspace_backend.v1.Briefing
+	31, // 82: ourspace_backend.v1.BriefingService.ListBriefings:output_type -> ourspace_backend.v1.ListBriefingsResponse
+	27, // 83: ourspace_backend.v1.BriefingService.UpdateBriefing:output_type -> ourspace_backend.v1.Briefing
+	44, // 84: ourspace_backend.v1.BriefingService.DeleteBriefing:output_type -> google.protobuf.Empty
+	20, // 85: ourspace_backend.v1.BriefingService.CreateBriefingType:output_type -> ourspace_backend.v1.BriefingType
+	20, // 86: ourspace_backend.v1.BriefingService.GetBriefingType:output_type -> ourspace_backend.v1.BriefingType
+	24, // 87: ourspace_backend.v1.BriefingService.ListBriefingTypes:output_type -> ourspace_backend.v1.ListBriefingTypesResponse
+	20, // 88: ourspace_backend.v1.BriefingService.UpdateBriefingType:output_type -> ourspace_backend.v1.BriefingType
+	44, // 89: ourspace_backend.v1.BriefingService.DeleteBriefingType:output_type -> google.protobuf.Empty
+	36, // 90: ourspace_backend.v1.PresenceService.ListPresences:output_type -> ourspace_backend.v1.ListPrecensesResponse
+	34, // 91: ourspace_backend.v1.PresenceService.Checkin:output_type -> ourspace_backend.v1.Presence
+	34, // 92: ourspace_backend.v1.PresenceService.Checkout:output_type -> ourspace_backend.v1.Presence
+	34, // 93: ourspace_backend.v1.PresenceService.UpdatePresence:output_type -> ourspace_backend.v1.Presence
+	44, // 94: ourspace_backend.v1.PresenceService.DeletePresence:output_type -> google.protobuf.Empty
+	70, // [70:95] is the sub-list for method output_type
+	45, // [45:70] is the sub-list for method input_type
+	45, // [45:45] is the sub-list for extension type_name
+	45, // [45:45] is the sub-list for extension extendee
+	0,  // [0:45] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_init() }
@@ -2253,19 +2780,21 @@ func file_api_proto_init() {
 	if File_api_proto != nil {
 		return
 	}
-	file_api_proto_msgTypes[30].OneofWrappers = []any{}
+	file_api_proto_msgTypes[3].OneofWrappers = []any{}
+	file_api_proto_msgTypes[31].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_rawDesc), len(file_api_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   36,
+			NumEnums:      4,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   4,
 		},
 		GoTypes:           file_api_proto_goTypes,
 		DependencyIndexes: file_api_proto_depIdxs,
+		EnumInfos:         file_api_proto_enumTypes,
 		MessageInfos:      file_api_proto_msgTypes,
 	}.Build()
 	File_api_proto = out.File

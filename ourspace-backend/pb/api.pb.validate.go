@@ -251,6 +251,8 @@ func (m *Member) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for AgeCategory
+
 	if len(errors) > 0 {
 		return MemberMultiError(errors)
 	}
@@ -455,6 +457,150 @@ func (m *ListMembersRequest) validate(all bool) error {
 	// no validation rules for PageSize
 
 	// no validation rules for PageToken
+
+	// no validation rules for SortBy
+
+	// no validation rules for SortDirection
+
+	if m.NameContains != nil {
+		// no validation rules for NameContains
+	}
+
+	if m.MembershipStartAfter != nil {
+
+		if all {
+			switch v := interface{}(m.GetMembershipStartAfter()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipStartAfter",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipStartAfter",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMembershipStartAfter()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListMembersRequestValidationError{
+					field:  "MembershipStartAfter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.MembershipStartBefore != nil {
+
+		if all {
+			switch v := interface{}(m.GetMembershipStartBefore()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipStartBefore",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipStartBefore",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMembershipStartBefore()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListMembersRequestValidationError{
+					field:  "MembershipStartBefore",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.MembershipEndAfter != nil {
+
+		if all {
+			switch v := interface{}(m.GetMembershipEndAfter()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipEndAfter",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipEndAfter",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMembershipEndAfter()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListMembersRequestValidationError{
+					field:  "MembershipEndAfter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.MembershipEndBefore != nil {
+
+		if all {
+			switch v := interface{}(m.GetMembershipEndBefore()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipEndBefore",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListMembersRequestValidationError{
+						field:  "MembershipEndBefore",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMembershipEndBefore()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListMembersRequestValidationError{
+					field:  "MembershipEndBefore",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.AgeCategoryEquals != nil {
+		// no validation rules for AgeCategoryEquals
+	}
 
 	if len(errors) > 0 {
 		return ListMembersRequestMultiError(errors)
@@ -674,41 +820,50 @@ var _ interface {
 	ErrorName() string
 } = ListMembersResponseValidationError{}
 
-// Validate checks the field values on PageToken with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *PageToken) Validate() error {
+// Validate checks the field values on MemberPageToken with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *MemberPageToken) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on PageToken with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in PageTokenMultiError, or nil
-// if none found.
-func (m *PageToken) ValidateAll() error {
+// ValidateAll checks the field values on MemberPageToken with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MemberPageTokenMultiError, or nil if none found.
+func (m *MemberPageToken) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *PageToken) validate(all bool) error {
+func (m *MemberPageToken) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Field
+
+	// no validation rules for LastValue
+
+	// no validation rules for Direction
+
+	// no validation rules for LastId
+
 	if len(errors) > 0 {
-		return PageTokenMultiError(errors)
+		return MemberPageTokenMultiError(errors)
 	}
 
 	return nil
 }
 
-// PageTokenMultiError is an error wrapping multiple validation errors returned
-// by PageToken.ValidateAll() if the designated constraints aren't met.
-type PageTokenMultiError []error
+// MemberPageTokenMultiError is an error wrapping multiple validation errors
+// returned by MemberPageToken.ValidateAll() if the designated constraints
+// aren't met.
+type MemberPageTokenMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m PageTokenMultiError) Error() string {
+func (m MemberPageTokenMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -717,11 +872,11 @@ func (m PageTokenMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m PageTokenMultiError) AllErrors() []error { return m }
+func (m MemberPageTokenMultiError) AllErrors() []error { return m }
 
-// PageTokenValidationError is the validation error returned by
-// PageToken.Validate if the designated constraints aren't met.
-type PageTokenValidationError struct {
+// MemberPageTokenValidationError is the validation error returned by
+// MemberPageToken.Validate if the designated constraints aren't met.
+type MemberPageTokenValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -729,22 +884,22 @@ type PageTokenValidationError struct {
 }
 
 // Field function returns field value.
-func (e PageTokenValidationError) Field() string { return e.field }
+func (e MemberPageTokenValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e PageTokenValidationError) Reason() string { return e.reason }
+func (e MemberPageTokenValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e PageTokenValidationError) Cause() error { return e.cause }
+func (e MemberPageTokenValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e PageTokenValidationError) Key() bool { return e.key }
+func (e MemberPageTokenValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e PageTokenValidationError) ErrorName() string { return "PageTokenValidationError" }
+func (e MemberPageTokenValidationError) ErrorName() string { return "MemberPageTokenValidationError" }
 
 // Error satisfies the builtin error interface
-func (e PageTokenValidationError) Error() string {
+func (e MemberPageTokenValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -756,14 +911,14 @@ func (e PageTokenValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sPageToken.%s: %s%s",
+		"invalid %sMemberPageToken.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = PageTokenValidationError{}
+var _ error = MemberPageTokenValidationError{}
 
 var _ interface {
 	Field() string
@@ -771,7 +926,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = PageTokenValidationError{}
+} = MemberPageTokenValidationError{}
 
 // Validate checks the field values on UpdateMemberRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1199,6 +1354,114 @@ var _ interface {
 	ErrorName() string
 } = CardValidationError{}
 
+// Validate checks the field values on CardPageToken with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CardPageToken) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CardPageToken with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CardPageTokenMultiError, or
+// nil if none found.
+func (m *CardPageToken) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CardPageToken) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Field
+
+	// no validation rules for LastValue
+
+	// no validation rules for Direction
+
+	// no validation rules for LastId
+
+	if len(errors) > 0 {
+		return CardPageTokenMultiError(errors)
+	}
+
+	return nil
+}
+
+// CardPageTokenMultiError is an error wrapping multiple validation errors
+// returned by CardPageToken.ValidateAll() if the designated constraints
+// aren't met.
+type CardPageTokenMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CardPageTokenMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CardPageTokenMultiError) AllErrors() []error { return m }
+
+// CardPageTokenValidationError is the validation error returned by
+// CardPageToken.Validate if the designated constraints aren't met.
+type CardPageTokenValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CardPageTokenValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CardPageTokenValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CardPageTokenValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CardPageTokenValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CardPageTokenValidationError) ErrorName() string { return "CardPageTokenValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CardPageTokenValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCardPageToken.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CardPageTokenValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CardPageTokenValidationError{}
+
 // Validate checks the field values on CreateCardRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -1459,6 +1722,43 @@ func (m *ListCardsRequest) validate(all bool) error {
 	// no validation rules for PageSize
 
 	// no validation rules for PageToken
+
+	// no validation rules for SortBy
+
+	// no validation rules for SortDirection
+
+	// no validation rules for MemberId
+
+	if all {
+		switch v := interface{}(m.GetValidOn()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListCardsRequestValidationError{
+					field:  "ValidOn",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListCardsRequestValidationError{
+					field:  "ValidOn",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValidOn()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListCardsRequestValidationError{
+				field:  "ValidOn",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for RfidValue
 
 	if len(errors) > 0 {
 		return ListCardsRequestMultiError(errors)

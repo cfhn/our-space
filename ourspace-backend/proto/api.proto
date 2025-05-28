@@ -8,6 +8,7 @@ package ourspace_backend.v1;
 import weak "gnostic/openapi/v3/annotations.proto"; // Will not import _ "" in the gen-go files
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
@@ -84,15 +85,37 @@ service MemberService {
 }
 
 message CreateMemberRequest {
-  string member_id = 1;
+  string member_id = 1 [json_name="member_id"];
   Member member = 2;
 }
 
 message Member {
-  string id = 1;
+  string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string name = 2;
-  google.protobuf.Timestamp membership_start = 3;
-  google.protobuf.Timestamp membership_end = 4;
+  google.protobuf.Timestamp membership_start = 3 [json_name="membership_start"];
+  google.protobuf.Timestamp membership_end = 4 [json_name="membership_end"];
+  AgeCategory age_category = 5 [json_name="age_category"];
+  repeated string tags = 6;
+}
+
+enum AgeCategory {
+  AGE_CATEGORY_UNKNOWN = 0;
+  AGE_CATEGORY_UNDERAGE = 1;
+  AGE_CATEGORY_ADULT = 2;
+}
+
+enum MemberField {
+  MEMBER_FIELD_UNKNOWN = 0;
+  MEMBER_FIELD_ID = 1;
+  MEMBER_FIELD_NAME = 2;
+  MEMBER_FIELD_MEMBERSHIP_START = 3;
+  MEMBER_FIELD_MEMBERSHIP_END = 4;
+}
+
+enum SortDirection {
+  SORT_DIRECTION_DEFAULT = 0;
+  SORT_DIRECTION_ASCENDING = 1;
+  SORT_DIRECTION_DESCENDING = 2;
 }
 
 message GetMemberRequest {
@@ -100,22 +123,36 @@ message GetMemberRequest {
 }
 
 message ListMembersRequest {
-  int32 page_size = 1;
-  string page_token = 2;
+  int32 page_size = 1 [json_name="page_size"];
+  string page_token = 2 [json_name="page_token"];
+
+  MemberField sort_by = 3 [json_name="sort_by"];
+  SortDirection sort_direction = 4 [json_name="sort_direction"];
+
+  optional string name_contains = 5 [json_name="name_contains"];
+  optional google.protobuf.Timestamp membership_start_after = 6 [json_name="membership_start_after"];
+  optional google.protobuf.Timestamp membership_start_before = 7 [json_name="membership_start_before"];
+  optional google.protobuf.Timestamp membership_end_after = 8 [json_name="membership_end_after"];
+  optional google.protobuf.Timestamp membership_end_before = 9 [json_name="membership_end_before"];
+  optional AgeCategory age_category_equals = 10 [json_name="age_category_equals"];
+  repeated string tag_contains = 11 [json_name="tag_contains"];
 }
 
 message ListMembersResponse {
   repeated Member members = 1;
-  string next_page_token = 2;
+  string next_page_token = 2 [json_name="next_page_token"];
 }
 
-message PageToken {
-  // ToDo
+message MemberPageToken {
+  MemberField field = 1;
+  string last_value = 2 [json_name="last_value"];
+  SortDirection direction = 3;
+  string last_id = 4 [json_name="last_id"];
 }
 
 message UpdateMemberRequest {
   Member member = 1;
-  google.protobuf.FieldMask field_mask = 2;
+  google.protobuf.FieldMask field_mask = 2 [json_name="field_mask"];
 }
 
 message DeleteMemberRequest {
@@ -175,15 +212,30 @@ service CardService {
 }
 
 message Card {
-  string id = 1;
-  string member_id = 2;
-  bytes rfid_value = 3;
-  google.protobuf.Timestamp valid_from = 4;
-  google.protobuf.Timestamp valid_to = 5;
+  string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string member_id = 2 [json_name="member_id"];
+  bytes rfid_value = 3 [json_name="rfid_value"];
+  google.protobuf.Timestamp valid_from = 4 [json_name="valid_from"];
+  google.protobuf.Timestamp valid_to = 5 [json_name="valid_to"];
+}
+
+enum CardField {
+  CARD_FIELD_UNKNOWN = 0;
+  CARD_FIELD_ID = 1;
+  CARD_FIELD_MEMBER_ID = 2;
+  CARD_FIELD_VALID_FROM = 3;
+  CARD_FIELD_VALID_TO = 4;
+}
+
+message CardPageToken {
+  CardField field = 1;
+  string last_value = 2 [json_name="last_value"];
+  SortDirection direction = 3;
+  string last_id = 4 [json_name="last_id"];
 }
 
 message CreateCardRequest {
-  string card_id = 1;
+  string card_id = 1 [json_name="card_id"];
   Card card = 2;
 }
 
@@ -192,18 +244,25 @@ message GetCardRequest {
 }
 
 message ListCardsRequest {
-  int32 page_size = 1;
-  string page_token = 2;
+  int32 page_size = 1 [json_name="page_size"];
+  string page_token = 2 [json_name="page_token"];
+
+  CardField sort_by = 3 [json_name="sort_by"];
+  SortDirection sort_direction = 4 [json_name="sort_direction"];
+
+  string member_id = 5  [json_name="member_id"];
+  google.protobuf.Timestamp valid_on = 6 [json_name="valid_on"];
+  bytes rfid_value = 7 [json_name="rfid_value"];
 }
 
 message ListCardsResponse {
   repeated Card cards = 1;
-  string next_page_token = 2;
+  string next_page_token = 2 [json_name="next_page_token"];
 }
 
 message UpdateCardRequest {
   Card card = 1;
-  google.protobuf.FieldMask field_mask = 2;
+  google.protobuf.FieldMask field_mask = 2 [json_name="field_mask"];
 }
 
 message DeleteCardRequest {
@@ -315,14 +374,14 @@ service BriefingService {
 
 message BriefingType {
   string id = 1;
-  string display_name = 2;
+  string display_name = 2 [json_name="display_name"];
   string description = 3;
-  google.protobuf.Duration expires_after = 4;
+  google.protobuf.Duration expires_after = 4 [json_name="expires_after"];
 }
 
 message CreateBriefingTypeRequest {
-  string briefing_type_id = 1;
-  BriefingType briefing_type = 2;
+  string briefing_type_id = 1 [json_name="briefing_type_id"];
+  BriefingType briefing_type = 2 [json_name="briefing_type"];
 }
 
 message GetBriefingTypeRequest {
@@ -330,18 +389,18 @@ message GetBriefingTypeRequest {
 }
 
 message ListBriefingTypesRequest {
-  int32 page_size = 1;
-  string page_token = 2;
+  int32 page_size = 1 [json_name="page_size"];
+  string page_token = 2 [json_name="page_token"];
 }
 
 message ListBriefingTypesResponse {
-  repeated BriefingType briefing_types = 1;
-  string next_page_token = 2;
+  repeated BriefingType briefing_types = 1 [json_name="briefing_types"];
+  string next_page_token = 2 [json_name="next_page_token"];
 }
 
 message UpdateBriefingTypeRequest {
-  BriefingType briefing_type = 1;
-  google.protobuf.FieldMask field_mask = 2;
+  BriefingType briefing_type = 1 [json_name="briefing_type"];
+  google.protobuf.FieldMask field_mask = 2 [json_name="field_mask"];
 }
 
 message DeleteBriefingTypeRequest {
@@ -350,11 +409,11 @@ message DeleteBriefingTypeRequest {
 
 message Briefing {
   string id = 1;
-  string briefing_type = 2;
+  string briefing_type = 2 [json_name="briefing_type"];
 }
 
 message CreateBriefingRequest {
-  string briefing_id = 1;
+  string briefing_id = 1 [json_name="briefing_id"];
   Briefing briefing = 2;
 }
 
@@ -363,18 +422,18 @@ message GetBriefingRequest {
 }
 
 message ListBriefingsRequest {
-  int32 page_size = 1;
-  string page_token = 2;
+  int32 page_size = 1 [json_name="page_size"];
+  string page_token = 2 [json_name="page_token"];
 }
 
 message ListBriefingsResponse {
   repeated Briefing briefings = 1;
-  string next_page_token = 2;
+  string next_page_token = 2 [json_name="next_page_token"];
 }
 
 message UpdateBriefingRequest {
   Briefing briefing = 1;
-  google.protobuf.FieldMask field_mask = 2;
+  google.protobuf.FieldMask field_mask = 2 [json_name="field_mask"];
 }
 
 message DeleteBriefingRequest {
@@ -427,7 +486,7 @@ service PresenceService {
   }
   rpc DeletePresence(DeletePresenceRequest) returns (google.protobuf.Empty) {
     option(google.api.http) = {
-      post: "/v1/presences/{id}"
+      delete: "/v1/presences/{id}"
     };
     option (gnostic.openapi.v3.operation) = {
       summary: "Delete Presence"
@@ -439,39 +498,39 @@ service PresenceService {
 
 message Presence {
   string id = 1;
-  string member_id = 2;
-  google.protobuf.Timestamp checkin_time = 3;
-  google.protobuf.Timestamp checkout_time = 4;
+  string member_id = 2 [json_name="member_id"];
+  google.protobuf.Timestamp checkin_time = 3 [json_name="checkin_time"];
+  google.protobuf.Timestamp checkout_time = 4 [json_name="checkout_time"];
 }
 
 message ListPrecensesRequest {
-  int32 page_size = 1;
-  string page_token = 2;
+  int32 page_size = 1 [json_name="page_size"];
+  string page_token = 2 [json_name="page_token"];
 
   // Filters
-  optional string member_id = 3;
-  optional google.protobuf.Timestamp checkin_time_after = 4;
-  optional google.protobuf.Timestamp checkin_time_before = 5;
-  optional google.protobuf.Timestamp checkout_time_after = 6;
-  optional google.protobuf.Timestamp checkout_time_before = 7;
+  optional string member_id = 3 [json_name="member_id"];
+  optional google.protobuf.Timestamp checkin_time_after = 4 [json_name="checkin_time_after"];
+  optional google.protobuf.Timestamp checkin_time_before = 5 [json_name="checkin_time_before"];
+  optional google.protobuf.Timestamp checkout_time_after = 6 [json_name="checkout_time_after"];
+  optional google.protobuf.Timestamp checkout_time_before = 7 [json_name="checkout_time_before"];
 }
 
 message ListPrecensesResponse {
   repeated Presence presence = 1;
-  string next_page_token = 2;
+  string next_page_token = 2 [json_name="next_page_token"];
 }
 
 message CheckinRequest {
-  string member_id = 1;
+  string member_id = 1 [json_name="member_id"];
 }
 
 message CheckoutRequest {
-  string member_id = 1;
+  string member_id = 1 [json_name="member_id"];
 }
 
 message UpdatePresenceRequest {
   Presence presence = 1;
-  google.protobuf.FieldMask field_mask = 2;
+  google.protobuf.FieldMask field_mask = 2 [json_name="field_mask"];
 }
 
 message DeletePresenceRequest {

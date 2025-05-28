@@ -19,12 +19,12 @@ paths:
             description: List all registered briefing types
             operationId: BriefingService_ListBriefingTypes
             parameters:
-                - name: pageSize
+                - name: page_size
                   in: query
                   schema:
                     type: integer
                     format: int32
-                - name: pageToken
+                - name: page_token
                   in: query
                   schema:
                     type: string
@@ -49,7 +49,7 @@ paths:
             description: Create safety briefing type
             operationId: BriefingService_CreateBriefingType
             parameters:
-                - name: briefingTypeId
+                - name: briefing_type_id
                   in: query
                   schema:
                     type: string
@@ -86,7 +86,7 @@ paths:
                   required: true
                   schema:
                     type: string
-                - name: fieldMask
+                - name: field_mask
                   in: query
                   schema:
                     type: string
@@ -169,12 +169,12 @@ paths:
             description: List all registered briefings
             operationId: BriefingService_ListBriefings
             parameters:
-                - name: pageSize
+                - name: page_size
                   in: query
                   schema:
                     type: integer
                     format: int32
-                - name: pageToken
+                - name: page_token
                   in: query
                   schema:
                     type: string
@@ -199,7 +199,7 @@ paths:
             description: Create safety briefing
             operationId: BriefingService_CreateBriefing
             parameters:
-                - name: briefingId
+                - name: briefing_id
                   in: query
                   schema:
                     type: string
@@ -236,7 +236,7 @@ paths:
                   required: true
                   schema:
                     type: string
-                - name: fieldMask
+                - name: field_mask
                   in: query
                   schema:
                     type: string
@@ -319,15 +319,39 @@ paths:
             description: List all registered cards
             operationId: CardService_ListCards
             parameters:
-                - name: pageSize
+                - name: page_size
                   in: query
                   schema:
                     type: integer
                     format: int32
-                - name: pageToken
+                - name: page_token
                   in: query
                   schema:
                     type: string
+                - name: sort_by
+                  in: query
+                  schema:
+                    type: integer
+                    format: enum
+                - name: sort_direction
+                  in: query
+                  schema:
+                    type: integer
+                    format: enum
+                - name: member_id
+                  in: query
+                  schema:
+                    type: string
+                - name: valid_on
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: rfid_value
+                  in: query
+                  schema:
+                    type: string
+                    format: bytes
             responses:
                 "200":
                     description: OK
@@ -349,7 +373,7 @@ paths:
             description: Create Space Card
             operationId: CardService_CreateCard
             parameters:
-                - name: cardId
+                - name: card_id
                   in: query
                   schema:
                     type: string
@@ -386,7 +410,7 @@ paths:
                   required: true
                   schema:
                     type: string
-                - name: fieldMask
+                - name: field_mask
                   in: query
                   schema:
                     type: string
@@ -469,15 +493,60 @@ paths:
             description: List all registered members
             operationId: MemberService_ListMembers
             parameters:
-                - name: pageSize
+                - name: page_size
                   in: query
                   schema:
                     type: integer
                     format: int32
-                - name: pageToken
+                - name: page_token
                   in: query
                   schema:
                     type: string
+                - name: sort_by
+                  in: query
+                  schema:
+                    type: integer
+                    format: enum
+                - name: sort_direction
+                  in: query
+                  schema:
+                    type: integer
+                    format: enum
+                - name: name_contains
+                  in: query
+                  schema:
+                    type: string
+                - name: membership_start_after
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: membership_start_before
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: membership_end_after
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: membership_end_before
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: age_category_equals
+                  in: query
+                  schema:
+                    type: integer
+                    format: enum
+                - name: tag_contains
+                  in: query
+                  schema:
+                    type: array
+                    items:
+                        type: string
             responses:
                 "200":
                     description: OK
@@ -499,7 +568,7 @@ paths:
             description: Create Space Member
             operationId: MemberService_CreateMember
             parameters:
-                - name: memberId
+                - name: member_id
                   in: query
                   schema:
                     type: string
@@ -586,7 +655,7 @@ paths:
                   required: true
                   schema:
                     type: string
-                - name: fieldMask
+                - name: field_mask
                   in: query
                   schema:
                     type: string
@@ -619,36 +688,36 @@ paths:
             description: List precenses, where members have checked in/out
             operationId: PresenceService_ListPresences
             parameters:
-                - name: pageSize
+                - name: page_size
                   in: query
                   schema:
                     type: integer
                     format: int32
-                - name: pageToken
+                - name: page_token
                   in: query
                   schema:
                     type: string
-                - name: memberId
+                - name: member_id
                   in: query
                   description: Filters
                   schema:
                     type: string
-                - name: checkinTimeAfter
+                - name: checkin_time_after
                   in: query
                   schema:
                     type: string
                     format: date-time
-                - name: checkinTimeBefore
+                - name: checkin_time_before
                   in: query
                   schema:
                     type: string
                     format: date-time
-                - name: checkoutTimeAfter
+                - name: checkout_time_after
                   in: query
                   schema:
                     type: string
                     format: date-time
-                - name: checkoutTimeBefore
+                - name: checkout_time_before
                   in: query
                   schema:
                     type: string
@@ -667,7 +736,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/Status'
     /v1/presences/{id}:
-        post:
+        delete:
             tags:
                 - PresenceService
                 - Presences
@@ -704,7 +773,7 @@ paths:
                   required: true
                   schema:
                     type: string
-                - name: fieldMask
+                - name: field_mask
                   in: query
                   schema:
                     type: string
@@ -789,45 +858,46 @@ components:
             properties:
                 id:
                     type: string
-                briefingType:
+                briefing_type:
                     type: string
         BriefingType:
             type: object
             properties:
                 id:
                     type: string
-                displayName:
+                display_name:
                     type: string
                 description:
                     type: string
-                expiresAfter:
+                expires_after:
                     pattern: ^-?(?:0|[1-9][0-9]{0,11})(?:\.[0-9]{1,9})?s$
                     type: string
         Card:
             type: object
             properties:
                 id:
+                    readOnly: true
                     type: string
-                memberId:
+                member_id:
                     type: string
-                rfidValue:
+                rfid_value:
                     type: string
                     format: bytes
-                validFrom:
+                valid_from:
                     type: string
                     format: date-time
-                validTo:
+                valid_to:
                     type: string
                     format: date-time
         CheckinRequest:
             type: object
             properties:
-                memberId:
+                member_id:
                     type: string
         CheckoutRequest:
             type: object
             properties:
-                memberId:
+                member_id:
                     type: string
         GoogleProtobufAny:
             type: object
@@ -840,11 +910,11 @@ components:
         ListBriefingTypesResponse:
             type: object
             properties:
-                briefingTypes:
+                briefing_types:
                     type: array
                     items:
                         $ref: '#/components/schemas/BriefingType'
-                nextPageToken:
+                next_page_token:
                     type: string
         ListBriefingsResponse:
             type: object
@@ -853,7 +923,7 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Briefing'
-                nextPageToken:
+                next_page_token:
                     type: string
         ListCardsResponse:
             type: object
@@ -862,7 +932,7 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Card'
-                nextPageToken:
+                next_page_token:
                     type: string
         ListMembersResponse:
             type: object
@@ -871,7 +941,7 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Member'
-                nextPageToken:
+                next_page_token:
                     type: string
         ListPrecensesResponse:
             type: object
@@ -880,32 +950,40 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Presence'
-                nextPageToken:
+                next_page_token:
                     type: string
         Member:
             type: object
             properties:
                 id:
+                    readOnly: true
                     type: string
                 name:
                     type: string
-                membershipStart:
+                membership_start:
                     type: string
                     format: date-time
-                membershipEnd:
+                membership_end:
                     type: string
                     format: date-time
+                age_category:
+                    type: integer
+                    format: enum
+                tags:
+                    type: array
+                    items:
+                        type: string
         Presence:
             type: object
             properties:
                 id:
                     type: string
-                memberId:
+                member_id:
                     type: string
-                checkinTime:
+                checkin_time:
                     type: string
                     format: date-time
-                checkoutTime:
+                checkout_time:
                     type: string
                     format: date-time
         Status:
