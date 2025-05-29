@@ -16,6 +16,7 @@ plugins:
   # https://github.com/google/gnostic/tree/main/cmd/protoc-gen-openapi
   - name: openapi
     out: openapi
+    opt: enum_type=string
   # Add field validation option within a protobuf file
   # https://github.com/bufbuild/protoc-gen-validate
   - name: validate

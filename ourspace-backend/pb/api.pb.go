@@ -2351,17 +2351,17 @@ var File_api_proto protoreflect.FileDescriptor
 
 const file_api_proto_rawDesc = "" +
 	"\n" +
-	"\tapi.proto\x12\x13ourspace_backend.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x17validate/validate.proto\"h\n" +
+	"\tapi.proto\x12\x13ourspace_backend.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x17validate/validate.proto\"v\n" +
 	"\x13CreateMemberRequest\x12\x1c\n" +
 	"\tmember_id\x18\x01 \x01(\tR\tmember_id\x123\n" +
-	"\x06member\x18\x02 \x01(\v2\x1b.ourspace_backend.v1.MemberR\x06member\"\x97\x02\n" +
+	"\x06member\x18\x02 \x01(\v2\x1b.ourspace_backend.v1.MemberR\x06member:\f\xbaG\t\xba\x01\x06member\"\xd1\x02\n" +
 	"\x06Member\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\tB\x03\xe0A\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12F\n" +
 	"\x10membership_start\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x10membership_start\x12B\n" +
 	"\x0emembership_end\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0emembership_end\x12D\n" +
 	"\fage_category\x18\x05 \x01(\x0e2 .ourspace_backend.v1.AgeCategoryR\fage_category\x12\x12\n" +
-	"\x04tags\x18\x06 \x03(\tR\x04tags\"\"\n" +
+	"\x04tags\x18\x06 \x03(\tR\x04tags:8\xbaG5\xba\x01\x02id\xba\x01\x04name\xba\x01\x10membership_start\xba\x01\fage_category\xba\x01\x04tags\"\"\n" +
 	"\x10GetMemberRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\xf6\x06\n" +
 	"\x12ListMembersRequest\x12\x1c\n" +
@@ -2384,10 +2384,10 @@ const file_api_proto_rawDesc = "" +
 	"\x18_membership_start_beforeB\x17\n" +
 	"\x15_membership_end_afterB\x18\n" +
 	"\x16_membership_end_beforeB\x16\n" +
-	"\x14_age_category_equals\"v\n" +
+	"\x14_age_category_equals\"\x97\x01\n" +
 	"\x13ListMembersResponse\x125\n" +
 	"\amembers\x18\x01 \x03(\v2\x1b.ourspace_backend.v1.MemberR\amembers\x12(\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\"\xc5\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token:\x1f\xbaG\x1c\xba\x01\amembers\xba\x01\x0fnext_page_token\"\xc5\x01\n" +
 	"\x0fMemberPageToken\x126\n" +
 	"\x05field\x18\x01 \x01(\x0e2 .ourspace_backend.v1.MemberFieldR\x05field\x12\x1e\n" +
 	"\n" +
@@ -2401,7 +2401,7 @@ const file_api_proto_rawDesc = "" +
 	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"field_mask\"%\n" +
 	"\x13DeleteMemberRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xcd\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x88\x02\n" +
 	"\x04Card\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\tB\x03\xe0A\x03R\x02id\x12\x1c\n" +
 	"\tmember_id\x18\x02 \x01(\tR\tmember_id\x12\x1e\n" +
@@ -2411,7 +2411,9 @@ const file_api_proto_rawDesc = "" +
 	"\n" +
 	"valid_from\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"valid_from\x126\n" +
-	"\bvalid_to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\bvalid_to\"\xc1\x01\n" +
+	"\bvalid_to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\bvalid_to:9\xbaG6\xba\x01\x02id\xba\x01\tmember_id\xba\x01\n" +
+	"rfid_value\xba\x01\n" +
+	"valid_from\xba\x01\bvalid_to\"\xc1\x01\n" +
 	"\rCardPageToken\x124\n" +
 	"\x05field\x18\x01 \x01(\x0e2\x1e.ourspace_backend.v1.CardFieldR\x05field\x12\x1e\n" +
 	"\n" +
@@ -2435,22 +2437,22 @@ const file_api_proto_rawDesc = "" +
 	"\bvalid_on\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bvalid_on\x12\x1e\n" +
 	"\n" +
 	"rfid_value\x18\a \x01(\fR\n" +
-	"rfid_value\"n\n" +
+	"rfid_value\"\x8d\x01\n" +
 	"\x11ListCardsResponse\x12/\n" +
 	"\x05cards\x18\x01 \x03(\v2\x19.ourspace_backend.v1.CardR\x05cards\x12(\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\"~\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token:\x1d\xbaG\x1a\xba\x01\x05cards\xba\x01\x0fnext_page_token\"~\n" +
 	"\x11UpdateCardRequest\x12-\n" +
 	"\x04card\x18\x01 \x01(\v2\x19.ourspace_backend.v1.CardR\x04card\x12:\n" +
 	"\n" +
 	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"field_mask\"#\n" +
 	"\x11DeleteCardRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xa5\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xdc\x01\n" +
 	"\fBriefingType\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\"\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\fdisplay_name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12?\n" +
-	"\rexpires_after\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\rexpires_after\"\x90\x01\n" +
+	"\rexpires_after\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\rexpires_after:5\xbaG2\xba\x01\x02id\xba\x01\fdisplay_name\xba\x01\vdescription\xba\x01\rexpires_after\"\x90\x01\n" +
 	"\x19CreateBriefingTypeRequest\x12*\n" +
 	"\x10briefing_type_id\x18\x01 \x01(\tR\x10briefing_type_id\x12G\n" +
 	"\rbriefing_type\x18\x02 \x01(\v2!.ourspace_backend.v1.BriefingTypeR\rbriefing_type\"(\n" +
@@ -2460,20 +2462,20 @@ const file_api_proto_rawDesc = "" +
 	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\n" +
-	"page_token\"\x90\x01\n" +
+	"page_token\"\xb8\x01\n" +
 	"\x19ListBriefingTypesResponse\x12I\n" +
 	"\x0ebriefing_types\x18\x01 \x03(\v2!.ourspace_backend.v1.BriefingTypeR\x0ebriefing_types\x12(\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\"\xa0\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token:&\xbaG#\xba\x01\x0ebriefing_types\xba\x01\x0fnext_page_token\"\xa0\x01\n" +
 	"\x19UpdateBriefingTypeRequest\x12G\n" +
 	"\rbriefing_type\x18\x01 \x01(\v2!.ourspace_backend.v1.BriefingTypeR\rbriefing_type\x12:\n" +
 	"\n" +
 	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"field_mask\"+\n" +
 	"\x19DeleteBriefingTypeRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"@\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"Z\n" +
 	"\bBriefing\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12$\n" +
-	"\rbriefing_type\x18\x02 \x01(\tR\rbriefing_type\"t\n" +
+	"\rbriefing_type\x18\x02 \x01(\tR\rbriefing_type:\x18\xbaG\x15\xba\x01\x02id\xba\x01\rbriefing_type\"t\n" +
 	"\x15CreateBriefingRequest\x12 \n" +
 	"\vbriefing_id\x18\x01 \x01(\tR\vbriefing_id\x129\n" +
 	"\bbriefing\x18\x02 \x01(\v2\x1d.ourspace_backend.v1.BriefingR\bbriefing\"$\n" +
@@ -2493,12 +2495,12 @@ const file_api_proto_rawDesc = "" +
 	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"field_mask\"'\n" +
 	"\x15DeleteBriefingRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xba\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xef\x01\n" +
 	"\bPresence\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
 	"\tmember_id\x18\x02 \x01(\tR\tmember_id\x12>\n" +
 	"\fcheckin_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fcheckin_time\x12@\n" +
-	"\rcheckout_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\rcheckout_time\"\xb1\x04\n" +
+	"\rcheckout_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\rcheckout_time:3\xbaG0\xba\x01\x02id\xba\x01\tmember_id\xba\x01\fcheckin_time\xba\x01\rcheckout_time\"\xb1\x04\n" +
 	"\x14ListPrecensesRequest\x12\x1c\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
@@ -2514,10 +2516,10 @@ const file_api_proto_rawDesc = "" +
 	"\x13_checkin_time_afterB\x16\n" +
 	"\x14_checkin_time_beforeB\x16\n" +
 	"\x14_checkout_time_afterB\x17\n" +
-	"\x15_checkout_time_before\"|\n" +
+	"\x15_checkout_time_before\"\x9e\x01\n" +
 	"\x15ListPrecensesResponse\x129\n" +
 	"\bpresence\x18\x01 \x03(\v2\x1d.ourspace_backend.v1.PresenceR\bpresence\x12(\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token\".\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token: \xbaG\x1d\xba\x01\bpresence\xba\x01\x0fnext_page_token\".\n" +
 	"\x0eCheckinRequest\x12\x1c\n" +
 	"\tmember_id\x18\x01 \x01(\tR\tmember_id\"/\n" +
 	"\x0fCheckoutRequest\x12\x1c\n" +

@@ -85,11 +85,21 @@ service MemberService {
 }
 
 message CreateMemberRequest {
+  option (gnostic.openapi.v3.schema) = {
+    required: "member"
+  };
   string member_id = 1 [json_name="member_id"];
   Member member = 2;
 }
 
 message Member {
+  option (gnostic.openapi.v3.schema) = {
+    required: "id",
+    required: "name",
+    required: "membership_start",
+    required: "age_category",
+    required: "tags"
+  };
   string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string name = 2;
   google.protobuf.Timestamp membership_start = 3 [json_name="membership_start"];
@@ -139,6 +149,10 @@ message ListMembersRequest {
 }
 
 message ListMembersResponse {
+  option (gnostic.openapi.v3.schema) = {
+    required: "members"
+    required: "next_page_token"
+  };
   repeated Member members = 1;
   string next_page_token = 2 [json_name="next_page_token"];
 }
@@ -212,6 +226,13 @@ service CardService {
 }
 
 message Card {
+  option (gnostic.openapi.v3.schema) = {
+    required: "id"
+    required: "member_id"
+    required: "rfid_value"
+    required: "valid_from"
+    required: "valid_to"
+  };
   string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string member_id = 2 [json_name="member_id"];
   bytes rfid_value = 3 [json_name="rfid_value"];
@@ -256,6 +277,10 @@ message ListCardsRequest {
 }
 
 message ListCardsResponse {
+  option (gnostic.openapi.v3.schema) = {
+    required: "cards"
+    required: "next_page_token"
+  };
   repeated Card cards = 1;
   string next_page_token = 2 [json_name="next_page_token"];
 }
@@ -373,6 +398,12 @@ service BriefingService {
 }
 
 message BriefingType {
+  option (gnostic.openapi.v3.schema) = {
+    required: "id"
+    required: "display_name"
+    required: "description"
+    required: "expires_after"
+  };
   string id = 1;
   string display_name = 2 [json_name="display_name"];
   string description = 3;
@@ -394,6 +425,10 @@ message ListBriefingTypesRequest {
 }
 
 message ListBriefingTypesResponse {
+  option (gnostic.openapi.v3.schema) = {
+    required: "briefing_types"
+    required: "next_page_token"
+  };
   repeated BriefingType briefing_types = 1 [json_name="briefing_types"];
   string next_page_token = 2 [json_name="next_page_token"];
 }
@@ -408,6 +443,10 @@ message DeleteBriefingTypeRequest {
 }
 
 message Briefing {
+  option (gnostic.openapi.v3.schema) = {
+    required: "id"
+    required: "briefing_type"
+  };
   string id = 1;
   string briefing_type = 2 [json_name="briefing_type"];
 }
@@ -497,6 +536,12 @@ service PresenceService {
 }
 
 message Presence {
+  option (gnostic.openapi.v3.schema) = {
+    required: "id"
+    required: "member_id"
+    required: "checkin_time"
+    required: "checkout_time"
+  };
   string id = 1;
   string member_id = 2 [json_name="member_id"];
   google.protobuf.Timestamp checkin_time = 3 [json_name="checkin_time"];
@@ -516,6 +561,10 @@ message ListPrecensesRequest {
 }
 
 message ListPrecensesResponse {
+  option (gnostic.openapi.v3.schema) = {
+    required: "presence"
+    required: "next_page_token"
+  };
   repeated Presence presence = 1;
   string next_page_token = 2 [json_name="next_page_token"];
 }

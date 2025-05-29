@@ -331,12 +331,22 @@ paths:
                 - name: sort_by
                   in: query
                   schema:
-                    type: integer
+                    enum:
+                        - CARD_FIELD_UNKNOWN
+                        - CARD_FIELD_ID
+                        - CARD_FIELD_MEMBER_ID
+                        - CARD_FIELD_VALID_FROM
+                        - CARD_FIELD_VALID_TO
+                    type: string
                     format: enum
                 - name: sort_direction
                   in: query
                   schema:
-                    type: integer
+                    enum:
+                        - SORT_DIRECTION_DEFAULT
+                        - SORT_DIRECTION_ASCENDING
+                        - SORT_DIRECTION_DESCENDING
+                    type: string
                     format: enum
                 - name: member_id
                   in: query
@@ -505,12 +515,22 @@ paths:
                 - name: sort_by
                   in: query
                   schema:
-                    type: integer
+                    enum:
+                        - MEMBER_FIELD_UNKNOWN
+                        - MEMBER_FIELD_ID
+                        - MEMBER_FIELD_NAME
+                        - MEMBER_FIELD_MEMBERSHIP_START
+                        - MEMBER_FIELD_MEMBERSHIP_END
+                    type: string
                     format: enum
                 - name: sort_direction
                   in: query
                   schema:
-                    type: integer
+                    enum:
+                        - SORT_DIRECTION_DEFAULT
+                        - SORT_DIRECTION_ASCENDING
+                        - SORT_DIRECTION_DESCENDING
+                    type: string
                     format: enum
                 - name: name_contains
                   in: query
@@ -539,7 +559,11 @@ paths:
                 - name: age_category_equals
                   in: query
                   schema:
-                    type: integer
+                    enum:
+                        - AGE_CATEGORY_UNKNOWN
+                        - AGE_CATEGORY_UNDERAGE
+                        - AGE_CATEGORY_ADULT
+                    type: string
                     format: enum
                 - name: tag_contains
                   in: query
@@ -854,6 +878,9 @@ paths:
 components:
     schemas:
         Briefing:
+            required:
+                - id
+                - briefing_type
             type: object
             properties:
                 id:
@@ -861,6 +888,11 @@ components:
                 briefing_type:
                     type: string
         BriefingType:
+            required:
+                - id
+                - display_name
+                - description
+                - expires_after
             type: object
             properties:
                 id:
@@ -873,6 +905,12 @@ components:
                     pattern: ^-?(?:0|[1-9][0-9]{0,11})(?:\.[0-9]{1,9})?s$
                     type: string
         Card:
+            required:
+                - id
+                - member_id
+                - rfid_value
+                - valid_from
+                - valid_to
             type: object
             properties:
                 id:
@@ -908,6 +946,9 @@ components:
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
         ListBriefingTypesResponse:
+            required:
+                - briefing_types
+                - next_page_token
             type: object
             properties:
                 briefing_types:
@@ -926,6 +967,9 @@ components:
                 next_page_token:
                     type: string
         ListCardsResponse:
+            required:
+                - cards
+                - next_page_token
             type: object
             properties:
                 cards:
@@ -935,6 +979,9 @@ components:
                 next_page_token:
                     type: string
         ListMembersResponse:
+            required:
+                - members
+                - next_page_token
             type: object
             properties:
                 members:
@@ -944,6 +991,9 @@ components:
                 next_page_token:
                     type: string
         ListPrecensesResponse:
+            required:
+                - presence
+                - next_page_token
             type: object
             properties:
                 presence:
@@ -953,6 +1003,12 @@ components:
                 next_page_token:
                     type: string
         Member:
+            required:
+                - id
+                - name
+                - membership_start
+                - age_category
+                - tags
             type: object
             properties:
                 id:
@@ -967,13 +1023,22 @@ components:
                     type: string
                     format: date-time
                 age_category:
-                    type: integer
+                    enum:
+                        - AGE_CATEGORY_UNKNOWN
+                        - AGE_CATEGORY_UNDERAGE
+                        - AGE_CATEGORY_ADULT
+                    type: string
                     format: enum
                 tags:
                     type: array
                     items:
                         type: string
         Presence:
+            required:
+                - id
+                - member_id
+                - checkin_time
+                - checkout_time
             type: object
             properties:
                 id:
