@@ -480,13 +480,13 @@ message DeleteBriefingRequest {
 }
 
 service PresenceService {
-  rpc ListPresences(ListPrecensesRequest) returns (ListPrecensesResponse) {
+  rpc ListPresences(ListPresencesRequest) returns (ListPresencesResponse) {
     option(google.api.http) = {
       get: "/v1/presences"
     };
     option (gnostic.openapi.v3.operation) = {
       summary: "List presences"
-      description: "List precenses, where members have checked in/out"
+      description: "List presences, where members have checked in/out"
       tags: "Presences"
     };
   }
@@ -548,7 +548,15 @@ message Presence {
   google.protobuf.Timestamp checkout_time = 4 [json_name="checkout_time"];
 }
 
-message ListPrecensesRequest {
+enum PresenceField {
+  PRESENCE_FIELD_UNKNOWN = 0;
+  PRESENCE_FIELD_ID = 1;
+  PRESENCE_FIELD_MEMBER_ID = 2;
+  PRESENCE_FIELD_CHECKIN_TIME = 3;
+  PRESENCE_FIELD_CHECKOUT_TIME = 4;
+}
+
+message ListPresencesRequest {
   int32 page_size = 1 [json_name="page_size"];
   string page_token = 2 [json_name="page_token"];
 
@@ -560,7 +568,7 @@ message ListPrecensesRequest {
   optional google.protobuf.Timestamp checkout_time_before = 7 [json_name="checkout_time_before"];
 }
 
-message ListPrecensesResponse {
+message ListPresencesResponse {
   option (gnostic.openapi.v3.schema) = {
     required: "presence"
     required: "next_page_token"

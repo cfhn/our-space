@@ -17,6 +17,7 @@ import (
 	"github.com/cfhn/our-space/ourspace-backend/internal/cards"
 	"github.com/cfhn/our-space/ourspace-backend/internal/config"
 	"github.com/cfhn/our-space/ourspace-backend/internal/members"
+	"github.com/cfhn/our-space/ourspace-backend/internal/presences"
 	"github.com/cfhn/our-space/ourspace-backend/pb"
 	"github.com/cfhn/our-space/pkg/database"
 	"github.com/cfhn/our-space/pkg/log"
@@ -73,6 +74,8 @@ func run(logger *slog.Logger) error {
 	memberService := members.NewService(membersRepo)
 	cardsRepo := cards.NewPostgresRepo(db)
 	cardsService := cards.NewService(cardsRepo, memberService)
+	presencesRepo := presences.NewPostgresRepo(db)
+	presencesService := presences.NewService(presencesRepo, memberService)
 
 	server := setup.Server{
 		HTTPPort: cfg.HTTPPort,
@@ -81,6 +84,7 @@ func run(logger *slog.Logger) error {
 		Register: func(server *grpc.Server, conn *grpc.ClientConn, mux *runtime.ServeMux) error {
 			pb.RegisterMemberServiceServer(server, memberService)
 			pb.RegisterCardServiceServer(server, cardsService)
+			pb.RegisterPresenceServiceServer(server, presencesService)
 
 			err := pb.RegisterMemberServiceHandlerClient(context.Background(), mux, pb.NewMemberServiceClient(client))
 			if err != nil {
@@ -88,6 +92,11 @@ func run(logger *slog.Logger) error {
 			}
 
 			err = pb.RegisterCardServiceHandlerClient(context.Background(), mux, pb.NewCardServiceClient(client))
+			if err != nil {
+				return err
+			}
+
+			err = pb.RegisterPresenceServiceHandlerClient(context.Background(), mux, pb.NewPresenceServiceClient(client))
 			if err != nil {
 				return err
 			}

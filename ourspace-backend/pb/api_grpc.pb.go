@@ -985,7 +985,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PresenceServiceClient interface {
-	ListPresences(ctx context.Context, in *ListPrecensesRequest, opts ...grpc.CallOption) (*ListPrecensesResponse, error)
+	ListPresences(ctx context.Context, in *ListPresencesRequest, opts ...grpc.CallOption) (*ListPresencesResponse, error)
 	Checkin(ctx context.Context, in *CheckinRequest, opts ...grpc.CallOption) (*Presence, error)
 	Checkout(ctx context.Context, in *CheckoutRequest, opts ...grpc.CallOption) (*Presence, error)
 	UpdatePresence(ctx context.Context, in *UpdatePresenceRequest, opts ...grpc.CallOption) (*Presence, error)
@@ -1000,9 +1000,9 @@ func NewPresenceServiceClient(cc grpc.ClientConnInterface) PresenceServiceClient
 	return &presenceServiceClient{cc}
 }
 
-func (c *presenceServiceClient) ListPresences(ctx context.Context, in *ListPrecensesRequest, opts ...grpc.CallOption) (*ListPrecensesResponse, error) {
+func (c *presenceServiceClient) ListPresences(ctx context.Context, in *ListPresencesRequest, opts ...grpc.CallOption) (*ListPresencesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListPrecensesResponse)
+	out := new(ListPresencesResponse)
 	err := c.cc.Invoke(ctx, PresenceService_ListPresences_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1054,7 +1054,7 @@ func (c *presenceServiceClient) DeletePresence(ctx context.Context, in *DeletePr
 // All implementations must embed UnimplementedPresenceServiceServer
 // for forward compatibility.
 type PresenceServiceServer interface {
-	ListPresences(context.Context, *ListPrecensesRequest) (*ListPrecensesResponse, error)
+	ListPresences(context.Context, *ListPresencesRequest) (*ListPresencesResponse, error)
 	Checkin(context.Context, *CheckinRequest) (*Presence, error)
 	Checkout(context.Context, *CheckoutRequest) (*Presence, error)
 	UpdatePresence(context.Context, *UpdatePresenceRequest) (*Presence, error)
@@ -1069,7 +1069,7 @@ type PresenceServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPresenceServiceServer struct{}
 
-func (UnimplementedPresenceServiceServer) ListPresences(context.Context, *ListPrecensesRequest) (*ListPrecensesResponse, error) {
+func (UnimplementedPresenceServiceServer) ListPresences(context.Context, *ListPresencesRequest) (*ListPresencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPresences not implemented")
 }
 func (UnimplementedPresenceServiceServer) Checkin(context.Context, *CheckinRequest) (*Presence, error) {
@@ -1106,7 +1106,7 @@ func RegisterPresenceServiceServer(s grpc.ServiceRegistrar, srv PresenceServiceS
 }
 
 func _PresenceService_ListPresences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPrecensesRequest)
+	in := new(ListPresencesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1118,7 +1118,7 @@ func _PresenceService_ListPresences_Handler(srv interface{}, ctx context.Context
 		FullMethod: PresenceService_ListPresences_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PresenceServiceServer).ListPresences(ctx, req.(*ListPrecensesRequest))
+		return srv.(PresenceServiceServer).ListPresences(ctx, req.(*ListPresencesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

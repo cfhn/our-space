@@ -931,7 +931,7 @@ var filter_PresenceService_ListPresences_0 = &utilities.DoubleArray{Encoding: ma
 
 func request_PresenceService_ListPresences_0(ctx context.Context, marshaler runtime.Marshaler, client PresenceServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq ListPrecensesRequest
+		protoReq ListPresencesRequest
 		metadata runtime.ServerMetadata
 	)
 	io.Copy(io.Discard, req.Body)
@@ -947,7 +947,7 @@ func request_PresenceService_ListPresences_0(ctx context.Context, marshaler runt
 
 func local_request_PresenceService_ListPresences_0(ctx context.Context, marshaler runtime.Marshaler, server PresenceServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq ListPrecensesRequest
+		protoReq ListPresencesRequest
 		metadata runtime.ServerMetadata
 	)
 	if err := req.ParseForm(); err != nil {

@@ -709,7 +709,7 @@ paths:
                 - PresenceService
                 - Presences
             summary: List presences
-            description: List precenses, where members have checked in/out
+            description: List presences, where members have checked in/out
             operationId: PresenceService_ListPresences
             parameters:
                 - name: page_size
@@ -752,7 +752,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListPrecensesResponse'
+                                $ref: '#/components/schemas/ListPresencesResponse'
                 default:
                     description: Default error response
                     content:
@@ -990,7 +990,7 @@ components:
                         $ref: '#/components/schemas/Member'
                 next_page_token:
                     type: string
-        ListPrecensesResponse:
+        ListPresencesResponse:
             required:
                 - presence
                 - next_page_token

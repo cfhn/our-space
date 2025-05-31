@@ -4128,22 +4128,22 @@ var _ interface {
 	ErrorName() string
 } = PresenceValidationError{}
 
-// Validate checks the field values on ListPrecensesRequest with the rules
+// Validate checks the field values on ListPresencesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ListPrecensesRequest) Validate() error {
+func (m *ListPresencesRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListPrecensesRequest with the rules
+// ValidateAll checks the field values on ListPresencesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ListPrecensesRequestMultiError, or nil if none found.
-func (m *ListPrecensesRequest) ValidateAll() error {
+// ListPresencesRequestMultiError, or nil if none found.
+func (m *ListPresencesRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListPrecensesRequest) validate(all bool) error {
+func (m *ListPresencesRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -4164,7 +4164,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			switch v := interface{}(m.GetCheckinTimeAfter()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckinTimeAfter",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4172,7 +4172,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckinTimeAfter",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4181,7 +4181,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCheckinTimeAfter()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListPrecensesRequestValidationError{
+				return ListPresencesRequestValidationError{
 					field:  "CheckinTimeAfter",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4197,7 +4197,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			switch v := interface{}(m.GetCheckinTimeBefore()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckinTimeBefore",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4205,7 +4205,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckinTimeBefore",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4214,7 +4214,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCheckinTimeBefore()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListPrecensesRequestValidationError{
+				return ListPresencesRequestValidationError{
 					field:  "CheckinTimeBefore",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4230,7 +4230,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			switch v := interface{}(m.GetCheckoutTimeAfter()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckoutTimeAfter",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4238,7 +4238,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckoutTimeAfter",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4247,7 +4247,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCheckoutTimeAfter()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListPrecensesRequestValidationError{
+				return ListPresencesRequestValidationError{
 					field:  "CheckoutTimeAfter",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4263,7 +4263,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			switch v := interface{}(m.GetCheckoutTimeBefore()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckoutTimeBefore",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4271,7 +4271,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListPrecensesRequestValidationError{
+					errors = append(errors, ListPresencesRequestValidationError{
 						field:  "CheckoutTimeBefore",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4280,7 +4280,7 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCheckoutTimeBefore()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListPrecensesRequestValidationError{
+				return ListPresencesRequestValidationError{
 					field:  "CheckoutTimeBefore",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4291,19 +4291,19 @@ func (m *ListPrecensesRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ListPrecensesRequestMultiError(errors)
+		return ListPresencesRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListPrecensesRequestMultiError is an error wrapping multiple validation
-// errors returned by ListPrecensesRequest.ValidateAll() if the designated
+// ListPresencesRequestMultiError is an error wrapping multiple validation
+// errors returned by ListPresencesRequest.ValidateAll() if the designated
 // constraints aren't met.
-type ListPrecensesRequestMultiError []error
+type ListPresencesRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListPrecensesRequestMultiError) Error() string {
+func (m ListPresencesRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -4312,11 +4312,11 @@ func (m ListPrecensesRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListPrecensesRequestMultiError) AllErrors() []error { return m }
+func (m ListPresencesRequestMultiError) AllErrors() []error { return m }
 
-// ListPrecensesRequestValidationError is the validation error returned by
-// ListPrecensesRequest.Validate if the designated constraints aren't met.
-type ListPrecensesRequestValidationError struct {
+// ListPresencesRequestValidationError is the validation error returned by
+// ListPresencesRequest.Validate if the designated constraints aren't met.
+type ListPresencesRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -4324,24 +4324,24 @@ type ListPrecensesRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListPrecensesRequestValidationError) Field() string { return e.field }
+func (e ListPresencesRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListPrecensesRequestValidationError) Reason() string { return e.reason }
+func (e ListPresencesRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListPrecensesRequestValidationError) Cause() error { return e.cause }
+func (e ListPresencesRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListPrecensesRequestValidationError) Key() bool { return e.key }
+func (e ListPresencesRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListPrecensesRequestValidationError) ErrorName() string {
-	return "ListPrecensesRequestValidationError"
+func (e ListPresencesRequestValidationError) ErrorName() string {
+	return "ListPresencesRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListPrecensesRequestValidationError) Error() string {
+func (e ListPresencesRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -4353,14 +4353,14 @@ func (e ListPrecensesRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListPrecensesRequest.%s: %s%s",
+		"invalid %sListPresencesRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListPrecensesRequestValidationError{}
+var _ error = ListPresencesRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -4368,24 +4368,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListPrecensesRequestValidationError{}
+} = ListPresencesRequestValidationError{}
 
-// Validate checks the field values on ListPrecensesResponse with the rules
+// Validate checks the field values on ListPresencesResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ListPrecensesResponse) Validate() error {
+func (m *ListPresencesResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListPrecensesResponse with the rules
+// ValidateAll checks the field values on ListPresencesResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ListPrecensesResponseMultiError, or nil if none found.
-func (m *ListPrecensesResponse) ValidateAll() error {
+// ListPresencesResponseMultiError, or nil if none found.
+func (m *ListPresencesResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListPrecensesResponse) validate(all bool) error {
+func (m *ListPresencesResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -4399,7 +4399,7 @@ func (m *ListPrecensesResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListPrecensesResponseValidationError{
+					errors = append(errors, ListPresencesResponseValidationError{
 						field:  fmt.Sprintf("Presence[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4407,7 +4407,7 @@ func (m *ListPrecensesResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListPrecensesResponseValidationError{
+					errors = append(errors, ListPresencesResponseValidationError{
 						field:  fmt.Sprintf("Presence[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4416,7 +4416,7 @@ func (m *ListPrecensesResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListPrecensesResponseValidationError{
+				return ListPresencesResponseValidationError{
 					field:  fmt.Sprintf("Presence[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4429,19 +4429,19 @@ func (m *ListPrecensesResponse) validate(all bool) error {
 	// no validation rules for NextPageToken
 
 	if len(errors) > 0 {
-		return ListPrecensesResponseMultiError(errors)
+		return ListPresencesResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListPrecensesResponseMultiError is an error wrapping multiple validation
-// errors returned by ListPrecensesResponse.ValidateAll() if the designated
+// ListPresencesResponseMultiError is an error wrapping multiple validation
+// errors returned by ListPresencesResponse.ValidateAll() if the designated
 // constraints aren't met.
-type ListPrecensesResponseMultiError []error
+type ListPresencesResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListPrecensesResponseMultiError) Error() string {
+func (m ListPresencesResponseMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -4450,11 +4450,11 @@ func (m ListPrecensesResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListPrecensesResponseMultiError) AllErrors() []error { return m }
+func (m ListPresencesResponseMultiError) AllErrors() []error { return m }
 
-// ListPrecensesResponseValidationError is the validation error returned by
-// ListPrecensesResponse.Validate if the designated constraints aren't met.
-type ListPrecensesResponseValidationError struct {
+// ListPresencesResponseValidationError is the validation error returned by
+// ListPresencesResponse.Validate if the designated constraints aren't met.
+type ListPresencesResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -4462,24 +4462,24 @@ type ListPrecensesResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListPrecensesResponseValidationError) Field() string { return e.field }
+func (e ListPresencesResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListPrecensesResponseValidationError) Reason() string { return e.reason }
+func (e ListPresencesResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListPrecensesResponseValidationError) Cause() error { return e.cause }
+func (e ListPresencesResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListPrecensesResponseValidationError) Key() bool { return e.key }
+func (e ListPresencesResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListPrecensesResponseValidationError) ErrorName() string {
-	return "ListPrecensesResponseValidationError"
+func (e ListPresencesResponseValidationError) ErrorName() string {
+	return "ListPresencesResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListPrecensesResponseValidationError) Error() string {
+func (e ListPresencesResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -4491,14 +4491,14 @@ func (e ListPrecensesResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListPrecensesResponse.%s: %s%s",
+		"invalid %sListPresencesResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListPrecensesResponseValidationError{}
+var _ error = ListPresencesResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -4506,7 +4506,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListPrecensesResponseValidationError{}
+} = ListPresencesResponseValidationError{}
 
 // Validate checks the field values on CheckinRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
