@@ -23,3 +23,8 @@ func NewPostgresRepo(db *sql.DB) *Postgres {
 	return &Postgres{db: db}
 }
 
+func (p *Postgres) DeletePresence(ctx context.Context, id string) error {
+	_, err := p.db.ExecContext(ctx, `delete from presences where id = $1`, id)
+
+	return err
+}
