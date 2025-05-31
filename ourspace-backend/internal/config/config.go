@@ -9,7 +9,7 @@ type Config struct {
 }
 
 type Database struct {
-	URL          string `env:"OURSPACE_BACKEND_DATABASE_URL" envDefault:"postgresql://postgres:postgres@localhost:5432/postgres"`
+	URL          string `env:"OURSPACE_BACKEND_DATABASE_URL" envDefault:"postgresql://postgres:postgres@localhost:5433/postgres"`
 	MaxOpenConns int    `env:"OURSPACE_BACKEND_DATABASE_MAX_OPEN_CONNS"`
 }
 
