@@ -82,6 +82,15 @@ service MemberService {
       tags: "Members"
     };
   }
+
+  rpc ListMemberTags(ListMemberTagsRequest) returns (ListMemberTagsResponse) {
+    option (google.api.http) = {get: "/v1/member-tags"};
+    option (gnostic.openapi.v3.operation) = {
+      summary: "List member tags"
+      description: "List all possible tags that appear on members so far"
+      tags: "Members"
+    };
+  }
 }
 
 message CreateMemberRequest {
@@ -171,6 +180,20 @@ message UpdateMemberRequest {
 
 message DeleteMemberRequest {
   string id = 1;
+}
+
+message ListMemberTagsRequest {
+  int32 page_size = 1 [json_name="page_size"];
+  string page_token = 2 [json_name="page_token"];
+}
+
+message ListMemberTagsResponse {
+  repeated string tags = 1 [json_name="tags"];
+  string next_page_token = 2 [json_name="next_page_token"];
+}
+
+message MemberTagsPageToken {
+  int32 offset = 1;
 }
 
 service CardService {

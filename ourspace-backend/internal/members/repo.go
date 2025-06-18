@@ -88,7 +88,7 @@ func (p *Postgres) ListMembers(
 	paginationCondition, paginationValues := generatePaginationQuery(token, 9)
 
 	var (
-		nameContains          = sql.Null[string]{V: filters.NameContains, Valid: filters.NameContains != ""}
+		nameContains          = wrapIlike(filters.NameContains)
 		membershipStartBefore = sql.Null[time.Time]{V: filters.MembershipStartBefore, Valid: !filters.MembershipStartBefore.IsZero()}
 		membershipStartAfter  = sql.Null[time.Time]{V: filters.MembershipStartAfter, Valid: !filters.MembershipStartAfter.IsZero()}
 		membershipEndBefore   = sql.Null[time.Time]{V: filters.MembershipEndBefore, Valid: !filters.MembershipEndBefore.IsZero()}
@@ -197,6 +197,14 @@ func getSort(sortField pb.MemberField, direction pb.SortDirection, token *pb.Mem
 
 }
 
+func wrapIlike(filter string) sql.Null[string] {
+	if filter == "" {
+		return sql.Null[string]{Valid: false}
+	}
+
+	return sql.Null[string]{V: "%" + strings.NewReplacer("%", `\\%`, "_", `\\_`).Replace(filter) + "%", Valid: true}
+}
+
 func (p *Postgres) UpdateMember(
 	ctx context.Context, member *pb.Member, fieldMask *fieldmaskpb.FieldMask,
 ) (*pb.Member, error) {
@@ -258,6 +266,39 @@ func (p *Postgres) DeleteMember(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (p *Postgres) ListMemberTags(
+	ctx context.Context, pageSize int32, pageToken *pb.MemberTagsPageToken,
+) ([]string, error) {
+	rows, err := p.db.QueryContext(ctx, `
+		select distinct unnest(tags)
+		from members
+		order by 1
+		limit $1
+		offset $2;
+`, pageSize, pageToken.Offset)
+	if err != nil {
+		return nil, err
+	}
+
+	tags := make([]string, 0, pageSize)
+
+	for rows.Next() {
+		var tag string
+		err = rows.Scan(&tag)
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, tag)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tags, nil
 }
 
 type scanner interface {

@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MemberService_CreateMember_FullMethodName = "/ourspace_backend.v1.MemberService/CreateMember"
-	MemberService_GetMember_FullMethodName    = "/ourspace_backend.v1.MemberService/GetMember"
-	MemberService_ListMembers_FullMethodName  = "/ourspace_backend.v1.MemberService/ListMembers"
-	MemberService_UpdateMember_FullMethodName = "/ourspace_backend.v1.MemberService/UpdateMember"
-	MemberService_DeleteMember_FullMethodName = "/ourspace_backend.v1.MemberService/DeleteMember"
+	MemberService_CreateMember_FullMethodName   = "/ourspace_backend.v1.MemberService/CreateMember"
+	MemberService_GetMember_FullMethodName      = "/ourspace_backend.v1.MemberService/GetMember"
+	MemberService_ListMembers_FullMethodName    = "/ourspace_backend.v1.MemberService/ListMembers"
+	MemberService_UpdateMember_FullMethodName   = "/ourspace_backend.v1.MemberService/UpdateMember"
+	MemberService_DeleteMember_FullMethodName   = "/ourspace_backend.v1.MemberService/DeleteMember"
+	MemberService_ListMemberTags_FullMethodName = "/ourspace_backend.v1.MemberService/ListMemberTags"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -36,6 +37,7 @@ type MemberServiceClient interface {
 	ListMembers(ctx context.Context, in *ListMembersRequest, opts ...grpc.CallOption) (*ListMembersResponse, error)
 	UpdateMember(ctx context.Context, in *UpdateMemberRequest, opts ...grpc.CallOption) (*Member, error)
 	DeleteMember(ctx context.Context, in *DeleteMemberRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListMemberTags(ctx context.Context, in *ListMemberTagsRequest, opts ...grpc.CallOption) (*ListMemberTagsResponse, error)
 }
 
 type memberServiceClient struct {
@@ -96,6 +98,16 @@ func (c *memberServiceClient) DeleteMember(ctx context.Context, in *DeleteMember
 	return out, nil
 }
 
+func (c *memberServiceClient) ListMemberTags(ctx context.Context, in *ListMemberTagsRequest, opts ...grpc.CallOption) (*ListMemberTagsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMemberTagsResponse)
+	err := c.cc.Invoke(ctx, MemberService_ListMemberTags_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemberServiceServer is the server API for MemberService service.
 // All implementations must embed UnimplementedMemberServiceServer
 // for forward compatibility.
@@ -105,6 +117,7 @@ type MemberServiceServer interface {
 	ListMembers(context.Context, *ListMembersRequest) (*ListMembersResponse, error)
 	UpdateMember(context.Context, *UpdateMemberRequest) (*Member, error)
 	DeleteMember(context.Context, *DeleteMemberRequest) (*emptypb.Empty, error)
+	ListMemberTags(context.Context, *ListMemberTagsRequest) (*ListMemberTagsResponse, error)
 	mustEmbedUnimplementedMemberServiceServer()
 }
 
@@ -129,6 +142,9 @@ func (UnimplementedMemberServiceServer) UpdateMember(context.Context, *UpdateMem
 }
 func (UnimplementedMemberServiceServer) DeleteMember(context.Context, *DeleteMemberRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMember not implemented")
+}
+func (UnimplementedMemberServiceServer) ListMemberTags(context.Context, *ListMemberTagsRequest) (*ListMemberTagsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListMemberTags not implemented")
 }
 func (UnimplementedMemberServiceServer) mustEmbedUnimplementedMemberServiceServer() {}
 func (UnimplementedMemberServiceServer) testEmbeddedByValue()                       {}
@@ -241,6 +257,24 @@ func _MemberService_DeleteMember_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_ListMemberTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMemberTagsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).ListMemberTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_ListMemberTags_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).ListMemberTags(ctx, req.(*ListMemberTagsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemberService_ServiceDesc is the grpc.ServiceDesc for MemberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -267,6 +301,10 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMember",
 			Handler:    _MemberService_DeleteMember_Handler,
+		},
+		{
+			MethodName: "ListMemberTags",
+			Handler:    _MemberService_ListMemberTags_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
