@@ -1192,6 +1192,320 @@ var _ interface {
 	ErrorName() string
 } = DeleteMemberRequestValidationError{}
 
+// Validate checks the field values on ListMemberTagsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListMemberTagsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListMemberTagsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListMemberTagsRequestMultiError, or nil if none found.
+func (m *ListMemberTagsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListMemberTagsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageSize
+
+	// no validation rules for PageToken
+
+	if len(errors) > 0 {
+		return ListMemberTagsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListMemberTagsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListMemberTagsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListMemberTagsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListMemberTagsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListMemberTagsRequestMultiError) AllErrors() []error { return m }
+
+// ListMemberTagsRequestValidationError is the validation error returned by
+// ListMemberTagsRequest.Validate if the designated constraints aren't met.
+type ListMemberTagsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListMemberTagsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListMemberTagsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListMemberTagsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListMemberTagsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListMemberTagsRequestValidationError) ErrorName() string {
+	return "ListMemberTagsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListMemberTagsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListMemberTagsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListMemberTagsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListMemberTagsRequestValidationError{}
+
+// Validate checks the field values on ListMemberTagsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListMemberTagsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListMemberTagsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListMemberTagsResponseMultiError, or nil if none found.
+func (m *ListMemberTagsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListMemberTagsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for NextPageToken
+
+	if len(errors) > 0 {
+		return ListMemberTagsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListMemberTagsResponseMultiError is an error wrapping multiple validation
+// errors returned by ListMemberTagsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListMemberTagsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListMemberTagsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListMemberTagsResponseMultiError) AllErrors() []error { return m }
+
+// ListMemberTagsResponseValidationError is the validation error returned by
+// ListMemberTagsResponse.Validate if the designated constraints aren't met.
+type ListMemberTagsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListMemberTagsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListMemberTagsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListMemberTagsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListMemberTagsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListMemberTagsResponseValidationError) ErrorName() string {
+	return "ListMemberTagsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListMemberTagsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListMemberTagsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListMemberTagsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListMemberTagsResponseValidationError{}
+
+// Validate checks the field values on MemberTagsPageToken with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MemberTagsPageToken) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MemberTagsPageToken with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MemberTagsPageTokenMultiError, or nil if none found.
+func (m *MemberTagsPageToken) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MemberTagsPageToken) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Offset
+
+	if len(errors) > 0 {
+		return MemberTagsPageTokenMultiError(errors)
+	}
+
+	return nil
+}
+
+// MemberTagsPageTokenMultiError is an error wrapping multiple validation
+// errors returned by MemberTagsPageToken.ValidateAll() if the designated
+// constraints aren't met.
+type MemberTagsPageTokenMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MemberTagsPageTokenMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MemberTagsPageTokenMultiError) AllErrors() []error { return m }
+
+// MemberTagsPageTokenValidationError is the validation error returned by
+// MemberTagsPageToken.Validate if the designated constraints aren't met.
+type MemberTagsPageTokenValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MemberTagsPageTokenValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MemberTagsPageTokenValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MemberTagsPageTokenValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MemberTagsPageTokenValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MemberTagsPageTokenValidationError) ErrorName() string {
+	return "MemberTagsPageTokenValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MemberTagsPageTokenValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMemberTagsPageToken.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MemberTagsPageTokenValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MemberTagsPageTokenValidationError{}
+
 // Validate checks the field values on Card with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
 // encountered is returned, or nil if there are no violations.

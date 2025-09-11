@@ -341,6 +341,51 @@ func (s Service) DeleteMember(ctx context.Context, request *pb.DeleteMemberReque
 	return &emptypb.Empty{}, nil
 }
 
+func (s Service) ListMemberTags(
+	ctx context.Context, request *pb.ListMemberTagsRequest,
+) (*pb.ListMemberTagsResponse, error) {
+	pageTokenBytes, err := base64.RawStdEncoding.DecodeString(request.PageToken)
+	if err != nil {
+		return nil, err
+	}
+
+	pageSize := request.PageSize
+	if pageSize == 0 {
+		pageSize = 50
+	}
+
+	pageToken := &pb.MemberTagsPageToken{}
+
+	err = proto.Unmarshal(pageTokenBytes, pageToken)
+	if err != nil {
+		return nil, err
+	}
+
+	tags, err := s.repo.ListMemberTags(ctx, request.PageSize+1, pageToken)
+	if err != nil {
+		return nil, err
+	}
+
+	var nextPageToken string
+
+	if len(tags) > int(request.PageSize) {
+		tags = tags[:request.PageSize]
+		nextPageTokenPb := &pb.MemberTagsPageToken{
+			Offset: pageToken.Offset + pageSize,
+		}
+		nextPageTokenBytes, err := proto.Marshal(nextPageTokenPb)
+		if err != nil {
+			return nil, err
+		}
+		nextPageToken = base64.RawStdEncoding.EncodeToString(nextPageTokenBytes)
+	}
+
+	return &pb.ListMemberTagsResponse{
+		Tags:          tags,
+		NextPageToken: nextPageToken,
+	}, nil
+}
+
 func getFieldValue(member *pb.Member, field pb.MemberField) (string, error) {
 	switch field {
 	case pb.MemberField_MEMBER_FIELD_ID:

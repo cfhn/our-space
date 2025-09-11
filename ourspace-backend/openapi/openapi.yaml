@@ -494,6 +494,37 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /v1/member-tags:
+        get:
+            tags:
+                - MemberService
+                - Members
+            summary: List member tags
+            description: List all possible tags that appear on members so far
+            operationId: MemberService_ListMemberTags
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListMemberTagsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /v1/members:
         get:
             tags:
@@ -976,6 +1007,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Card'
+                next_page_token:
+                    type: string
+        ListMemberTagsResponse:
+            type: object
+            properties:
+                tags:
+                    type: array
+                    items:
+                        type: string
                 next_page_token:
                     type: string
         ListMembersResponse:
