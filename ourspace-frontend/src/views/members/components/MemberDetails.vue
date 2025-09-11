@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type {MemberServiceGetMemberResponse} from "@/client";
+import {type MemberServiceGetMemberResponse, memberServiceListMemberTags} from "@/client";
 import Input from "../../../components/Input.vue";
 import RadioGroup from "@/components/RadioGroup.vue";
 import TagInput from "@/views/members/components/TagInput.vue";
+import {computed, ref, watchEffect} from "vue";
 
 const props = defineProps<{
   member: MemberServiceGetMemberResponse,
@@ -19,7 +20,17 @@ const ageCategoryOptions = [
   },
 ];
 
-const tagOptions = ["cfhn", "volunteer", "employee", "employee 2", "employee 3"];
+const tagOptions = ref<string[]>([]);
+
+watchEffect(() => {
+  memberServiceListMemberTags({
+    query: {
+      page_size: 100,
+    }
+  }).then(resp => {
+    tagOptions.value = resp.data?.tags ?? [];
+  });
+})
 
 </script>
 
@@ -33,9 +44,10 @@ const tagOptions = ["cfhn", "volunteer", "employee", "employee 2", "employee 3"]
            :is-edit="props.isEdit" class="onyx-grid-span-12 onyx-grid-lg-span-6"/>
   </div>
 
-  <RadioGroup label="Age Category" :options="ageCategoryOptions" :is-edit="isEdit" v-model="member.age_category" class="form-row" />
+  <RadioGroup label="Age Category" :options="ageCategoryOptions" :is-edit="isEdit"
+              v-model="member.age_category" class="form-row"/>
 
-  <TagInput label="Tags" v-model="member.tags" :options="tagOptions" :is-edit="isEdit" />
+  <TagInput label="Tags" v-model="member.tags" :options="tagOptions" :is-edit="isEdit"/>
 </template>
 
 <style scoped>

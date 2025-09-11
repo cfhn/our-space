@@ -196,7 +196,7 @@ watchEffect(async () => {
             <OnyxIcon :icon="userCompanyId" size="48px"/>
           </template>
           <template #buttons>
-            <OnyxButton label="Add Card"></OnyxButton>
+            <OnyxButton label="Add Card" :link="`/cards/new?memberId=${member.id}`"></OnyxButton>
           </template>
         </OnyxEmpty>
         <Card v-for="card of cards?.cards" :card :member v-if="member" class="card" />

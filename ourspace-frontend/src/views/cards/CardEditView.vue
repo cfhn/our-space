@@ -16,7 +16,7 @@ import {
   type MemberReadable,
   memberServiceGetMember
 } from "@/client";
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 
 const addYear = (d: Date, year: number): Date => {
   d.setFullYear(d.getFullYear() + year);
@@ -25,6 +25,14 @@ const addYear = (d: Date, year: number): Date => {
 const props = defineProps<{
   id: string;
 }>();
+
+const route = useRoute();
+const memberId = computed((): string|undefined => {
+  if (route.query.memberId instanceof Array) {
+    return route.query.memberId[0]??undefined;
+  }
+  return route.query.memberId??undefined;
+});
 const isEdit = ref(false);
 const isCreate = computed(() => !props.id);
 const card = ref<CardReadable>({
@@ -177,7 +185,7 @@ const save = async () => {
           </OnyxHeadline>
           <OnyxHeadline is="h1" v-else>Create new Card</OnyxHeadline>
 
-          <CardDetails v-if="card" :card="card" :is-edit="isEdit || isCreate" />
+          <CardDetails v-if="card" :card="card" :is-edit="isEdit || isCreate" :member-id="isCreate ? memberId : undefined" />
         </OnyxForm>
       </div>
     </div>

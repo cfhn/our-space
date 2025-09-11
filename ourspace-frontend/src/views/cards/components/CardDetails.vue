@@ -3,12 +3,19 @@ import type {CardReadable, MemberReadable} from "@/client";
 import Input from "@/components/Input.vue";
 import CardInput from "@/views/cards/components/CardInput.vue";
 import MemberSelect from "@/views/members/components/MemberSelect.vue";
+import {watchEffect} from "vue";
 
 const props = defineProps<{
   card: CardReadable;
   isEdit: boolean;
+  memberId?: string;
 }>();
 
+watchEffect( () => {
+  if (props.isEdit && props.memberId) {
+    props.card.member_id = props.memberId;
+  }
+});
 
 </script>
 

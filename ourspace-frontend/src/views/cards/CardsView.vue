@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import {
+  type ColumnConfig,
+  createFeature,
+  DataGridFeatures,
   OnyxBottomBar,
   OnyxButton,
   OnyxDataGrid,
   OnyxInput,
   OnyxPageLayout,
-  type ColumnConfig, createFeature, DataGridFeatures,
 } from "sit-onyx";
 import {
-  cardServiceGetCard,
   cardServiceListCards,
-  type CardServiceListCardsResponse, memberServiceGetMember
+  type CardServiceListCardsResponse,
+  memberServiceGetMember
 } from "@/client";
 import {computed, h, ref, watch, watchEffect} from "vue";
 import CardActions from "@/views/cards/components/CardActions.vue";
@@ -110,7 +112,7 @@ watch(searchValue, () => {
   <OnyxPageLayout>
     <div class="table-top-actions">
       <h1>Cards</h1>
-      <OnyxInput label="Search" :hide-label="true" placeholder="Search" v-model="searchValue" density="compact" autofocus />
+      <OnyxInput label="RFID ID" :hide-label="true" placeholder="RFID" v-model="searchValue" density="compact" autofocus />
     </div>
     <OnyxDataGrid :columns :data :features class="onyx-density-compact"></OnyxDataGrid>
     <template #footer>

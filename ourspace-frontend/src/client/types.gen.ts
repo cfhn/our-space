@@ -66,6 +66,11 @@ export type ListCardsResponseWritable = {
     next_page_token: string;
 };
 
+export type ListMemberTagsResponse = {
+    tags?: Array<string>;
+    next_page_token?: string;
+};
+
 export type ListMembersResponseReadable = {
     members: Array<MemberReadable>;
     next_page_token: string;
@@ -535,6 +540,34 @@ export type CardServiceGetCardResponses = {
 };
 
 export type CardServiceGetCardResponse = CardServiceGetCardResponses[keyof CardServiceGetCardResponses];
+
+export type MemberServiceListMemberTagsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        page_size?: number;
+        page_token?: string;
+    };
+    url: '/v1/member-tags';
+};
+
+export type MemberServiceListMemberTagsErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type MemberServiceListMemberTagsError = MemberServiceListMemberTagsErrors[keyof MemberServiceListMemberTagsErrors];
+
+export type MemberServiceListMemberTagsResponses = {
+    /**
+     * OK
+     */
+    200: ListMemberTagsResponse;
+};
+
+export type MemberServiceListMemberTagsResponse = MemberServiceListMemberTagsResponses[keyof MemberServiceListMemberTagsResponses];
 
 export type MemberServiceListMembersData = {
     body?: never;
