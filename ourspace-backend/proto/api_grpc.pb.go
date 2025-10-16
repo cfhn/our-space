@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             (unknown)
-// source: api.proto
+// source: ourspace-backend/proto/api.proto
 
 package pb
 
@@ -20,12 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MemberService_CreateMember_FullMethodName   = "/ourspace_backend.v1.MemberService/CreateMember"
-	MemberService_GetMember_FullMethodName      = "/ourspace_backend.v1.MemberService/GetMember"
-	MemberService_ListMembers_FullMethodName    = "/ourspace_backend.v1.MemberService/ListMembers"
-	MemberService_UpdateMember_FullMethodName   = "/ourspace_backend.v1.MemberService/UpdateMember"
-	MemberService_DeleteMember_FullMethodName   = "/ourspace_backend.v1.MemberService/DeleteMember"
-	MemberService_ListMemberTags_FullMethodName = "/ourspace_backend.v1.MemberService/ListMemberTags"
+	MemberService_CreateMember_FullMethodName   = "/ourspace_backend.proto.MemberService/CreateMember"
+	MemberService_GetMember_FullMethodName      = "/ourspace_backend.proto.MemberService/GetMember"
+	MemberService_ListMembers_FullMethodName    = "/ourspace_backend.proto.MemberService/ListMembers"
+	MemberService_UpdateMember_FullMethodName   = "/ourspace_backend.proto.MemberService/UpdateMember"
+	MemberService_DeleteMember_FullMethodName   = "/ourspace_backend.proto.MemberService/DeleteMember"
+	MemberService_ListMemberTags_FullMethodName = "/ourspace_backend.proto.MemberService/ListMemberTags"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -279,7 +279,7 @@ func _MemberService_ListMemberTags_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MemberService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ourspace_backend.v1.MemberService",
+	ServiceName: "ourspace_backend.proto.MemberService",
 	HandlerType: (*MemberServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -308,15 +308,15 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api.proto",
+	Metadata: "ourspace-backend/proto/api.proto",
 }
 
 const (
-	CardService_CreateCard_FullMethodName = "/ourspace_backend.v1.CardService/CreateCard"
-	CardService_GetCard_FullMethodName    = "/ourspace_backend.v1.CardService/GetCard"
-	CardService_ListCards_FullMethodName  = "/ourspace_backend.v1.CardService/ListCards"
-	CardService_UpdateCard_FullMethodName = "/ourspace_backend.v1.CardService/UpdateCard"
-	CardService_DeleteCard_FullMethodName = "/ourspace_backend.v1.CardService/DeleteCard"
+	CardService_CreateCard_FullMethodName = "/ourspace_backend.proto.CardService/CreateCard"
+	CardService_GetCard_FullMethodName    = "/ourspace_backend.proto.CardService/GetCard"
+	CardService_ListCards_FullMethodName  = "/ourspace_backend.proto.CardService/ListCards"
+	CardService_UpdateCard_FullMethodName = "/ourspace_backend.proto.CardService/UpdateCard"
+	CardService_DeleteCard_FullMethodName = "/ourspace_backend.proto.CardService/DeleteCard"
 )
 
 // CardServiceClient is the client API for CardService service.
@@ -537,7 +537,7 @@ func _CardService_DeleteCard_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var CardService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ourspace_backend.v1.CardService",
+	ServiceName: "ourspace_backend.proto.CardService",
 	HandlerType: (*CardServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -562,20 +562,20 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api.proto",
+	Metadata: "ourspace-backend/proto/api.proto",
 }
 
 const (
-	BriefingService_CreateBriefing_FullMethodName     = "/ourspace_backend.v1.BriefingService/CreateBriefing"
-	BriefingService_GetBriefing_FullMethodName        = "/ourspace_backend.v1.BriefingService/GetBriefing"
-	BriefingService_ListBriefings_FullMethodName      = "/ourspace_backend.v1.BriefingService/ListBriefings"
-	BriefingService_UpdateBriefing_FullMethodName     = "/ourspace_backend.v1.BriefingService/UpdateBriefing"
-	BriefingService_DeleteBriefing_FullMethodName     = "/ourspace_backend.v1.BriefingService/DeleteBriefing"
-	BriefingService_CreateBriefingType_FullMethodName = "/ourspace_backend.v1.BriefingService/CreateBriefingType"
-	BriefingService_GetBriefingType_FullMethodName    = "/ourspace_backend.v1.BriefingService/GetBriefingType"
-	BriefingService_ListBriefingTypes_FullMethodName  = "/ourspace_backend.v1.BriefingService/ListBriefingTypes"
-	BriefingService_UpdateBriefingType_FullMethodName = "/ourspace_backend.v1.BriefingService/UpdateBriefingType"
-	BriefingService_DeleteBriefingType_FullMethodName = "/ourspace_backend.v1.BriefingService/DeleteBriefingType"
+	BriefingService_CreateBriefing_FullMethodName     = "/ourspace_backend.proto.BriefingService/CreateBriefing"
+	BriefingService_GetBriefing_FullMethodName        = "/ourspace_backend.proto.BriefingService/GetBriefing"
+	BriefingService_ListBriefings_FullMethodName      = "/ourspace_backend.proto.BriefingService/ListBriefings"
+	BriefingService_UpdateBriefing_FullMethodName     = "/ourspace_backend.proto.BriefingService/UpdateBriefing"
+	BriefingService_DeleteBriefing_FullMethodName     = "/ourspace_backend.proto.BriefingService/DeleteBriefing"
+	BriefingService_CreateBriefingType_FullMethodName = "/ourspace_backend.proto.BriefingService/CreateBriefingType"
+	BriefingService_GetBriefingType_FullMethodName    = "/ourspace_backend.proto.BriefingService/GetBriefingType"
+	BriefingService_ListBriefingTypes_FullMethodName  = "/ourspace_backend.proto.BriefingService/ListBriefingTypes"
+	BriefingService_UpdateBriefingType_FullMethodName = "/ourspace_backend.proto.BriefingService/UpdateBriefingType"
+	BriefingService_DeleteBriefingType_FullMethodName = "/ourspace_backend.proto.BriefingService/DeleteBriefingType"
 )
 
 // BriefingServiceClient is the client API for BriefingService service.
@@ -963,7 +963,7 @@ func _BriefingService_DeleteBriefingType_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var BriefingService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ourspace_backend.v1.BriefingService",
+	ServiceName: "ourspace_backend.proto.BriefingService",
 	HandlerType: (*BriefingServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -1008,22 +1008,22 @@ var BriefingService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api.proto",
+	Metadata: "ourspace-backend/proto/api.proto",
 }
 
 const (
-	PresenceService_ListPresences_FullMethodName  = "/ourspace_backend.v1.PresenceService/ListPresences"
-	PresenceService_Checkin_FullMethodName        = "/ourspace_backend.v1.PresenceService/Checkin"
-	PresenceService_Checkout_FullMethodName       = "/ourspace_backend.v1.PresenceService/Checkout"
-	PresenceService_UpdatePresence_FullMethodName = "/ourspace_backend.v1.PresenceService/UpdatePresence"
-	PresenceService_DeletePresence_FullMethodName = "/ourspace_backend.v1.PresenceService/DeletePresence"
+	PresenceService_ListPresences_FullMethodName  = "/ourspace_backend.proto.PresenceService/ListPresences"
+	PresenceService_Checkin_FullMethodName        = "/ourspace_backend.proto.PresenceService/Checkin"
+	PresenceService_Checkout_FullMethodName       = "/ourspace_backend.proto.PresenceService/Checkout"
+	PresenceService_UpdatePresence_FullMethodName = "/ourspace_backend.proto.PresenceService/UpdatePresence"
+	PresenceService_DeletePresence_FullMethodName = "/ourspace_backend.proto.PresenceService/DeletePresence"
 )
 
 // PresenceServiceClient is the client API for PresenceService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PresenceServiceClient interface {
-	ListPresences(ctx context.Context, in *ListPrecensesRequest, opts ...grpc.CallOption) (*ListPrecensesResponse, error)
+	ListPresences(ctx context.Context, in *ListPresencesRequest, opts ...grpc.CallOption) (*ListPresencesResponse, error)
 	Checkin(ctx context.Context, in *CheckinRequest, opts ...grpc.CallOption) (*Presence, error)
 	Checkout(ctx context.Context, in *CheckoutRequest, opts ...grpc.CallOption) (*Presence, error)
 	UpdatePresence(ctx context.Context, in *UpdatePresenceRequest, opts ...grpc.CallOption) (*Presence, error)
@@ -1038,9 +1038,9 @@ func NewPresenceServiceClient(cc grpc.ClientConnInterface) PresenceServiceClient
 	return &presenceServiceClient{cc}
 }
 
-func (c *presenceServiceClient) ListPresences(ctx context.Context, in *ListPrecensesRequest, opts ...grpc.CallOption) (*ListPrecensesResponse, error) {
+func (c *presenceServiceClient) ListPresences(ctx context.Context, in *ListPresencesRequest, opts ...grpc.CallOption) (*ListPresencesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListPrecensesResponse)
+	out := new(ListPresencesResponse)
 	err := c.cc.Invoke(ctx, PresenceService_ListPresences_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1092,7 +1092,7 @@ func (c *presenceServiceClient) DeletePresence(ctx context.Context, in *DeletePr
 // All implementations must embed UnimplementedPresenceServiceServer
 // for forward compatibility.
 type PresenceServiceServer interface {
-	ListPresences(context.Context, *ListPrecensesRequest) (*ListPrecensesResponse, error)
+	ListPresences(context.Context, *ListPresencesRequest) (*ListPresencesResponse, error)
 	Checkin(context.Context, *CheckinRequest) (*Presence, error)
 	Checkout(context.Context, *CheckoutRequest) (*Presence, error)
 	UpdatePresence(context.Context, *UpdatePresenceRequest) (*Presence, error)
@@ -1107,7 +1107,7 @@ type PresenceServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPresenceServiceServer struct{}
 
-func (UnimplementedPresenceServiceServer) ListPresences(context.Context, *ListPrecensesRequest) (*ListPrecensesResponse, error) {
+func (UnimplementedPresenceServiceServer) ListPresences(context.Context, *ListPresencesRequest) (*ListPresencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPresences not implemented")
 }
 func (UnimplementedPresenceServiceServer) Checkin(context.Context, *CheckinRequest) (*Presence, error) {
@@ -1144,7 +1144,7 @@ func RegisterPresenceServiceServer(s grpc.ServiceRegistrar, srv PresenceServiceS
 }
 
 func _PresenceService_ListPresences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPrecensesRequest)
+	in := new(ListPresencesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1156,7 +1156,7 @@ func _PresenceService_ListPresences_Handler(srv interface{}, ctx context.Context
 		FullMethod: PresenceService_ListPresences_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PresenceServiceServer).ListPresences(ctx, req.(*ListPrecensesRequest))
+		return srv.(PresenceServiceServer).ListPresences(ctx, req.(*ListPresencesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1237,7 +1237,7 @@ func _PresenceService_DeletePresence_Handler(srv interface{}, ctx context.Contex
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PresenceService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ourspace_backend.v1.PresenceService",
+	ServiceName: "ourspace_backend.proto.PresenceService",
 	HandlerType: (*PresenceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -1262,5 +1262,5 @@ var PresenceService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api.proto",
+	Metadata: "ourspace-backend/proto/api.proto",
 }

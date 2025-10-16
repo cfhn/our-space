@@ -21,7 +21,7 @@ const validTo = computed(() => {
   return `${date.getFullYear()}-${("00"+(date.getMonth() + 1)).slice(-2)}-${("00"+date.getDate()).slice(-2)}`;
 });
 
-const rfidValue = computed(() => [...atob(props.card.rfid_value)].map(c=> c.charCodeAt(0).toString(16).padStart(2,0)).join(''))
+const rfidValue = computed(() => [...atob(props.card.rfid_value)].map(c=> c.charCodeAt(0).toString(16).padStart(2,"0")).join(''))
 
 const isValid = computed(() => {
   const today = new Date();

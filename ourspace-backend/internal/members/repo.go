@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/cfhn/our-space/ourspace-backend/pb"
+	"github.com/cfhn/our-space/ourspace-backend/proto"
 )
 
 var ErrNotFound = errors.New("member not found")
@@ -51,10 +51,15 @@ func (p *Postgres) CreateMember(ctx context.Context, member *pb.Member) (*pb.Mem
 		membershipEnd = sql.Null[time.Time]{V: member.MembershipEnd.AsTime(), Valid: true}
 	}
 
+	tags := []string{}
+	if member.Tags != nil {
+		tags = member.Tags
+	}
+
 	_, err := p.db.ExecContext(ctx, `
 		insert into members (id, name, membership_start, membership_end, age_category, tags)
 		values ($1, $2, $3, $4, $5, $6);
-	`, member.Id, member.Name, member.MembershipStart.AsTime(), membershipEnd, member.AgeCategory.String(), member.Tags)
+	`, member.Id, member.Name, member.MembershipStart.AsTime(), membershipEnd, member.AgeCategory.String(), tags)
 
 	if err != nil {
 		return nil, err

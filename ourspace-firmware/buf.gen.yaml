@@ -1,0 +1,24 @@
+version: v1
+plugins:
+  - name: go
+    out: proto
+    opt: paths=source_relative
+  - name: go-grpc
+    out: proto
+    opt: paths=source_relative,require_unimplemented_servers=true
+  # gRPC Gateway
+  # generates a reverse-proxy server which translates a RESTful JSON API into gRPC
+  # https://grpc-ecosystem.github.io/grpc-gateway/
+  - name: grpc-gateway
+    out: proto
+    opt: paths=source_relative
+  # Generate OpenAPI Spec V3 file
+  # https://github.com/google/gnostic/tree/main/cmd/protoc-gen-openapi
+  - name: openapi
+    out: openapi
+    opt: naming=proto,enum_type=string
+  # Add field validation option within a protobuf file
+  # https://github.com/bufbuild/protoc-gen-validate
+  - name: validate
+    out: proto
+    opt: paths=source_relative,lang=go

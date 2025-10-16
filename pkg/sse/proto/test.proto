@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package pkg.sse.proto;
+
+
+option go_package = "github.com/cfhn/our-space/pkg/sse/proto;pb";
+
+enum Enum {
+  ENUM_UNKNOWN = 0;
+  ENUM_B = 1;
+  ENUM_C = 10;
+}
+
+message TestRequest {
+  float float_value = 1;
+  double double_value = 2;
+  int64 int64_value = 3;
+  uint64 uint64_value = 4;
+  int32 int32_value = 5;
+  fixed64 fixed64_value = 6;
+  fixed32 fixed32_value = 7;
+  bool bool_value = 8;
+  string string_value = 9;
+  bytes bytes_value = 10;
+  uint32 uint32_value = 11;
+  Enum enum_value = 12;
+  sfixed32 sfixed32_value = 13;
+  sfixed64 sfixed64_value = 14;
+  sint32 sint32_value = 15;
+  sint64 sint64_value = 16;
+  repeated string repeated_string_value = 17;
+  repeated float repeated_float_value = 18;
+  repeated double repeated_double_value = 19;
+  repeated int64 repeated_int64_value = 20;
+  repeated uint64 repeated_uint64_value = 21;
+  repeated int32 repeated_int32_value = 22;
+  repeated fixed64 repeated_fixed64_value = 23;
+  repeated fixed32 repeated_fixed32_value = 24;
+  repeated bool repeated_bool_value = 25;
+  repeated bytes repeated_bytes_value = 26;
+  repeated uint32 repeated_uint32_value = 27;
+  repeated Enum repeated_enum_value = 28;
+  repeated sfixed32 repeated_sfixed32_value = 29;
+  repeated sfixed64 repeated_sfixed64_value = 30;
+  repeated sint32 repeated_sint32_value = 31;
+  repeated sint64 repeated_sint64_value = 32;
+  string jsonnamehandling = 33 [json_name="json_name_handling"];
+}
+
+message TestResponse {
+  string some_field = 1 [json_name="some_field"];
+}
+
+service TestService {
+  rpc Test(TestRequest) returns (stream TestResponse);
+}
