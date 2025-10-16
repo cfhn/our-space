@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/cfhn/our-space/ourspace-backend/pb"
+	"github.com/cfhn/our-space/ourspace-backend/proto"
 )
 
 var ErrNotFound = errors.New("card not found")

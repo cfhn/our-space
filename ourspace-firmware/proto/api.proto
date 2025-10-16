@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package ourspace_firmware.v1;
+
+// buf:lint:ignore IMPORT_NO_WEAK
+import weak "gnostic/openapi/v3/annotations.proto"; // Will not import _ "" in the gen-go files
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/cfhn/our-space/ourspace-firmware/proto;pb";
+
+option (gnostic.openapi.v3.document) = {
+  info: {
+    title: "ourspace-firmware-api"
+    version: "1.0"
+    description: "Local API for the Terminal frontend firmware"
+  }
+  servers: {
+    url: "http://localhost:8080"
+    description: "Host Server"
+  }
+};
+
+service FirmwareService {
+  rpc ScanCard(ScanCardRequest) returns (ScanCardResponse) {
+    option (google.api.http) = {
+      post: "/v1/card"
+      body: "*"
+    };
+  }
+  rpc ListenForCardEvents(ListenForCardEventsRequest) returns (stream ListenForCardEventsResponse) {}
+}
+
+message ScanCardRequest {
+  bytes rfid_value = 1 [json_name="rfid_value"];
+}
+
+message ScanCardResponse {
+
+}
+
+message ListenForCardEventsRequest {
+}
+
+message ListenForCardEventsResponse {
+  string token = 1 [json_name="token"];
+  Card card = 2 [json_name="card"];
+  Member member = 3 [json_name="member"];
+}
+
+message Member {
+  string id = 1;
+  string name = 2;
+}
+
+message Card {
+  string id = 1;
+  google.protobuf.Timestamp valid_from = 2;
+  google.protobuf.Timestamp valid_to = 3;
+}

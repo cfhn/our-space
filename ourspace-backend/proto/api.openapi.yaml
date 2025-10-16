@@ -1,0 +1,1114 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ourspace-backend-api
+    description: Manage members and their qualifications for Maker Spaces
+    version: "1.0"
+servers:
+    - url: http://localhost:8080
+      description: Host Server
+paths:
+    /v1/briefing-types:
+        get:
+            tags:
+                - BriefingService
+                - BriefingTypes
+            summary: List briefing types
+            description: List all registered briefing types
+            operationId: BriefingService_ListBriefingTypes
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListBriefingTypesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - BriefingService
+                - BriefingTypes
+            summary: Create briefing type
+            description: Create safety briefing type
+            operationId: BriefingService_CreateBriefingType
+            parameters:
+                - name: briefing_type_id
+                  in: query
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BriefingType'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BriefingType'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/briefing-types/{briefing_type.id}:
+        patch:
+            tags:
+                - BriefingService
+                - BriefingTypes
+            summary: Update briefing type
+            description: Update specified fields of briefing types
+            operationId: BriefingService_UpdateBriefingType
+            parameters:
+                - name: briefing_type.id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: field_mask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BriefingType'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BriefingType'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/briefing-types/{id}:
+        get:
+            tags:
+                - BriefingService
+                - BriefingTypes
+            summary: Get briefing-type
+            description: Get briefing type information
+            operationId: BriefingService_GetBriefingType
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BriefingType'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - BriefingService
+                - BriefingTypes
+            summary: Delete briefing-type
+            description: Delete the specified briefing type
+            operationId: BriefingService_DeleteBriefingType
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/briefings:
+        get:
+            tags:
+                - BriefingService
+                - Briefings
+            summary: List briefings
+            description: List all registered briefings
+            operationId: BriefingService_ListBriefings
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListBriefingsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - BriefingService
+                - Briefings
+            summary: Create Briefing
+            description: Create safety briefing
+            operationId: BriefingService_CreateBriefing
+            parameters:
+                - name: briefing_id
+                  in: query
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Briefing'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Briefing'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/briefings/{briefing.id}:
+        patch:
+            tags:
+                - BriefingService
+                - Briefings
+            summary: Update briefing
+            description: Update specified fields of briefings
+            operationId: BriefingService_UpdateBriefing
+            parameters:
+                - name: briefing.id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: field_mask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Briefing'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Briefing'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/briefings/{id}:
+        get:
+            tags:
+                - BriefingService
+                - Briefings
+            summary: Get briefing
+            description: Get briefing information
+            operationId: BriefingService_GetBriefing
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Briefing'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - BriefingService
+                - Briefings
+            summary: Delete briefing
+            description: Delete the specified briefing
+            operationId: BriefingService_DeleteBriefing
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/cards:
+        get:
+            tags:
+                - CardService
+                - Cards
+            summary: List cards
+            description: List all registered cards
+            operationId: CardService_ListCards
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+                - name: sort_by
+                  in: query
+                  schema:
+                    enum:
+                        - CARD_FIELD_UNKNOWN
+                        - CARD_FIELD_ID
+                        - CARD_FIELD_MEMBER_ID
+                        - CARD_FIELD_VALID_FROM
+                        - CARD_FIELD_VALID_TO
+                    type: string
+                    format: enum
+                - name: sort_direction
+                  in: query
+                  schema:
+                    enum:
+                        - SORT_DIRECTION_DEFAULT
+                        - SORT_DIRECTION_ASCENDING
+                        - SORT_DIRECTION_DESCENDING
+                    type: string
+                    format: enum
+                - name: member_id
+                  in: query
+                  schema:
+                    type: string
+                - name: valid_on
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: rfid_value
+                  in: query
+                  schema:
+                    type: string
+                    format: bytes
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListCardsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - CardService
+                - Cards
+            summary: Create Card
+            description: Create Space Card
+            operationId: CardService_CreateCard
+            parameters:
+                - name: card_id
+                  in: query
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Card'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Card'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/cards/{card.id}:
+        patch:
+            tags:
+                - CardService
+                - Cards
+            summary: Update card
+            description: Update specified fields of cards
+            operationId: CardService_UpdateCard
+            parameters:
+                - name: card.id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: field_mask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Card'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Card'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/cards/{id}:
+        get:
+            tags:
+                - CardService
+                - Cards
+            summary: Get card
+            description: Get card information
+            operationId: CardService_GetCard
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Card'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - CardService
+                - Cards
+            summary: Delete card
+            description: Delete the specified card
+            operationId: CardService_DeleteCard
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/member-tags:
+        get:
+            tags:
+                - MemberService
+                - Members
+            summary: List member tags
+            description: List all possible tags that appear on members so far
+            operationId: MemberService_ListMemberTags
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListMemberTagsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/members:
+        get:
+            tags:
+                - MemberService
+                - Members
+            summary: List members
+            description: List all registered members
+            operationId: MemberService_ListMembers
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+                - name: sort_by
+                  in: query
+                  schema:
+                    enum:
+                        - MEMBER_FIELD_UNKNOWN
+                        - MEMBER_FIELD_ID
+                        - MEMBER_FIELD_NAME
+                        - MEMBER_FIELD_MEMBERSHIP_START
+                        - MEMBER_FIELD_MEMBERSHIP_END
+                    type: string
+                    format: enum
+                - name: sort_direction
+                  in: query
+                  schema:
+                    enum:
+                        - SORT_DIRECTION_DEFAULT
+                        - SORT_DIRECTION_ASCENDING
+                        - SORT_DIRECTION_DESCENDING
+                    type: string
+                    format: enum
+                - name: name_contains
+                  in: query
+                  schema:
+                    type: string
+                - name: membership_start_after
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: membership_start_before
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: membership_end_after
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: membership_end_before
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: age_category_equals
+                  in: query
+                  schema:
+                    enum:
+                        - AGE_CATEGORY_UNKNOWN
+                        - AGE_CATEGORY_UNDERAGE
+                        - AGE_CATEGORY_ADULT
+                    type: string
+                    format: enum
+                - name: tag_contains
+                  in: query
+                  schema:
+                    type: array
+                    items:
+                        type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListMembersResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - MemberService
+                - Members
+            summary: Create Member
+            description: Create Space Member
+            operationId: MemberService_CreateMember
+            parameters:
+                - name: member_id
+                  in: query
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Member'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Member'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/members/{id}:
+        get:
+            tags:
+                - MemberService
+                - Members
+            summary: Get member
+            description: Get member information
+            operationId: MemberService_GetMember
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Member'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - MemberService
+                - Members
+            summary: Delete member
+            description: Delete the specified member
+            operationId: MemberService_DeleteMember
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/members/{member.id}:
+        patch:
+            tags:
+                - MemberService
+                - Members
+            summary: Update member
+            description: Update specified fields of members
+            operationId: MemberService_UpdateMember
+            parameters:
+                - name: member.id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: field_mask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Member'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Member'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/presences:
+        get:
+            tags:
+                - PresenceService
+                - Presences
+            summary: List presences
+            description: List precenses, where members have checked in/out
+            operationId: PresenceService_ListPresences
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+                - name: member_id
+                  in: query
+                  description: Filters
+                  schema:
+                    type: string
+                - name: checkin_time_after
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: checkin_time_before
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: checkout_time_after
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: checkout_time_before
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListPresencesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/presences/{id}:
+        delete:
+            tags:
+                - PresenceService
+                - Presences
+            summary: Delete Presence
+            description: Delete a presence record
+            operationId: PresenceService_DeletePresence
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/presences/{presence.id}:
+        post:
+            tags:
+                - PresenceService
+                - Presences
+            summary: Update presence
+            description: Updates a presence. Usual operation should be via checkin/checkout instead of update
+            operationId: PresenceService_UpdatePresence
+            parameters:
+                - name: presence.id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: field_mask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Presence'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Presence'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/presences:checkin:
+        post:
+            tags:
+                - PresenceService
+                - Presences
+            summary: Check in
+            description: Check in a member, this creates a new presence
+            operationId: PresenceService_Checkin
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CheckinRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Presence'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/presences:checkout:
+        post:
+            tags:
+                - PresenceService
+                - Presences
+            summary: Check out
+            description: Check out a member, ends an open presence if there is one
+            operationId: PresenceService_Checkout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CheckoutRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Presence'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+components:
+    schemas:
+        Briefing:
+            required:
+                - id
+                - briefing_type
+            type: object
+            properties:
+                id:
+                    type: string
+                briefing_type:
+                    type: string
+        BriefingType:
+            required:
+                - id
+                - display_name
+                - description
+                - expires_after
+            type: object
+            properties:
+                id:
+                    type: string
+                display_name:
+                    type: string
+                description:
+                    type: string
+                expires_after:
+                    pattern: ^-?(?:0|[1-9][0-9]{0,11})(?:\.[0-9]{1,9})?s$
+                    type: string
+        Card:
+            required:
+                - id
+                - member_id
+                - rfid_value
+                - valid_from
+                - valid_to
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: string
+                member_id:
+                    type: string
+                rfid_value:
+                    type: string
+                    format: bytes
+                valid_from:
+                    type: string
+                    format: date-time
+                valid_to:
+                    type: string
+                    format: date-time
+        CheckinRequest:
+            type: object
+            properties:
+                member_id:
+                    type: string
+        CheckoutRequest:
+            type: object
+            properties:
+                member_id:
+                    type: string
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListBriefingTypesResponse:
+            required:
+                - briefing_types
+                - next_page_token
+            type: object
+            properties:
+                briefing_types:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/BriefingType'
+                next_page_token:
+                    type: string
+        ListBriefingsResponse:
+            type: object
+            properties:
+                briefings:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Briefing'
+                next_page_token:
+                    type: string
+        ListCardsResponse:
+            required:
+                - cards
+                - next_page_token
+            type: object
+            properties:
+                cards:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Card'
+                next_page_token:
+                    type: string
+        ListMemberTagsResponse:
+            type: object
+            properties:
+                tags:
+                    type: array
+                    items:
+                        type: string
+                next_page_token:
+                    type: string
+        ListMembersResponse:
+            required:
+                - members
+                - next_page_token
+            type: object
+            properties:
+                members:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Member'
+                next_page_token:
+                    type: string
+        ListPresencesResponse:
+            required:
+                - presence
+                - next_page_token
+            type: object
+            properties:
+                presence:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Presence'
+                next_page_token:
+                    type: string
+        Member:
+            required:
+                - id
+                - name
+                - membership_start
+                - age_category
+                - tags
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: string
+                name:
+                    type: string
+                membership_start:
+                    type: string
+                    format: date-time
+                membership_end:
+                    type: string
+                    format: date-time
+                age_category:
+                    enum:
+                        - AGE_CATEGORY_UNKNOWN
+                        - AGE_CATEGORY_UNDERAGE
+                        - AGE_CATEGORY_ADULT
+                    type: string
+                    format: enum
+                tags:
+                    type: array
+                    items:
+                        type: string
+        Presence:
+            required:
+                - id
+                - member_id
+                - checkin_time
+                - checkout_time
+            type: object
+            properties:
+                id:
+                    type: string
+                member_id:
+                    type: string
+                checkin_time:
+                    type: string
+                    format: date-time
+                checkout_time:
+                    type: string
+                    format: date-time
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+tags:
+    - name: BriefingService
+    - name: CardService
+    - name: MemberService
+    - name: PresenceService

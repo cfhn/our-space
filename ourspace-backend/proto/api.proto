@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ourspace_backend.v1;
+package ourspace_backend.proto;
 
 // weak, otherwise gnostic imports broken imports for gen-go
 // weak import: proto definition only adds options, no additional messages.
@@ -8,17 +8,14 @@ package ourspace_backend.v1;
 import weak "gnostic/openapi/v3/annotations.proto"; // Will not import _ "" in the gen-go files
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
-import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
-import "validate/validate.proto";
 
 // Defines the import path that should be used to import the generated package,
 // and the package name.
-option go_package = "github.com/cfhn/our-space/ourspace-backend/pb;pb";
+option go_package = "github.com/cfhn/our-space/ourspace-backend/proto;pb";
 // These annotations are used when generating the OpenAPI file.
 option (gnostic.openapi.v3.document) = {
   info: {
@@ -503,7 +500,7 @@ message DeleteBriefingRequest {
 }
 
 service PresenceService {
-  rpc ListPresences(ListPrecensesRequest) returns (ListPrecensesResponse) {
+  rpc ListPresences(ListPresencesRequest) returns (ListPresencesResponse) {
     option(google.api.http) = {
       get: "/v1/presences"
     };
@@ -571,7 +568,7 @@ message Presence {
   google.protobuf.Timestamp checkout_time = 4 [json_name="checkout_time"];
 }
 
-message ListPrecensesRequest {
+message ListPresencesRequest {
   int32 page_size = 1 [json_name="page_size"];
   string page_token = 2 [json_name="page_token"];
 
@@ -583,7 +580,7 @@ message ListPrecensesRequest {
   optional google.protobuf.Timestamp checkout_time_before = 7 [json_name="checkout_time_before"];
 }
 
-message ListPrecensesResponse {
+message ListPresencesResponse {
   option (gnostic.openapi.v3.schema) = {
     required: "presence"
     required: "next_page_token"

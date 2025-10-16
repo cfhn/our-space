@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -19,13 +20,20 @@ import (
 )
 
 type JobSpec struct {
-	Name     string
-	Job      Job
-	Interval time.Duration
+	Name      string
+	Job       Job
+	Interval  time.Duration
+	Immediate bool
 }
 
 type Job interface {
 	Run(ctx context.Context) error
+}
+
+type JobFunc func(ctx context.Context) error
+
+func (fn JobFunc) Run(ctx context.Context) error {
+	return fn(ctx)
 }
 
 type Server struct {
@@ -34,6 +42,7 @@ type Server struct {
 	Logger   *slog.Logger
 	Register func(*grpc.Server, *grpc.ClientConn, *runtime.ServeMux) error
 	Jobs     []JobSpec
+	Cors     *cors.Options
 }
 
 func (s *Server) Run() error {
@@ -59,8 +68,13 @@ func (s *Server) Run() error {
 		return err
 	}
 
+	var handler http.Handler = serveMux
+	if s.Cors != nil {
+		handler = cors.New(*s.Cors).Handler(handler)
+	}
+
 	httpServer := http.Server{
-		Handler: serveMux,
+		Handler: handler,
 	}
 
 	server := grpc.NewServer()
@@ -76,7 +90,7 @@ func (s *Server) Run() error {
 
 	reflection.Register(server)
 
-	eg := errgroup.Group{}
+	eg, ctx := errgroup.WithContext(context.Background())
 
 	eg.Go(func() error {
 		s.Logger.Info("serving gRPC", "addr", grpcListener.Addr().String())
@@ -106,18 +120,24 @@ func (s *Server) Run() error {
 		eg.Go(func() error {
 			ticker := time.NewTicker(jobSpec.Interval)
 			defer ticker.Stop()
-
-			select {
-			case <-ticker.C:
+			if jobSpec.Immediate {
 				err := jobSpec.Job.Run(context.Background())
 				if err != nil {
 					s.Logger.Error("job failure", log.Error(err), slog.String("job", jobSpec.Name))
-
-					return err
 				}
 			}
 
-			return nil
+			for {
+				select {
+				case <-ticker.C:
+					err := jobSpec.Job.Run(context.Background())
+					if err != nil {
+						s.Logger.Error("job failure", log.Error(err), slog.String("job", jobSpec.Name))
+					}
+				case <-ctx.Done():
+					return nil
+				}
+			}
 		})
 	}
 

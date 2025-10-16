@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {RouterView} from 'vue-router';
+import {RouterView, useRoute} from 'vue-router';
 import {useColorMode} from "@vueuse/core"
 import {
   OnyxAppLayout,
@@ -12,12 +12,14 @@ import {
 
 const {store: colorScheme} = useColorMode({disableTransition: false});
 useThemeTransition(colorScheme);
+
+const route = useRoute();
 </script>
 
 <template>
   <OnyxAppLayout>
     <template #navBar>
-      <OnyxNavBar app-name="OurSpace">
+      <OnyxNavBar app-name="OurSpace" v-if="route.meta.navbar ?? true">
         <OnyxNavItem label="Members" link="/members"></OnyxNavItem>
         <OnyxNavItem label="Cards" link="/cards"></OnyxNavItem>
         <template #contextArea>
