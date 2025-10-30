@@ -26,3 +26,4 @@ protobreaking: $(wildcard **/proto/buf.lock) bin/protoc-gen-buf-breaking ## Comp
 generate: ## Generates code from protobuf files
 generate: bin/buf bin/protoc-gen-grpc-gateway bin/protoc-gen-openapi $(wildcard **/proto/buf.lock) bin/protoc-gen-go bin/protoc-gen-go-grpc bin/protoc-gen-validate
 	PATH=$(PWD)/bin:$$PATH buf generate
+	cd ourspace-frontend && pnpm run openapi-ts

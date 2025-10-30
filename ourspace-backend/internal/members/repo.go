@@ -65,14 +65,25 @@ func (p *Postgres) CreateMember(ctx context.Context, member *pb.Member) (*pb.Mem
 		return nil, err
 	}
 
+	if member.MemberLogin != nil {
+		_, err = p.db.ExecContext(ctx, `
+			insert into members_auth (id, username, password_hash)
+			values ($1, $2, $3)
+		`, member.Id, member.MemberLogin.Username, member.MemberLogin.Password)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return p.GetMember(ctx, member.Id)
 }
 
 func (p *Postgres) GetMember(ctx context.Context, id string) (*pb.Member, error) {
 	row := p.db.QueryRowContext(ctx, `
-		select id, name, membership_start, membership_end, age_category, tags
+		select members.id, name, membership_start, membership_end, age_category, tags, members_auth.username
 		from members
-		where id = $1`, id,
+		left join members_auth on members.id = members_auth.id
+		where members.id = $1`, id,
 	)
 
 	member, err := scanMember(row)
@@ -115,8 +126,9 @@ func (p *Postgres) ListMembers(
 	values = append(values, paginationValues...)
 
 	rows, err := p.db.QueryContext(ctx, `
-		select id, name, membership_start, membership_end, age_category, tags
+		select members.id, name, membership_start, membership_end, age_category, tags, members_auth.username
 		from members
+		left join members_auth on members.id = members_auth.id
 		where
 		    ($1::text is null OR name ilike $1)
 		and ($2::timestamptz is null OR membership_start < $2)
@@ -221,6 +233,7 @@ func (p *Postgres) UpdateMember(
 		ageCategory         sql.Null[string]
 		updateTags          bool
 		tags                pgtype.FlatArray[string]
+		updateMemberLogin   bool
 	)
 
 	for _, path := range fieldMask.Paths {
@@ -244,6 +257,8 @@ func (p *Postgres) UpdateMember(
 			if tags == nil {
 				tags = pgtype.FlatArray[string]{}
 			}
+		case "member_login":
+			updateMemberLogin = true
 		}
 	}
 
@@ -259,6 +274,24 @@ func (p *Postgres) UpdateMember(
 	`, member.Id, name, membershipStart, updateMembershipEnd, membershipEnd, ageCategory, updateTags, tags)
 	if err != nil {
 		return nil, err
+	}
+
+	if updateMemberLogin && member.MemberLogin != nil {
+		_, err = p.db.ExecContext(ctx, `
+			insert into members_auth (id, username, password_hash)
+			values ($1, $2, $3)
+			on conflict (id) do update
+				set username = excluded.username,
+					password_hash = excluded.password_hash
+		`, member.Id, member.MemberLogin.Username, member.MemberLogin.Password)
+		if err != nil {
+			return nil, err
+		}
+	} else if updateMemberLogin {
+		_, err = p.db.ExecContext(ctx, `
+			delete from members_auth
+			where id = $1
+		`, member.Id)
 	}
 
 	return p.GetMember(ctx, member.Id)
@@ -316,6 +349,7 @@ func scanMember(in scanner) (*pb.Member, error) {
 		membershipStart time.Time
 		membershipEnd   sql.Null[time.Time]
 		ageCategory     string
+		username        sql.Null[string]
 	)
 
 	m := pgtype.NewMap()
@@ -327,6 +361,7 @@ func scanMember(in scanner) (*pb.Member, error) {
 		&membershipEnd,
 		&ageCategory,
 		m.SQLScanner(&member.Tags),
+		&username,
 	)
 	if err != nil {
 		return nil, err
@@ -337,6 +372,12 @@ func scanMember(in scanner) (*pb.Member, error) {
 
 	if membershipEnd.Valid {
 		member.MembershipEnd = timestamppb.New(membershipEnd.V)
+	}
+
+	if username.Valid {
+		member.MemberLogin = &pb.MemberLogin{
+			Username: username.V,
+		}
 	}
 
 	return member, nil

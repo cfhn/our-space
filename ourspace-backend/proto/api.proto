@@ -12,6 +12,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
+import "pkg/setup/proto/auth.proto";
 
 // Defines the import path that should be used to import the generated package,
 // and the package name.
@@ -26,6 +27,27 @@ option (gnostic.openapi.v3.document) = {
   servers: {
     url: "http://localhost:8080"
     description: "Host Server"
+  }
+  components: {
+    security_schemes: {
+      additional_properties: {
+        name: "authenticated"
+        value: {
+          security_scheme: {
+            name: "authenticated"
+            type: "http"
+            scheme: "bearer"
+            bearer_format: "JWT"
+          }
+        }
+      }
+    }
+  }
+  security: {
+    additional_properties: {
+      name: "authenticated"
+      value: {}
+    }
   }
 };
 
@@ -112,6 +134,12 @@ message Member {
   google.protobuf.Timestamp membership_end = 4 [json_name="membership_end"];
   AgeCategory age_category = 5 [json_name="age_category"];
   repeated string tags = 6;
+  optional MemberLogin member_login = 7 [json_name="member_login"];
+}
+
+message MemberLogin {
+  string username = 1;
+  string password = 2 [(google.api.field_behavior) = INPUT_ONLY];
 }
 
 enum AgeCategory {
@@ -605,3 +633,90 @@ message UpdatePresenceRequest {
 message DeletePresenceRequest {
   string id = 1;
 }
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Login"
+      description: "Authenticate with our-space"
+      tags: "Auth"
+      security: {}
+    };
+    option(pkg.setup.auth_options) = {
+      allow_unauthenticated: true
+    };
+  }
+  rpc Refresh(RefreshRequest) returns (RefreshResponse) {
+    option (google.api.http) ={
+      post: "/v1/auth/refresh"
+      body: "*"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Refresh Authentication"
+      description: "Refreshes the token. Use with user-facing clients only."
+      security: {}
+    };
+    option(pkg.setup.auth_options) = {
+      allow_unauthenticated: true
+    };
+  }
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/logout"
+      body: "*"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Logout"
+      description: "Logs out the user-facing client"
+      security: {}
+    };
+    option(pkg.setup.auth_options) = {
+      allow_unauthenticated: true
+    };
+  }
+}
+
+message LoginRequest {
+  oneof credentials {
+    LoginPassword password = 1;
+    LoginOpenIDConnect oidc = 2;
+  }
+}
+
+message LoginPassword {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginOpenIDConnect {
+  string auth_code = 1 [json_name="auth_code"];
+  string client_id = 2 [json_name="client_id"];
+  string code_verifier = 3 [json_name="code_verifier"];
+}
+
+message LoginResponse {
+  oneof outcome {
+    LoginSuccess success = 1;
+  }
+}
+
+message LoginSuccess {
+  string access_token = 1 [json_name="access_token"];
+  string refresh_token = 2 [json_name="refresh_token"];
+
+  google.protobuf.Timestamp access_token_expiry = 3;
+  google.protobuf.Timestamp refresh_token_expiry = 4;
+}
+
+message RefreshRequest {}
+
+message RefreshResponse {
+  LoginSuccess success = 1;
+}
+
+message LogoutRequest {}
+message LogoutResponse {}

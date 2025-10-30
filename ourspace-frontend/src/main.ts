@@ -8,7 +8,17 @@ import {createApp} from 'vue'
 import {createOnyx} from "sit-onyx";
 import App from './App.vue'
 import router from './router.ts'
+import {client} from "./client/client.gen";
+import {getToken, startRefreshTokenTask} from "@/auth/token.ts";
+import {authGuard} from "@/auth/guard.ts";
 
+client.setConfig({
+  baseUrl: location.origin + "/api",
+  auth: getToken,
+})
+
+startRefreshTokenTask();
+router.beforeEach(authGuard);
 
 const onyx = createOnyx({
   router: router,

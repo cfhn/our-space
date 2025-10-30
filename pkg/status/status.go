@@ -42,3 +42,11 @@ func FromError(err error) *status.Status {
 
 	return s
 }
+
+func Unauthenticated() error {
+	return status.Error(codes.Unauthenticated, "unauthenticated")
+}
+
+func PermissionDenied() error {
+	return status.Error(codes.PermissionDenied, "permission denied")
+}

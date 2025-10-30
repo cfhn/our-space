@@ -2,11 +2,13 @@ package setup
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -37,12 +39,14 @@ func (fn JobFunc) Run(ctx context.Context) error {
 }
 
 type Server struct {
-	HTTPPort int
-	GRPCPort int
-	Logger   *slog.Logger
-	Register func(*grpc.Server, *grpc.ClientConn, *runtime.ServeMux) error
-	Jobs     []JobSpec
-	Cors     *cors.Options
+	HTTPPort        int
+	GRPCPort        int
+	Logger          *slog.Logger
+	Register        func(*grpc.Server, *grpc.ClientConn, *runtime.ServeMux) error
+	Jobs            []JobSpec
+	Cors            *cors.Options
+	ServeMuxOptions []runtime.ServeMuxOption
+	KeyFunc         func(kid string) *ecdsa.PublicKey
 }
 
 func (s *Server) Run() error {
@@ -56,7 +60,12 @@ func (s *Server) Run() error {
 		return err
 	}
 
-	serveMux := runtime.NewServeMux()
+	muxOptions := s.ServeMuxOptions
+	muxOptions = append(muxOptions, runtime.WithIncomingHeaderMatcher(func(s string) (string, bool) {
+		return "", strings.EqualFold(s, "authorization")
+	}))
+
+	serveMux := runtime.NewServeMux(s.ServeMuxOptions...)
 
 	err = serveMux.HandlePath(
 		http.MethodGet, "/.well-known/ready",
@@ -77,7 +86,9 @@ func (s *Server) Run() error {
 		Handler: handler,
 	}
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(AuthInterceptor(s.KeyFunc)),
+	)
 	grpcClient, err := grpc.NewClient(fmt.Sprintf("localhost:%d", s.GRPCPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err

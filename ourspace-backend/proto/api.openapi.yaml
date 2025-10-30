@@ -10,6 +10,91 @@ servers:
     - url: http://localhost:8080
       description: Host Server
 paths:
+    /v1/auth/login:
+        post:
+            tags:
+                - AuthService
+                - Auth
+            summary: Login
+            description: Authenticate with our-space
+            operationId: AuthService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+            security:
+                - {}
+    /v1/auth/logout:
+        post:
+            tags:
+                - AuthService
+            summary: Logout
+            description: Logs out the user-facing client
+            operationId: AuthService_Logout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LogoutRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LogoutResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+            security:
+                - {}
+    /v1/auth/refresh:
+        post:
+            tags:
+                - AuthService
+            summary: Refresh Authentication
+            description: Refreshes the token. Use with user-facing clients only.
+            operationId: AuthService_Refresh
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RefreshRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RefreshResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+            security:
+                - {}
     /v1/briefing-types:
         get:
             tags:
@@ -1042,6 +1127,53 @@ components:
                         $ref: '#/components/schemas/Presence'
                 next_page_token:
                     type: string
+        LoginOpenIDConnect:
+            type: object
+            properties:
+                auth_code:
+                    type: string
+                client_id:
+                    type: string
+                code_verifier:
+                    type: string
+        LoginPassword:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        LoginRequest:
+            type: object
+            properties:
+                password:
+                    $ref: '#/components/schemas/LoginPassword'
+                oidc:
+                    $ref: '#/components/schemas/LoginOpenIDConnect'
+        LoginResponse:
+            type: object
+            properties:
+                success:
+                    $ref: '#/components/schemas/LoginSuccess'
+        LoginSuccess:
+            type: object
+            properties:
+                access_token:
+                    type: string
+                refresh_token:
+                    type: string
+                access_token_expiry:
+                    type: string
+                    format: date-time
+                refresh_token_expiry:
+                    type: string
+                    format: date-time
+        LogoutRequest:
+            type: object
+            properties: {}
+        LogoutResponse:
+            type: object
+            properties: {}
         Member:
             required:
                 - id
@@ -1073,6 +1205,16 @@ components:
                     type: array
                     items:
                         type: string
+                member_login:
+                    $ref: '#/components/schemas/MemberLogin'
+        MemberLogin:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    writeOnly: true
+                    type: string
         Presence:
             required:
                 - id
@@ -1091,6 +1233,14 @@ components:
                 checkout_time:
                     type: string
                     format: date-time
+        RefreshRequest:
+            type: object
+            properties: {}
+        RefreshResponse:
+            type: object
+            properties:
+                success:
+                    $ref: '#/components/schemas/LoginSuccess'
         Status:
             type: object
             properties:
@@ -1107,7 +1257,16 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+    securitySchemes:
+        authenticated:
+            type: http
+            name: authenticated
+            scheme: bearer
+            bearerFormat: JWT
+security:
+    - authenticated: []
 tags:
+    - name: AuthService
     - name: BriefingService
     - name: CardService
     - name: MemberService

@@ -81,9 +81,44 @@ export type ListMembersResponseWritable = {
     next_page_token: string;
 };
 
-export type ListPrecensesResponse = {
+export type ListPresencesResponse = {
     presence: Array<Presence>;
     next_page_token: string;
+};
+
+export type LoginOpenIdConnect = {
+    auth_code?: string;
+    client_id?: string;
+    code_verifier?: string;
+};
+
+export type LoginPassword = {
+    username?: string;
+    password?: string;
+};
+
+export type LoginRequest = {
+    password?: LoginPassword;
+    oidc?: LoginOpenIdConnect;
+};
+
+export type LoginResponse = {
+    success?: LoginSuccess;
+};
+
+export type LoginSuccess = {
+    access_token?: string;
+    refresh_token?: string;
+    access_token_expiry?: string;
+    refresh_token_expiry?: string;
+};
+
+export type LogoutRequest = {
+    [key: string]: unknown;
+};
+
+export type LogoutResponse = {
+    [key: string]: unknown;
 };
 
 export type MemberReadable = {
@@ -93,6 +128,7 @@ export type MemberReadable = {
     membership_end?: string;
     age_category: 'AGE_CATEGORY_UNKNOWN' | 'AGE_CATEGORY_UNDERAGE' | 'AGE_CATEGORY_ADULT';
     tags: Array<string>;
+    member_login?: MemberLoginReadable;
 };
 
 export type MemberWritable = {
@@ -101,6 +137,16 @@ export type MemberWritable = {
     membership_end?: string;
     age_category: 'AGE_CATEGORY_UNKNOWN' | 'AGE_CATEGORY_UNDERAGE' | 'AGE_CATEGORY_ADULT';
     tags: Array<string>;
+    member_login?: MemberLoginWritable;
+};
+
+export type MemberLoginReadable = {
+    username?: string;
+};
+
+export type MemberLoginWritable = {
+    username?: string;
+    password?: string;
 };
 
 export type Presence = {
@@ -108,6 +154,14 @@ export type Presence = {
     member_id: string;
     checkin_time: string;
     checkout_time: string;
+};
+
+export type RefreshRequest = {
+    [key: string]: unknown;
+};
+
+export type RefreshResponse = {
+    success?: LoginSuccess;
 };
 
 /**
@@ -127,6 +181,81 @@ export type Status = {
      */
     details?: Array<GoogleProtobufAny>;
 };
+
+export type AuthServiceLoginData = {
+    body: LoginRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/login';
+};
+
+export type AuthServiceLoginErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type AuthServiceLoginError = AuthServiceLoginErrors[keyof AuthServiceLoginErrors];
+
+export type AuthServiceLoginResponses = {
+    /**
+     * OK
+     */
+    200: LoginResponse;
+};
+
+export type AuthServiceLoginResponse = AuthServiceLoginResponses[keyof AuthServiceLoginResponses];
+
+export type AuthServiceLogoutData = {
+    body: LogoutRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/logout';
+};
+
+export type AuthServiceLogoutErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type AuthServiceLogoutError = AuthServiceLogoutErrors[keyof AuthServiceLogoutErrors];
+
+export type AuthServiceLogoutResponses = {
+    /**
+     * OK
+     */
+    200: LogoutResponse;
+};
+
+export type AuthServiceLogoutResponse = AuthServiceLogoutResponses[keyof AuthServiceLogoutResponses];
+
+export type AuthServiceRefreshData = {
+    body: RefreshRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/refresh';
+};
+
+export type AuthServiceRefreshErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type AuthServiceRefreshError = AuthServiceRefreshErrors[keyof AuthServiceRefreshErrors];
+
+export type AuthServiceRefreshResponses = {
+    /**
+     * OK
+     */
+    200: RefreshResponse;
+};
+
+export type AuthServiceRefreshResponse = AuthServiceRefreshResponses[keyof AuthServiceRefreshResponses];
 
 export type BriefingServiceListBriefingTypesData = {
     body?: never;
@@ -745,7 +874,7 @@ export type PresenceServiceListPresencesResponses = {
     /**
      * OK
      */
-    200: ListPrecensesResponse;
+    200: ListPresencesResponse;
 };
 
 export type PresenceServiceListPresencesResponse = PresenceServiceListPresencesResponses[keyof PresenceServiceListPresencesResponses];

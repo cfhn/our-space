@@ -2,15 +2,23 @@ package main
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/sha256"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/pem"
 	"fmt"
 	"log/slog"
 	"os"
+	"sync/atomic"
+	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"google.golang.org/grpc"
 
+	"github.com/cfhn/our-space/ourspace-backend/internal/auth"
 	"github.com/cfhn/our-space/ourspace-backend/internal/cards"
 	"github.com/cfhn/our-space/ourspace-backend/internal/config"
 	"github.com/cfhn/our-space/ourspace-backend/internal/members"
@@ -59,6 +67,13 @@ func run(logger *slog.Logger) error {
 		return err
 	}
 
+	var (
+		signingKey atomic.Pointer[ecdsa.PrivateKey]
+		publicKeys atomic.Pointer[map[string]*ecdsa.PublicKey]
+	)
+
+	authRepo := auth.NewPostgresRepo(db)
+	authService := auth.NewAuthService(authRepo, &signingKey, &publicKeys)
 	membersRepo := members.NewPostgresRepo(db)
 	memberService := members.NewService(membersRepo)
 	cardsRepo := cards.NewPostgresRepo(db)
@@ -71,6 +86,7 @@ func run(logger *slog.Logger) error {
 		Register: func(server *grpc.Server, conn *grpc.ClientConn, mux *runtime.ServeMux) error {
 			pb.RegisterMemberServiceServer(server, memberService)
 			pb.RegisterCardServiceServer(server, cardsService)
+			pb.RegisterAuthServiceServer(server, authService)
 
 			err := pb.RegisterMemberServiceHandlerClient(context.Background(), mux, pb.NewMemberServiceClient(client))
 			if err != nil {
@@ -82,10 +98,108 @@ func run(logger *slog.Logger) error {
 				return err
 			}
 
+			err = pb.RegisterAuthServiceHandlerClient(context.Background(), mux, pb.NewAuthServiceClient(client))
+			if err != nil {
+				return err
+			}
+
 			return nil
 		},
-		Jobs: nil,
+		Jobs: []setup.JobSpec{
+			{
+				Name:      "refresh_signing_key",
+				Immediate: true,
+				Interval:  5 * time.Minute,
+				Job: setup.JobFunc(func(ctx context.Context) error {
+					loadedSigningKey, verificationKeys, err := loadKeys(cfg.Auth.SigningKeyPath, cfg.Auth.VerificationKeysPath)
+					if err != nil {
+						return err
+					}
+
+					publicKeys.Store(&verificationKeys)
+					signingKey.Store(loadedSigningKey)
+
+					return nil
+				}),
+			},
+		},
+		ServeMuxOptions: []runtime.ServeMuxOption{
+			runtime.WithForwardResponseOption(auth.CookieRewriter),
+			runtime.WithMetadata(auth.CookieForwarder),
+		},
+		KeyFunc: func(kid string) *ecdsa.PublicKey {
+			keyMap := *publicKeys.Load()
+			return keyMap[kid]
+		},
 	}
 
 	return server.Run()
+}
+
+func loadKeys(privateKeyPath, publicKeysPath string) (*ecdsa.PrivateKey, map[string]*ecdsa.PublicKey, error) {
+	pemContent, err := os.ReadFile(privateKeyPath)
+	if err != nil {
+		return nil, nil, err
+	}
+	block, _ := pem.Decode(pemContent)
+	if block == nil {
+		return nil, nil, fmt.Errorf("public key not found")
+	}
+
+	privateKey, err := x509.ParseECPrivateKey(block.Bytes)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	pemContent, err = os.ReadFile(publicKeysPath)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	keys := map[string]*ecdsa.PublicKey{}
+
+	for {
+		block, pemContent = pem.Decode(pemContent)
+		if block == nil {
+			break
+		}
+
+		if block.Type != "PUBLIC KEY" {
+			continue
+		}
+
+		publicKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		ecdsaKey, ok := publicKey.(*ecdsa.PublicKey)
+		if !ok {
+			continue
+		}
+
+		b, err := ecdsaKey.Bytes()
+		if err != nil {
+			return nil, nil, err
+		}
+
+		fingerprint := sha256.Sum256(b)
+		encoded := base64.RawStdEncoding.EncodeToString(fingerprint[:])
+
+		keys[encoded] = ecdsaKey
+	}
+
+	// Always add the current signing key to the verification keys
+	signingPublicKey := privateKey.Public().(*ecdsa.PublicKey)
+	b, err := signingPublicKey.Bytes()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	fingerprint := sha256.Sum256(b)
+	encoded := base64.RawStdEncoding.EncodeToString(fingerprint[:])
+
+	keys[encoded] = signingPublicKey
+
+	return privateKey, keys, nil
 }
