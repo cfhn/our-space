@@ -2,34 +2,63 @@ package sync
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"iter"
 	"log/slog"
 
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
+	"github.com/cfhn/our-space/pkg/setup"
 )
+
+var ErrUnknownLoginOutcome = errors.New("unknown login outcome")
 
 type Repository interface {
 	Replace(members []*pbBackend.Member, cards []*pbBackend.Card)
 }
 
 type BackendSynchronizer struct {
+	AuthClient   pbBackend.AuthServiceClient
 	MemberClient pbBackend.MemberServiceClient
 	CardClient   pbBackend.CardServiceClient
 
 	Repository Repository
 	Logger     *slog.Logger
+
+	ApiKey string
 }
 
 func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 	b.Logger.InfoContext(ctx, "starting sync")
 
+	backendAuth, err := setup.NewBearerTokenAuth(func(ctx context.Context) (string, error) {
+		loginResp, err := b.AuthClient.Login(ctx, &pbBackend.LoginRequest{
+			Credentials: &pbBackend.LoginRequest_ApiKey{
+				ApiKey: &pbBackend.LoginApiKey{
+					ApiKey: b.ApiKey,
+				},
+			},
+		})
+		if err != nil {
+			return "", err
+		}
+
+		loginSuccess, ok := loginResp.Outcome.(*pbBackend.LoginResponse_Success)
+		if !ok {
+			return "", fmt.Errorf("%w: %T", ErrUnknownLoginOutcome, loginResp.Outcome)
+		}
+
+		return loginSuccess.Success.AccessToken, nil
+	})
+
 	members, err := collect(pageIterator(func(pageToken string) (*pbBackend.ListMembersResponse, error) {
 		return b.MemberClient.ListMembers(ctx, &pbBackend.ListMembersRequest{
 			PageToken: pageToken,
 			PageSize:  100,
-		})
+		}, grpc.PerRPCCredentials(backendAuth))
 	}, (*pbBackend.ListMembersResponse).GetMembers))
 	if err != nil {
 		return err
@@ -39,8 +68,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 		return b.CardClient.ListCards(ctx, &pbBackend.ListCardsRequest{
 			PageSize:  100,
 			PageToken: pageToken,
-		})
-
+		}, grpc.PerRPCCredentials(backendAuth))
 	}, (*pbBackend.ListCardsResponse).GetCards))
 	if err != nil {
 		return err

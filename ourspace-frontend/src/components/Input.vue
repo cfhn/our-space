@@ -5,7 +5,7 @@ import {computed} from "vue";
 const props = defineProps<{
   label: string;
   isEdit: boolean;
-  type: "text" | "date";
+  type: "text" | "date" | "password";
 }>();
 
 const model = defineModel<string>();
@@ -23,12 +23,15 @@ const date = computed(() => {
 </script>
 
 <template>
-  <OnyxInput :label="props.label" v-model="model" v-if="isEdit && type == 'text'" v-bind="$attrs" />
-  <OnyxDatePicker type="datetime-local" :label="props.label" v-model="model" v-if="isEdit && type == 'date'" v-bind="$attrs" />
+  <OnyxInput :label="props.label" v-model="model"
+             v-if="isEdit && (type === 'text' || type === 'password')" :type v-bind="$attrs"/>
+  <OnyxDatePicker type="datetime-local" :label="props.label" v-model="model"
+                  v-if="isEdit && type == 'date'" v-bind="$attrs"/>
   <div v-if="!isEdit" v-bind="$attrs">
-    <p class="onyx-text--small label">{{props.label}}</p>
-    <p class="value" v-if="type !== 'date'">{{model}}</p>
-    <p class="value" v-if="type === 'date'">{{date}}</p>
+    <p class="onyx-text--small label">{{ props.label }}</p>
+    <p class="value" v-if="type === 'date'">{{ date }}</p>
+    <p class="value" v-else-if="type === 'text'">{{ model }}</p>
+    <p class="value" v-else-if="type === 'password'">***</p>
   </div>
 </template>
 
@@ -36,8 +39,9 @@ const date = computed(() => {
 .label {
   color: var(--onyx-color-text-icons-neutral-medium);
 }
+
 .value {
   padding: var(--onyx-density-xs) 0;
-  margin: calc(2*var(--onyx-1px-in-rem)) 0;
+  margin: calc(2 * var(--onyx-1px-in-rem)) 0;
 }
 </style>

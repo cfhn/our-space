@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,6 +15,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/cfhn/our-space/ourspace-backend/proto"
+	"github.com/cfhn/our-space/pkg/pwhash"
 	"github.com/cfhn/our-space/pkg/status"
 )
 
@@ -40,6 +42,15 @@ func (s Service) CreateMember(ctx context.Context, request *pb.CreateMemberReque
 		request.Member.Id = request.MemberId
 	} else {
 		request.Member.Id = uuid.New().String()
+	}
+
+	if request.Member.MemberLogin != nil {
+		hash, err := pwhash.Create(request.Member.MemberLogin.Password)
+		if err != nil {
+			return nil, err
+		}
+
+		request.Member.MemberLogin.Password = hash
 	}
 
 	member, err := s.repo.CreateMember(ctx, request.Member)
@@ -121,6 +132,36 @@ func validateCreateMember(request *pb.CreateMemberRequest) []*errdetails.BadRequ
 				Field:       fmt.Sprintf("member.tags[%d]", i),
 				Description: "tag must not be empty",
 				Reason:      "FIELD_INVALID",
+			})
+		}
+	}
+
+	if request.Member.MemberLogin != nil {
+		if len(request.Member.MemberLogin.Username) == 0 {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:       fmt.Sprintf("member.member_login.username"),
+				Description: "username must not be empty",
+			})
+		}
+
+		if len(request.Member.MemberLogin.Username) > 64 {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:       fmt.Sprintf("member.member_login.username"),
+				Description: "username must not be longer than 64 characters",
+			})
+		}
+
+		if len(request.Member.MemberLogin.Password) < 8 {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:       fmt.Sprintf("member.member_login.password"),
+				Description: "password must not be shorter than 8 characters",
+			})
+		}
+
+		if !strings.ContainsAny(request.Member.MemberLogin.Password, "0123456789") {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:       fmt.Sprintf("member.member_login.password"),
+				Description: "password must contain at least one number",
 			})
 		}
 	}
@@ -241,6 +282,15 @@ func (s Service) UpdateMember(ctx context.Context, request *pb.UpdateMemberReque
 		return nil, status.FieldViolations(fieldViolations)
 	}
 
+	if slices.Contains(request.FieldMask.Paths, "member_login") && request.Member.MemberLogin != nil {
+		hash, err := pwhash.Create(request.Member.MemberLogin.Password)
+		if err != nil {
+			return nil, err
+		}
+
+		request.Member.MemberLogin.Password = hash
+	}
+
 	updated, err := s.repo.UpdateMember(ctx, request.Member, request.FieldMask)
 	if err != nil {
 		return nil, err
@@ -323,6 +373,36 @@ func validateUpdateMember(request *pb.UpdateMemberRequest) []*errdetails.BadRequ
 						Field:       fmt.Sprintf("member.tags[%d]", i),
 						Description: "tag must not be empty",
 						Reason:      "FIELD_INVALID",
+					})
+				}
+			}
+		case "member_login":
+			if request.Member.MemberLogin != nil {
+				if len(request.Member.MemberLogin.Username) == 0 {
+					fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+						Field:       fmt.Sprintf("member.member_login.username"),
+						Description: "username must not be empty",
+					})
+				}
+
+				if len(request.Member.MemberLogin.Username) > 64 {
+					fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+						Field:       fmt.Sprintf("member.member_login.username"),
+						Description: "username must not be longer than 64 characters",
+					})
+				}
+
+				if len(request.Member.MemberLogin.Password) < 8 {
+					fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+						Field:       fmt.Sprintf("member.member_login.password"),
+						Description: "password must not be shorter than 8 characters",
+					})
+				}
+
+				if !strings.ContainsAny(request.Member.MemberLogin.Password, "0123456789") {
+					fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+						Field:       fmt.Sprintf("member.member_login.password"),
+						Description: "password must contain at least one number",
 					})
 				}
 			}

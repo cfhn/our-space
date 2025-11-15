@@ -45,10 +45,13 @@ func run() error {
 	firmwareService := firmware.NewService(logger, repo)
 
 	synchronizer := &sync.BackendSynchronizer{
+		AuthClient:   pbBackend.NewAuthServiceClient(backendClient),
 		MemberClient: pbBackend.NewMemberServiceClient(backendClient),
 		CardClient:   pbBackend.NewCardServiceClient(backendClient),
 		Repository:   repo,
 		Logger:       logger.With("module", "sync"),
+
+		ApiKey: os.Getenv("API_KEY"),
 	}
 
 	server := setup.Server{
@@ -87,6 +90,7 @@ func run() error {
 			MaxAge:           0,
 			AllowCredentials: true,
 		},
+		DisableAuthentication: true,
 	}
 
 	return server.Run()

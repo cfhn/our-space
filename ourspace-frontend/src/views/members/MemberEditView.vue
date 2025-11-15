@@ -17,7 +17,7 @@ import {
   memberServiceCreateMember,
   memberServiceGetMember,
   type MemberServiceGetMemberResponse,
-  memberServiceUpdateMember
+  memberServiceUpdateMember, type MemberWritable
 } from "@/client";
 import MemberDetails from "@/views/members/components/MemberDetails.vue";
 
@@ -63,7 +63,7 @@ const cancelEditing = () => {
   isEdit.value = false;
 }
 
-const changedFields = (member: MemberReadable, memberOriginal: MemberReadable): string[] => {
+const changedFields = (member: MemberWritable, memberOriginal: MemberReadable): string[] => {
   const changedFields = [];
   if (member.name !== memberOriginal.name) {
     changedFields.push("name");
@@ -79,6 +79,14 @@ const changedFields = (member: MemberReadable, memberOriginal: MemberReadable): 
   }
   if (!member.tags.every(value => memberOriginal.tags.includes(value))) {
     changedFields.push("tags");
+  }
+  if (
+    (member.member_login?.password !== undefined && member.member_login.password !== "") ||
+    (member.member_login !== undefined && memberOriginal.member_login === undefined) ||
+    (member.member_login === undefined && memberOriginal.member_login !== undefined) ||
+    (member.member_login?.username !== memberOriginal.member_login?.username)
+  ) {
+    changedFields.push("member_login");
   }
   return changedFields;
 }
@@ -149,6 +157,7 @@ watchEffect(async () => {
   if (resp.error) {
     console.log(resp.error);
   } else {
+    console.log(resp.data);
     member.value = resp.data;
     memberOriginal = {...resp.data};
   }
@@ -182,7 +191,7 @@ watchEffect(async () => {
       <div class="onyx-grid-span-6">
         <OnyxForm v-if="member" ref="memberForm">
           <OnyxHeadline is="h1" v-if="!isCreate">Member
-            <OnyxIconButton label="Edit" :icon="iconEdit" @click="isEdit = true" v-if="!isEdit" />
+            <OnyxIconButton label="Edit" :icon="iconEdit" @click="isEdit = true" v-if="!isEdit"/>
           </OnyxHeadline>
           <OnyxHeadline is="h1" v-if="isCreate">Create new Member</OnyxHeadline>
           <MemberDetails :member="member" :is-edit="isEdit || isCreate"/>
@@ -199,14 +208,17 @@ watchEffect(async () => {
             <OnyxButton label="Add Card" :link="`/cards/new?memberId=${member.id}`"></OnyxButton>
           </template>
         </OnyxEmpty>
-        <Card v-for="card of cards?.cards" :card :member v-if="member" class="card" />
+        <Card v-for="card of cards?.cards" :card :member v-if="member" class="card"/>
       </div>
     </div>
     <template #footer>
       <OnyxBottomBar>
-        <OnyxButton label="Back" mode="plain" color="neutral" @click="back" v-if="!isEdit"></OnyxButton>
-        <OnyxButton label="Cancel" mode="plain" color="neutral" @click="cancelEditing" v-if="isEdit"></OnyxButton>
-        <OnyxButton label="Save" mode="plain" color="primary" :disabled="!shouldEnableSave" @click="save"></OnyxButton>
+        <OnyxButton label="Back" mode="plain" color="neutral" @click="back"
+                    v-if="!isEdit"></OnyxButton>
+        <OnyxButton label="Cancel" mode="plain" color="neutral" @click="cancelEditing"
+                    v-if="isEdit"></OnyxButton>
+        <OnyxButton label="Save" mode="plain" color="primary" :disabled="!shouldEnableSave"
+                    @click="save"></OnyxButton>
       </OnyxBottomBar>
     </template>
   </OnyxPageLayout>
@@ -216,6 +228,7 @@ watchEffect(async () => {
 .card-empty {
   margin: 0 auto;
 }
+
 .card {
   margin-bottom: var(--onyx-spacing-sm);
 }

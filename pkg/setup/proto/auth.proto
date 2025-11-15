@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pkg.setup;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/cfhn/our-space/pkg/setup/proto;pb";
+
+extend google.protobuf.MethodOptions {
+  optional AuthOptions auth_options = 53040 [retention = RETENTION_RUNTIME];
+}
+
+message AuthOptions {
+  bool allow_unauthenticated = 1;
+}
