@@ -16,7 +16,7 @@ import (
 var ErrSessionExceedsLifetime = errors.New("session max length exceeds lifetime")
 
 func (s *Service) generateTokens(
-	username, name string, loginTime time.Time,
+	username, name string, loginTime time.Time, accessTokenValidity time.Duration,
 ) (string, time.Time, string, time.Time, error) {
 	now := time.Now()
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodES256, setup.AccessTokenClaims{

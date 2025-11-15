@@ -18,10 +18,10 @@ import (
 var ErrNotFound = errors.New("member not found")
 
 var membershipFields = map[pb.MemberField]string{
-	pb.MemberField_MEMBER_FIELD_ID:               "id",
-	pb.MemberField_MEMBER_FIELD_NAME:             "name",
-	pb.MemberField_MEMBER_FIELD_MEMBERSHIP_START: "membership_start",
-	pb.MemberField_MEMBER_FIELD_MEMBERSHIP_END:   "membership_end",
+	pb.MemberField_MEMBER_FIELD_ID:               "members.id",
+	pb.MemberField_MEMBER_FIELD_NAME:             "members.name",
+	pb.MemberField_MEMBER_FIELD_MEMBERSHIP_START: "members.membership_start",
+	pb.MemberField_MEMBER_FIELD_MEMBERSHIP_END:   "members.membership_end",
 }
 
 type Filters struct {
@@ -177,7 +177,7 @@ func generatePaginationQuery(token *pb.MemberPageToken, offset int) (string, []a
 	values = append(values, token.LastValue)
 
 	if token.Field != pb.MemberField_MEMBER_FIELD_ID {
-		fields = append(fields, "id")
+		fields = append(fields, "members.id")
 		values = append(values, token.LastId)
 	}
 

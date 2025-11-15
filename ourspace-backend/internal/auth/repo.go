@@ -7,7 +7,10 @@ import (
 	"fmt"
 )
 
-var ErrNotFound = errors.New("user not found")
+var (
+	ErrUserNotFound   = errors.New("user not found")
+	ErrApiKeyNotFound = errors.New("api key not found")
+)
 
 type PostgresRepository struct {
 	db *sql.DB
@@ -41,7 +44,7 @@ func (r *PostgresRepository) FindUserLoginDetails(ctx context.Context, username 
 	)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("%w", ErrNotFound)
+		return nil, fmt.Errorf("%w", ErrUserNotFound)
 	}
 	if err != nil {
 		return nil, err
@@ -57,4 +60,30 @@ func (r *PostgresRepository) UpdateHash(ctx context.Context, username, passwordH
 		where username = $1
 	`, username, passwordHash)
 	return err
+}
+
+func (r *PostgresRepository) FindApiKey(ctx context.Context, apiKey string) (*ApiKeyDetails, error) {
+	var (
+		result   ApiKeyDetails
+		memberId sql.Null[string]
+	)
+
+	err := r.db.QueryRowContext(ctx, `
+		select
+			id,
+			member_id
+		from api_keys
+		where
+			api_key = $1
+	`, apiKey).Scan(
+		&result.ID,
+		&memberId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	result.MemberId = memberId.V
+
+	return &result, nil
 }

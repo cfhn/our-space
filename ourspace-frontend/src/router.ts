@@ -61,6 +61,7 @@ const router = createRouter({
       component: TerminalView,
       meta: {
         navbar: false,
+        authenticated: false,
       }
     }
   ],

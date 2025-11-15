@@ -46,7 +46,9 @@ type Server struct {
 	Jobs            []JobSpec
 	Cors            *cors.Options
 	ServeMuxOptions []runtime.ServeMuxOption
-	KeyFunc         func(kid string) *ecdsa.PublicKey
+
+	DisableAuthentication bool
+	KeyFunc               func(kid string) *ecdsa.PublicKey
 }
 
 func (s *Server) Run() error {
@@ -86,8 +88,14 @@ func (s *Server) Run() error {
 		Handler: handler,
 	}
 
+	interceptors := []grpc.UnaryServerInterceptor{}
+
+	if !s.DisableAuthentication {
+		interceptors = append(interceptors, AuthInterceptor(s.KeyFunc))
+	}
+
 	server := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(AuthInterceptor(s.KeyFunc)),
+		grpc.ChainUnaryInterceptor(interceptors...),
 	)
 	grpcClient, err := grpc.NewClient(fmt.Sprintf("localhost:%d", s.GRPCPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

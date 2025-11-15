@@ -20,7 +20,7 @@ run-qemu: ./out/virtual.img
       -m 2048 \
       -drive file=./out/virtual.img,format=raw \
       -device e1000,netdev=net0 \
-      -netdev type=user,id=net0,hostfwd=tcp::8080-:80 \
+      -netdev type=user,id=net0,hostfwd=tcp::8080-:8080,hostfwd=tcp::50051-:50051 \
       -vga std \
       -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
       -drive if=pflash,format=raw,file=./deployment/uefi_nvram.fd

@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1.4
 
 # get modules, if they don't change the cache can be used for faster builds
-FROM golang:1.24.2 AS base
+FROM golang:1.25.3 AS base
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 ENV GOOS=linux
@@ -19,7 +19,7 @@ FROM base AS build
 RUN --mount=target=. \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go build -ldflags="-w -s" -o /app/main ./cmd/ourspace-backend/*.go
+    go build -ldflags="-w -s" -o /app/main ./ourspace-backend/cmd/ourspace-backend/
 
 # Import the binary from build stage
 

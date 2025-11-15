@@ -86,6 +86,10 @@ export type ListPresencesResponse = {
     next_page_token: string;
 };
 
+export type LoginApiKey = {
+    api_key?: string;
+};
+
 export type LoginOpenIdConnect = {
     auth_code?: string;
     client_id?: string;
@@ -100,6 +104,7 @@ export type LoginPassword = {
 export type LoginRequest = {
     password?: LoginPassword;
     oidc?: LoginOpenIdConnect;
+    api_key?: LoginApiKey;
 };
 
 export type LoginResponse = {

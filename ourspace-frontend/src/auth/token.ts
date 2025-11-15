@@ -69,6 +69,10 @@ const refresh = async () => {
     credentials: "include",
   });
   if (response.error || !response.data.success || !response.data.success.access_token) {
+    if (router.currentRoute.value.meta["authenticated"] === false) {
+      return;
+    }
+
     return router.push("/login");
   }
 

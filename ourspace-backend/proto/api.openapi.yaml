@@ -1127,6 +1127,11 @@ components:
                         $ref: '#/components/schemas/Presence'
                 next_page_token:
                     type: string
+        LoginApiKey:
+            type: object
+            properties:
+                api_key:
+                    type: string
         LoginOpenIDConnect:
             type: object
             properties:
@@ -1150,6 +1155,8 @@ components:
                     $ref: '#/components/schemas/LoginPassword'
                 oidc:
                     $ref: '#/components/schemas/LoginOpenIDConnect'
+                api_key:
+                    $ref: '#/components/schemas/LoginApiKey'
         LoginResponse:
             type: object
             properties:

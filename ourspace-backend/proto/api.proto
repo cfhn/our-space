@@ -684,6 +684,7 @@ message LoginRequest {
   oneof credentials {
     LoginPassword password = 1;
     LoginOpenIDConnect oidc = 2;
+    LoginApiKey api_key = 3;
   }
 }
 
@@ -696,6 +697,10 @@ message LoginOpenIDConnect {
   string auth_code = 1 [json_name="auth_code"];
   string client_id = 2 [json_name="client_id"];
   string code_verifier = 3 [json_name="code_verifier"];
+}
+
+message LoginApiKey {
+  string api_key = 1;
 }
 
 message LoginResponse {

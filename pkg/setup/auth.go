@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc"
@@ -111,4 +113,67 @@ func shouldAuthenticate(methodName string) bool {
 	}
 
 	return !authOptions.AllowUnauthenticated
+}
+
+type BearerTokenAuth struct {
+	mu      sync.RWMutex
+	token   string
+	expires time.Time
+	renew   func(ctx context.Context) (string, error)
+}
+
+func NewBearerTokenAuth(renew func(ctx context.Context) (string, error)) (*BearerTokenAuth, error) {
+	newToken, err := renew(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	// We just want the expiry
+	claims := jwt.RegisteredClaims{}
+	_, _, err = jwt.NewParser().ParseUnverified(newToken, &claims)
+	if err != nil {
+		return nil, err
+	}
+
+	return &BearerTokenAuth{
+		renew:   renew,
+		token:   newToken,
+		expires: claims.ExpiresAt.Time,
+	}, nil
+}
+
+func (b *BearerTokenAuth) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	b.mu.RLock()
+	expires := b.expires
+	b.mu.RUnlock()
+
+	if time.Since(expires) > 0 {
+		newToken, err := b.renew(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		claims := jwt.RegisteredClaims{}
+		_, _, err = jwt.NewParser().ParseUnverified(newToken, &claims)
+		if err != nil {
+			return nil, err
+		}
+
+		b.mu.Lock()
+		b.token = newToken
+		b.expires = claims.ExpiresAt.Time
+		b.mu.Unlock()
+	}
+
+	b.mu.RLock()
+	token := b.token
+	b.mu.RUnlock()
+
+	return map[string]string{
+		"authorization": "Bearer " + token,
+	}, nil
+}
+
+func (b *BearerTokenAuth) RequireTransportSecurity() bool {
+	return false
 }
