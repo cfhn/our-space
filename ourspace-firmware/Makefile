@@ -1,4 +1,5 @@
 GOK := gok -i ourspace-firmware --parent_dir ./deployment
+OVMF_VARS_LOCATION := /usr/share/ovmf/x64/OVMF_VARS.4m.fd
 
 .PHONY: clean
 clean:
@@ -13,17 +14,20 @@ build-qemu: ./out/virtual.img
 	/sbin/mkfs.ext4 -F -E offset=1157627904 /home/patrick/code/our-space/ourspace-firmware/out/virtual.img 3063791
 
 .PHONY: run-qemu
-run-qemu: ./out/virtual.img
+run-qemu: ./out/image.img ./out/uefi_nvram.fd
 	qemu-system-x86_64 \
       -machine accel=kvm \
       -smp 8 \
       -m 2048 \
-      -drive file=./out/virtual.img,format=raw \
+      -drive file=./out/image.img,format=raw \
       -device e1000,netdev=net0 \
-      -netdev type=user,id=net0,hostfwd=tcp::8080-:8080,hostfwd=tcp::50051-:50051 \
+      -netdev type=user,id=net0,hostfwd=tcp::8081-:8081,hostfwd=tcp::2222-:22 \
       -vga std \
       -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
-      -drive if=pflash,format=raw,file=./deployment/uefi_nvram.fd
+      -drive if=pflash,format=raw,file=./out/uefi_nvram.fd
+
+./out/uefi_nvram.fd:
+	cp $(OVMF_VARS_LOCATION) ./out/uefi_nvram.fd
 
 GO_DEPENDENCIES = google.golang.org/protobuf/cmd/protoc-gen-go \
 				google.golang.org/grpc/cmd/protoc-gen-go-grpc \
@@ -56,3 +60,36 @@ protobreaking: ../buf.lock bin/protoc-gen-buf-breaking ## Compares your current 
 generate: ## Generates code from protobuf files
 generate: bin/protoc-gen-grpc-gateway bin/protoc-gen-openapi ../buf.lock bin/protoc-gen-go bin/protoc-gen-go-grpc bin/protoc-gen-validate
 	PATH=$(PWD)/bin:$$PATH buf generate
+	PATH=$(PWD)/bin:$$PATH go generate ./...
+
+out/base.tar.gz: deployment/base.yaml deployment/overlay/etc/systemd/system/cage@.service out/firmware
+	docker run \
+		-v $(PWD):/work \
+		-v /dev/kvm:/dev/kvm \
+		--privileged \
+		--cgroupns host \
+		--security-opt label=disable \
+		--cap-add=SYS_ADMIN \
+		--workdir /work \
+		godebos/debos \
+		--scratchsize=16G \
+		/work/deployment/base.yaml \
+		--template-var "backend_address:$(BACKEND_ADDRESS)" \
+		--template-var "api_key:$(API_KEY)"
+
+out/image.img: deployment/image.yaml out/base.tar.gz
+	docker run \
+		-v $(PWD):/work \
+		-v /dev/kvm:/dev/kvm \
+		--privileged \
+		--cgroupns host \
+		--security-opt label=disable \
+		--cap-add=SYS_ADMIN \
+		--workdir /work \
+		godebos/debos \
+		/work/deployment/image.yaml
+	sudo chown $(USER):$(GID) out/image.img
+
+.PHONY: out/firmware
+out/firmware:
+	go build -ldflags="-w -s" -o "$(@)" ./cmd/ourspace-firmware

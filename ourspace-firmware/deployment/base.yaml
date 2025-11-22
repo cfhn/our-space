@@ -1,0 +1,69 @@
+{{- $mirror := or .mirror "http://deb.debian.org/debian" -}}
+{{- $suite := or .suite "trixie" -}}
+{{- $image := or .image "out/base.tar.gz" -}}
+
+architecture: amd64
+
+actions:
+  - action: debootstrap
+    suite: {{ $suite }}
+    components:
+      - main
+    mirror: {{ $mirror }}
+    variant: minbase
+
+  - action: apt
+    description: Install Kernel and extra packages
+    packages:
+      - adduser
+      - ca-certificates
+      - cage
+      - chromium
+      - grub-common
+      - grub-efi
+      - grub-efi-amd64
+      - gtk-3-examples
+      - htop
+      - initramfs-tools
+      - iproute2
+      - libnss-myhostname
+      - linux-image-amd64
+      - nano
+      - network-manager
+      - openssh-server
+      - openssl
+      - sudo
+      - systemd
+      - systemd-sysv
+      - util-linux
+      - zstd
+
+  - action: overlay
+    source: overlay
+
+  - action: run
+    chroot: true
+    command: |
+      echo "our-space-appliance" > /etc/hostname
+      useradd \
+        --uid 1000 \
+        --user-group \
+        --create-home \
+        --password $(echo "ourspace" | openssl passwd -6 -stdin) \
+        ourspace
+      usermod -a -G sudo ourspace
+      systemctl enable cage@tty1.service
+      systemctl enable ourspace.service
+      mkdir -p /home/ourspace/.ssh/
+      echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHDrMwsslvec7TeUJkrpnj6/04HsxDclgew5gPB61F24" >> /home/ourspace/.ssh/authorized_keys
+      mkdir -p /opt/ourspace
+      echo "BACKEND_ADDRESS={{ .backend_address }}" >> /opt/ourspace/environment
+      echo "API_KEY={{ .api_key }}" >> /opt/ourspace/environment
+
+  - action: overlay
+    source: ../out/firmware
+    destination: /opt/ourspace/firmware
+
+  - action: pack
+    file: {{ $image }}
+    compression: gz

@@ -2,18 +2,24 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/firmware"
+	"github.com/cfhn/our-space/ourspace-firmware/internal/frontend"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/inmemory"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/sync"
 	pb "github.com/cfhn/our-space/ourspace-firmware/proto"
@@ -35,8 +41,20 @@ func run() error {
 		log.WithSource(),
 	)
 
+	useTLS, err := strconv.ParseBool(os.Getenv("BACKEND_TLS"))
+	if err != nil {
+		useTLS = false
+	}
+
+	var creds credentials.TransportCredentials
+	if useTLS {
+		creds = credentials.NewTLS(&tls.Config{})
+	} else {
+		creds = insecure.NewCredentials()
+	}
+
 	backendAddress := os.Getenv("BACKEND_ADDRESS")
-	backendClient, err := grpc.NewClient(backendAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	backendClient, err := grpc.NewClient(backendAddress, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		return err
 	}
@@ -52,6 +70,12 @@ func run() error {
 		Logger:       logger.With("module", "sync"),
 
 		ApiKey: os.Getenv("API_KEY"),
+	}
+
+	frontendServer := http.Server{
+		Handler:     frontend.ServeFrontend(),
+		Addr:        ":8080",
+		ReadTimeout: 10 * time.Second,
 	}
 
 	server := setup.Server{
@@ -76,6 +100,18 @@ func run() error {
 				Name:      "Synchronize",
 				Job:       setup.JobFunc(synchronizer.Synchronize),
 				Interval:  10 * time.Second,
+				Immediate: true,
+			},
+			{
+				Name: "Frontend",
+				Job: setup.JobFunc(func(ctx context.Context) error {
+					err := frontendServer.ListenAndServe()
+					if errors.Is(err, http.ErrServerClosed) {
+						return nil
+					}
+					return err
+				}),
+				Interval:  math.MaxInt,
 				Immediate: true,
 			},
 		},

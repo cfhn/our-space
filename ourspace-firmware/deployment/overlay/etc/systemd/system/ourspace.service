@@ -1,0 +1,14 @@
+[Unit]
+Description=Ourspace Firmware
+After=systemd-user-sessions.service plymouth-quit-wait.service
+Before=graphical.target
+
+[Service]
+Type=simple
+ExecStart=/opt/ourspace/firmware
+Restart=always
+User=ourspace
+EnvironmentFile=/opt/ourspace/environment
+
+[Install]
+WantedBy=graphical.target
