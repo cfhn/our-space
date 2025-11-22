@@ -53,6 +53,9 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 
 		return loginSuccess.Success.AccessToken, nil
 	})
+	if err != nil {
+		return err
+	}
 
 	members, err := collect(pageIterator(func(pageToken string) (*pbBackend.ListMembersResponse, error) {
 		return b.MemberClient.ListMembers(ctx, &pbBackend.ListMembersRequest{

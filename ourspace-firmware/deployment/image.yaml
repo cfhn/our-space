@@ -1,0 +1,52 @@
+{{- $image := or .suite "out/image.img" -}}
+{{- $suite := or .suite "trixie" -}}
+
+architecture: amd64
+
+actions:
+  - action: unpack
+    file: out/base.tar.gz
+    compression: gz
+
+  - action: image-partition
+    imagename: {{ $image }}
+    imagesize: 8GB
+    partitiontype: gpt
+    mountpoints:
+      - mountpoint: /
+        partition: root
+      - mountpoint: /boot/efi
+        partition: efi
+        flags: [ boot ]
+      - mountpoint: /data
+        partition: data
+    partitions:
+      - name: efi
+        fs: vfat
+        parttype: C12A7328-F81F-11D2-BA4B-00A0C93EC93B
+        start: 0%
+        end: 256MB
+        options: [ x-systemd.automount ]
+      - name: root
+        fs: ext4
+        start: 256MB
+        end: 4GB
+      - name: data
+        fs: ext4
+        start: 4GB
+        end: 100%
+
+  - action: filesystem-deploy
+    description: Deploying filesystem onto image
+
+  - action: run
+    chroot: true
+    command: update-grub
+
+  - action: run
+    chroot: true
+    command: grub-install --target=x86_64-efi --no-nvram
+
+  - action: run
+    chroot: true
+    command: mkdir -p /boot/efi/EFI/BOOT && cp /boot/efi/EFI/debian/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
