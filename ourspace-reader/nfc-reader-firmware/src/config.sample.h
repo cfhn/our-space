@@ -22,8 +22,9 @@
 
 // Host and path of backend
 #define CONFIG_BACKEND_HOST         "<<server>>"
+#define CONFIG_BACKEND_PORT         80
 #define CONFIG_BACKEND_PATH         "/scan"
-#define CONFIG_BACKEND_PATH_ALIVE   "/heartbeat"
+// #define CONFIG_BACKEND_PATH_ALIVE   "/heartbeat" // not implemented yet
 
 // id to idendifiy data source
 #define CONFIG_TERMINAL_ID "<<human-readable-terminal-id>>"

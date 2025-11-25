@@ -32,19 +32,30 @@ void sendUidToServer(const char *uid) {
     responseBufIdx = 0;
     memset(responseBuf, 0, sizeof(responseBuf));
     
-    if (client.connect(CONFIG_BACKEND_HOST, 80)) {
-        static const char httpStr[] PROGMEM = 
+    if (client.connect(CONFIG_BACKEND_HOST, CONFIG_BACKEND_PORT)) {
+        // Build body
+        char body[128] = {0};
+        int bodyLen = snprintf_P(body, sizeof(body), PSTR("{\"card_serial\": \"%s\", \"terminalId\": \"%s\"}\r\n"), uid, CONFIG_TERMINAL_ID);
+        bodyLen = min(sizeof(body), bodyLen);
+        
+        // "Build" and send static part of header
+        static const char headerStatic[] PROGMEM = 
             "POST " CONFIG_BACKEND_PATH " HTTP/1.1\r\n"
             "Host: " CONFIG_BACKEND_HOST "\r\n"
             "User-Agent: arduino-ethernet\r\n"
             "Content-Type: application/json\r\n"
             "Connection: close\r\n"
-            "\r\n";
-        client_write_P(httpStr, sizeof(httpStr));
+            "Content-Length: ";
+        client_write_P(headerStatic, sizeof(headerStatic) - 1);
         
-        char payload[100] = {0};
-        int len = snprintf_P(payload, sizeof(payload), PSTR("{\"uid\": \"%s\", \"terminalId\": \"%s\"}\r\n"), uid, CONFIG_TERMINAL_ID);
-        client.write(payload, len);
+        // Build dynamic part of header (Content Length)
+        char headerDynamic[16];
+        int headerDynamicLen = snprintf(headerDynamic, sizeof(headerDynamic), "%d\r\n\r\n", bodyLen);
+        headerDynamicLen = min(sizeof(headerDynamic), headerDynamicLen);
+
+        // Send dynamic header + body
+        client.write(headerDynamic, headerDynamicLen);
+        client.write(body, bodyLen);
     }
 }
 
@@ -52,22 +63,29 @@ void checkHttpResponse() {
     while (client.available()) {
         int bytesToRead = client.available();
         if (bytesToRead + responseBufIdx < sizeof(responseBuf)) {
-            client.readBytes(responseBuf + responseBufIdx, bytesToRead);
+            responseBufIdx += client.readBytes(responseBuf + responseBufIdx, bytesToRead);
+        }
+        else {  
+            // handle buffer too small
+            while(client.available()) {
+                client.read();  // discard buffer
+            }
+
         }
     }
 
     
     if (!client.connected() && requestSent != 0) {  // If client got disconnected and a response is expected
         // handle response
-
-        if (strstr(responseBuf, "added") != NULL) {
-            setAnimation(ANIM_CHECK_IN);
-        } else if (strstr(responseBuf, "removed") != NULL) {
-            setAnimation(ANIM_CHECK_OUT);
-        } else if (strstr(responseBuf, "unknown") != NULL) {
-            setAnimation(ANIM_UNKNOWN_CARD);
-        } else {
+        if (strstr(responseBuf,         "checkin"           ) != NULL)  { setAnimation(ANIM_CHECK_IN); }
+        else if (strstr(responseBuf,    "checkout"          ) != NULL)  { setAnimation(ANIM_CHECK_OUT); }
+        else if (strstr(responseBuf,    "member-not-found"  ) != NULL)  { setAnimation(ANIM_UNKNOWN_CARD); }
+        else if (strstr(responseBuf,    "card-not-found"    ) != NULL)  { setAnimation(ANIM_UNKNOWN_CARD); }
+        else {
             setAnimation(ANIM_ERROR, 3000, true);
+            // Serial.println("Response:");
+            // Serial.write(responseBuf);
+            // Serial.println();
         }
         requestSent = 0;    // mark handling done
     }
