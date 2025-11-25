@@ -8,7 +8,6 @@
 #include <Ethernet.h>
 #include <Dhcp.h>
 
-const String terminalId = CONFIG_TERMINAL_ID;
 const int heartbeat_intervall = CONFIG_HEARTBEAT_INTERVAL;
 uint8_t macAddr[] = CONFIG_MAC;
 
@@ -17,6 +16,13 @@ EthernetClient client;
 uint32_t requestSent = 0;
 char responseBuf[512];
 uint16_t responseBufIdx = 0;
+
+// like client.write, but takes pointer to string in program space
+void client_write_P(const char *buffer_P, size_t size) {
+    char buffer[size];
+    memcpy_P(buffer, buffer_P, size);
+    client.write(buffer, size);
+}
 
 void sendUidToServer(const char *uid) {
     setAnimation(ANIM_CARD_PROCESSING);
@@ -27,16 +33,18 @@ void sendUidToServer(const char *uid) {
     memset(responseBuf, 0, sizeof(responseBuf));
     
     if (client.connect(CONFIG_BACKEND_HOST, 80)) {
-        client.println(F("POST " CONFIG_BACKEND_PATH " HTTP/1.1"));
-        client.println(F("Host: " CONFIG_BACKEND_HOST));
-        client.println(F("User-Agent: arduino-ethernet"));
-        client.println(F("Content-Type: application/json"));
-        client.println(F("Connection: close"));
-        client.println();
+        static const char httpStr[] PROGMEM = 
+            "POST " CONFIG_BACKEND_PATH " HTTP/1.1\r\n"
+            "Host: " CONFIG_BACKEND_HOST "\r\n"
+            "User-Agent: arduino-ethernet\r\n"
+            "Content-Type: application/json\r\n"
+            "Connection: close\r\n"
+            "\r\n";
+        client_write_P(httpStr, sizeof(httpStr));
         
         char payload[100] = {0};
-        snprintf_P(payload, sizeof(payload), PSTR("{\"uid\": \"%s\", \"terminalId\": \"%s\"}"), uid, CONFIG_TERMINAL_ID);
-        client.println(payload);
+        int len = snprintf_P(payload, sizeof(payload), PSTR("{\"uid\": \"%s\", \"terminalId\": \"%s\"}\r\n"), uid, CONFIG_TERMINAL_ID);
+        client.write(payload, len);
     }
 }
 
@@ -71,22 +79,22 @@ bool ethInit() {
     Ethernet.init();
     // DHCP
     if (Ethernet.begin(macAddr, 10000) == 0) {
-        DBG.println("Failed to configure Ethernet using DHCP");
+        DBG.println(F("Failed to configure Ethernet using DHCP"));
         success = false;
     }
     // Static IP
     // Ethernet.begin(macAddr, IPAddress(192,168,13,245));
 
     if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-        DBG.println("Ethernet module was not found.  Sorry, can't run without hardware. :(");
+        DBG.println(F("Ethernet module was not found.  Sorry, can't run without hardware. :("));
     } else if (Ethernet.linkStatus() == LinkOFF) {
-        DBG.println("Ethernet cable is not connected.");
+        DBG.println(F("Ethernet cable is not connected."));
         success = false;
     }
     
     if(success) {
         // print your local IP address:
-        DBG.print("My IP address: ");
+        DBG.print(F("My IP address: "));
         DBG.println(Ethernet.localIP());
     }
     return success;
@@ -105,6 +113,7 @@ void ethLoop() {
             setAnimation(ANIM_IDLE);
             break;
     }
+    
 }
 
 
