@@ -45,7 +45,7 @@ void animationLoop(bool forceUpdate) {
             case ANIM_IDLE: {           // rainbow pulse & rotate
                 uint8_t val = animCounter % ANIM_SCALE;                // limit counter
                 val = val < (ANIM_SCALE / 2) ? val : ANIM_SCALE - val; // map to up/down counting
-                val = map(val, 0, ANIM_SCALE / 2, 64, 255);            // map to full brightness
+                val = map(val, 0, ANIM_SCALE / 2, 100, 255);           // map to full brightness
 
                 for (uint8_t i = 0; i < NUM_LEDS; i++) {
                     uint8_t hue = (animCounter + (255 / NUM_LEDS) * i) % 256; // hue rainbow
@@ -108,7 +108,7 @@ void animationLoop(bool forceUpdate) {
                 strip.fill(0);
             }
             break;
-            
+
             case ANIM_CONNECTING: { // chasing white dot
                 uint8_t ledToLight = (animCounter / 2) % NUM_LEDS;
                 for (uint8_t i = 0; i < NUM_LEDS; i++) {
