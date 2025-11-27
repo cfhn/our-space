@@ -59,10 +59,9 @@ protobreaking: ../buf.lock bin/protoc-gen-buf-breaking ## Compares your current 
 
 generate: ## Generates code from protobuf files
 generate: bin/protoc-gen-grpc-gateway bin/protoc-gen-openapi ../buf.lock bin/protoc-gen-go bin/protoc-gen-go-grpc bin/protoc-gen-validate
-	PATH=$(PWD)/bin:$$PATH buf generate
 	PATH=$(PWD)/bin:$$PATH go generate ./...
 
-out/base.tar.gz: deployment/base.yaml deployment/overlay/etc/systemd/system/cage@.service out/firmware
+out/base.tar.gz: deployment/base.yaml $(shell find ./deployment/overlay -type f)
 	docker run \
 		-v $(PWD):/work \
 		-v /dev/kvm:/dev/kvm \
@@ -73,11 +72,24 @@ out/base.tar.gz: deployment/base.yaml deployment/overlay/etc/systemd/system/cage
 		--workdir /work \
 		godebos/debos \
 		--scratchsize=16G \
-		/work/deployment/base.yaml \
+		/work/deployment/base.yaml
+
+out/app.tar.gz: deployment/app.yaml out/firmware out/base.tar.gz
+	docker run \
+		-v $(PWD):/work \
+		-v /dev/kvm:/dev/kvm \
+		--privileged \
+		--cgroupns host \
+		--security-opt label=disable \
+		--cap-add=SYS_ADMIN \
+		--workdir /work \
+		godebos/debos \
+		--scratchsize=16G \
+		/work/deployment/app.yaml \
 		--template-var "backend_address:$(BACKEND_ADDRESS)" \
 		--template-var "api_key:$(API_KEY)"
 
-out/image.img: deployment/image.yaml out/base.tar.gz
+out/image.img: deployment/image.yaml out/app.tar.gz
 	docker run \
 		-v $(PWD):/work \
 		-v /dev/kvm:/dev/kvm \
@@ -90,6 +102,6 @@ out/image.img: deployment/image.yaml out/base.tar.gz
 		/work/deployment/image.yaml
 	sudo chown $(USER):$(GID) out/image.img
 
-.PHONY: out/firmware
+
 out/firmware:
 	go build -ldflags="-w -s" -o "$(@)" ./cmd/ourspace-firmware

@@ -1,4 +1,4 @@
-{{- $mirror := or .mirror "http://deb.debian.org/debian" -}}
+{{- $mirror := or .mirror "https://ftp-stud.hs-esslingen.de/debian/" -}}
 {{- $suite := or .suite "trixie" -}}
 {{- $image := or .image "out/base.tar.gz" -}}
 
@@ -36,6 +36,7 @@ actions:
       - systemd
       - systemd-sysv
       - util-linux
+      - wlr-randr
       - zstd
 
   - action: overlay
@@ -44,7 +45,7 @@ actions:
   - action: run
     chroot: true
     command: |
-      echo "our-space-appliance" > /etc/hostname
+      echo "our-space-terminal" > /etc/hostname
       useradd \
         --uid 1000 \
         --user-group \
@@ -56,13 +57,6 @@ actions:
       systemctl enable ourspace.service
       mkdir -p /home/ourspace/.ssh/
       echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHDrMwsslvec7TeUJkrpnj6/04HsxDclgew5gPB61F24" >> /home/ourspace/.ssh/authorized_keys
-      mkdir -p /opt/ourspace
-      echo "BACKEND_ADDRESS={{ .backend_address }}" >> /opt/ourspace/environment
-      echo "API_KEY={{ .api_key }}" >> /opt/ourspace/environment
-
-  - action: overlay
-    source: ../out/firmware
-    destination: /opt/ourspace/firmware
 
   - action: pack
     file: {{ $image }}

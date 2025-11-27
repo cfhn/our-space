@@ -23,7 +23,7 @@ After=getty@%i.service
 [Service]
 Type=simple
 ExecStart=/usr/bin/cage -- /usr/bin/chromium --no-sandbox --no-first-run --password-store=basic --simulate-outdated-no-au='Tue, 31 Dec 2199 23:59:59 GMT' --noerrdialogs --disable-infobars --kiosk --app='http://localhost:8080/terminal'
-#ExecStartPost=+sh -c "tty_name='%i'; exec chvt $${tty_name#tty}"
+ExecStartPost=/usr/bin/wlr-randr --output DP-1 --transform 90
 Restart=always
 User=ourspace
 # Log this user with utmp, letting it show up with commands 'w' and
