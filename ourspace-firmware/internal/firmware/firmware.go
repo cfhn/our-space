@@ -2,12 +2,16 @@ package firmware
 
 import (
 	"context"
+	"encoding/hex"
+	"fmt"
 	"log/slog"
 
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
 	pb "github.com/cfhn/our-space/ourspace-firmware/proto"
+	"github.com/cfhn/our-space/pkg/status"
 )
 
 type Repository interface {
@@ -20,14 +24,14 @@ type Service struct {
 
 	logger *slog.Logger
 
-	notifier *Notifier
+	notifier *Notifier[pb.ListenForCardEventsResponse]
 	repo     Repository
 }
 
 func NewService(logger *slog.Logger, repo Repository) *Service {
 	svc := &Service{
 		logger:   logger,
-		notifier: NewNotifier(),
+		notifier: NewNotifier[pb.ListenForCardEventsResponse](),
 		repo:     repo,
 	}
 
@@ -35,9 +39,49 @@ func NewService(logger *slog.Logger, repo Repository) *Service {
 }
 
 func (svc *Service) ScanCard(ctx context.Context, req *pb.ScanCardRequest) (*pb.ScanCardResponse, error) {
-	svc.notifier.Notify(req.RfidValue)
+	fmt.Println(req.CardSerial)
 
-	return &pb.ScanCardResponse{}, nil
+	rfidBytes, err := hex.DecodeString(req.CardSerial)
+	if err != nil {
+		return nil, status.FieldViolations([]*errdetails.BadRequest_FieldViolation{
+			{
+				Field:       "card_serial",
+				Description: "invalid encoding",
+			},
+		})
+	}
+
+	card := svc.repo.FindCardByRFID(rfidBytes)
+	if card == nil {
+		return &pb.ScanCardResponse{
+			Outcome: "card-not-found",
+		}, nil
+	}
+
+	member := svc.repo.FindMemberByID(card.MemberId)
+	if member == nil {
+		return &pb.ScanCardResponse{
+			Outcome: "member-not-found",
+		}, nil
+	}
+
+	scanCardEvent := &pb.ListenForCardEventsResponse{
+		Member: &pb.Member{
+			Id:   member.Id,
+			Name: member.Name,
+		},
+		Card: &pb.Card{
+			Id:        card.Id,
+			ValidFrom: card.ValidFrom,
+			ValidTo:   card.ValidTo,
+		},
+	}
+
+	svc.notifier.Notify(scanCardEvent)
+
+	return &pb.ScanCardResponse{
+		Outcome: "checkin",
+	}, nil
 }
 
 func (svc *Service) ListenForCardEvents(
@@ -50,7 +94,7 @@ func (svc *Service) ListenForCardEvents(
 		default:
 		}
 
-		rfidValue := svc.notifier.Wait()
+		cardEvent := svc.notifier.Wait()
 
 		select {
 		case <-resp.Context().Done():
@@ -58,27 +102,7 @@ func (svc *Service) ListenForCardEvents(
 		default:
 		}
 
-		card := svc.repo.FindCardByRFID(rfidValue)
-		if card == nil {
-			continue
-		}
-
-		member := svc.repo.FindMemberByID(card.MemberId)
-		if member == nil {
-			continue
-		}
-
-		err := resp.Send(&pb.ListenForCardEventsResponse{
-			Member: &pb.Member{
-				Id:   member.Id,
-				Name: member.Name,
-			},
-			Card: &pb.Card{
-				Id:        card.Id,
-				ValidFrom: card.ValidFrom,
-				ValidTo:   card.ValidTo,
-			},
-		})
+		err := resp.Send(cardEvent)
 
 		if err != nil {
 			return err

@@ -47,12 +47,13 @@ components:
         ScanCardRequest:
             type: object
             properties:
-                rfid_value:
+                card_serial:
                     type: string
-                    format: bytes
         ScanCardResponse:
             type: object
-            properties: {}
+            properties:
+                outcome:
+                    type: string
         Status:
             type: object
             properties:

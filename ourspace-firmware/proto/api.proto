@@ -32,11 +32,11 @@ service FirmwareService {
 }
 
 message ScanCardRequest {
-  bytes rfid_value = 1 [json_name="rfid_value"];
+  string card_serial = 1 [json_name="card_serial"];
 }
 
 message ScanCardResponse {
-
+  string outcome = 1;
 }
 
 message ListenForCardEventsRequest {

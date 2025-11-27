@@ -43,7 +43,7 @@ const processToken = (token: string) => {
   if (parts.length != 3) {
     return;
   }
-  const claims = JSON.parse(atob(parts[1]));
+  const claims = JSON.parse(base64Decode(parts[1]));
 
   userStoreRef.fullName = claims["full_name"];
 }
@@ -110,4 +110,10 @@ export const logout = async () => {
     body: {},
   });
   await router.push({name: "login"})
+}
+
+function base64Decode(str: string): string {
+  return decodeURIComponent(atob(str).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
 }
