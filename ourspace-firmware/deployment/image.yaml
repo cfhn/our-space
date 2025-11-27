@@ -5,7 +5,7 @@ architecture: amd64
 
 actions:
   - action: unpack
-    file: out/base.tar.gz
+    file: out/app.tar.gz
     compression: gz
 
   - action: image-partition

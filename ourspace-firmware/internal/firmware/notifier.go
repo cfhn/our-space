@@ -4,30 +4,31 @@ import (
 	"sync"
 )
 
-type Notifier struct {
+type Notifier[T any] struct {
 	cond  *sync.Cond
-	value []byte
+	value *T
 }
 
-func NewNotifier() *Notifier {
-	return &Notifier{
+func NewNotifier[T any]() *Notifier[T] {
+	return &Notifier[T]{
 		cond: sync.NewCond(&sync.Mutex{}),
 	}
 }
 
-func (n *Notifier) Notify(value []byte) {
+func (n *Notifier[T]) Notify(value *T) {
+	v := *value
+
 	n.cond.L.Lock()
-	n.value = value
+	n.value = &v
 	n.cond.Broadcast()
 	n.cond.L.Unlock()
 }
 
-func (n *Notifier) Wait() []byte {
+func (n *Notifier[T]) Wait() *T {
 	n.cond.L.Lock()
 	n.cond.Wait()
-	v := make([]byte, len(n.value))
-	copy(v, n.value)
+	v := *n.value
 	n.cond.L.Unlock()
 
-	return v
+	return &v
 }

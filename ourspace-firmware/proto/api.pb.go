@@ -26,7 +26,7 @@ const (
 
 type ScanCardRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RfidValue     []byte                 `protobuf:"bytes,1,opt,name=rfid_value,proto3" json:"rfid_value,omitempty"`
+	CardSerial    string                 `protobuf:"bytes,1,opt,name=card_serial,proto3" json:"card_serial,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -61,15 +61,16 @@ func (*ScanCardRequest) Descriptor() ([]byte, []int) {
 	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ScanCardRequest) GetRfidValue() []byte {
+func (x *ScanCardRequest) GetCardSerial() string {
 	if x != nil {
-		return x.RfidValue
+		return x.CardSerial
 	}
-	return nil
+	return ""
 }
 
 type ScanCardResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Outcome       string                 `protobuf:"bytes,1,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -102,6 +103,13 @@ func (x *ScanCardResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ScanCardResponse.ProtoReflect.Descriptor instead.
 func (*ScanCardResponse) Descriptor() ([]byte, []int) {
 	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ScanCardResponse) GetOutcome() string {
+	if x != nil {
+		return x.Outcome
+	}
+	return ""
 }
 
 type ListenForCardEventsRequest struct {
@@ -316,12 +324,11 @@ var File_ourspace_firmware_proto_api_proto protoreflect.FileDescriptor
 
 const file_ourspace_firmware_proto_api_proto_rawDesc = "" +
 	"\n" +
-	"!ourspace-firmware/proto/api.proto\x12\x14ourspace_firmware.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"1\n" +
-	"\x0fScanCardRequest\x12\x1e\n" +
-	"\n" +
-	"rfid_value\x18\x01 \x01(\fR\n" +
-	"rfid_value\"\x12\n" +
-	"\x10ScanCardResponse\"\x1c\n" +
+	"!ourspace-firmware/proto/api.proto\x12\x14ourspace_firmware.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"3\n" +
+	"\x0fScanCardRequest\x12 \n" +
+	"\vcard_serial\x18\x01 \x01(\tR\vcard_serial\",\n" +
+	"\x10ScanCardResponse\x12\x18\n" +
+	"\aoutcome\x18\x01 \x01(\tR\aoutcome\"\x1c\n" +
 	"\x1aListenForCardEventsRequest\"\x99\x01\n" +
 	"\x1bListenForCardEventsResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12.\n" +

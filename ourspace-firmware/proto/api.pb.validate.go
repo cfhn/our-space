@@ -57,7 +57,7 @@ func (m *ScanCardRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for RfidValue
+	// no validation rules for CardSerial
 
 	if len(errors) > 0 {
 		return ScanCardRequestMultiError(errors)
@@ -158,6 +158,8 @@ func (m *ScanCardResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Outcome
 
 	if len(errors) > 0 {
 		return ScanCardResponseMultiError(errors)

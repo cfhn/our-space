@@ -1,0 +1,22 @@
+architecture: amd64
+
+actions:
+  - action: unpack
+    file: out/base.tar.gz
+    compression: gz
+
+  - action: run
+    chroot: true
+    command: |
+      mkdir -p /opt/ourspace
+      echo "BACKEND_ADDRESS={{ .backend_address }}" >> /opt/ourspace/environment
+      echo "API_KEY={{ .api_key }}" >> /opt/ourspace/environment
+      echo "BACKEND_TLS=true" >> /opt/ourspace/environment
+
+  - action: overlay
+    source: ../out/firmware
+    destination: /opt/ourspace/firmware
+
+  - action: pack
+    file: out/app.tar.gz
+    compression: gz
