@@ -22,8 +22,7 @@ After=getty@%i.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/cage -- /usr/bin/chromium --no-sandbox --no-first-run --password-store=basic --simulate-outdated-no-au='Tue, 31 Dec 2199 23:59:59 GMT' --noerrdialogs --disable-infobars --kiosk --app='http://localhost:8080/terminal'
-ExecStartPost=/usr/bin/wlr-randr --output DP-1 --transform 90
+ExecStart=/usr/bin/cage -- /bin/sh -c "wlr-randr --json | jq -r \".[0].name\" | xargs -I {} wlr-randr --output {} --transform 90 && /usr/bin/chromium --no-sandbox --no-first-run --password-store=basic --simulate-outdated-no-au='Tue, 31 Dec 2199 23:59:59 GMT' --noerrdialogs --disable-infobars --kiosk --app='http://localhost:8080/terminal'"
 Restart=always
 User=ourspace
 # Log this user with utmp, letting it show up with commands 'w' and
@@ -37,6 +36,8 @@ TTYVHangup=yes
 TTYVTDisallocate=yes
 # Fail to start if not controlling the virtual terminal.
 StandardInput=tty-fail
+StandardOutput=file:/var/log/cage.log
+StandardError=file:/var/log/cage_err.log
 
 # Set up a full (custom) user session for the user, required by Cage.
 PAMName=cage

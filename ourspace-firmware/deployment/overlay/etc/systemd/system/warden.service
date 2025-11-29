@@ -1,0 +1,6 @@
+[Unit]
+Description=Ensures there is still something in the cage
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'systemctl show --no-pager cage@tty1 | grep ExecMainPID | cut -d= -f2 | xargs pstree -T | grep chromium | wc -l | grep 0 && kill -9 $(systemctl show --no-pager cage@tty1 | grep ExecMainPID | cut -d= -f2)'

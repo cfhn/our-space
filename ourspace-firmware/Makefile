@@ -105,3 +105,10 @@ out/image.img: deployment/image.yaml out/app.tar.gz
 
 out/firmware:
 	go build -ldflags="-w -s" -o "$(@)" ./cmd/ourspace-firmware
+
+updatebundle/rootfs.ext4: out/image.img
+	dd bs=512 count=7500000 if=out/image.img of=updatebundle/rootfs.ext4 skip=500001 status=progress
+
+out/ourspace.raucb: updatebundle/rootfs.ext4 updatebundle/manifest.raucm
+	rm -f out/ourspace.raucb
+	rauc bundle --cert ./updatebundle/cert.pem --key ./updatebundle/key.pem ./updatebundle ./out/ourspace.raucb
