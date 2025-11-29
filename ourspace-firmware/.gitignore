@@ -1,2 +1,4 @@
 out/
 internal/frontend/dist
+updatebundle/*
+!updatebundle/manifest.raucm

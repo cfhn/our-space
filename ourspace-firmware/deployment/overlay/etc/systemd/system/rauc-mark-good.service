@@ -1,0 +1,11 @@
+[Unit]
+Description=Mark boot as good
+After=cage@tty1.service ourspace.service
+Requires=cage@tty1.service ourspace.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rauc status mark-good
+
+[Install]
+WantedBy=graphical.target

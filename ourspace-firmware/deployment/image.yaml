@@ -10,11 +10,11 @@ actions:
 
   - action: image-partition
     imagename: {{ $image }}
-    imagesize: 8GB
+    imagesize: 14GB
     partitiontype: gpt
     mountpoints:
       - mountpoint: /
-        partition: root
+        partition: root0
       - mountpoint: /boot/efi
         partition: efi
         flags: [ boot ]
@@ -27,17 +27,25 @@ actions:
         start: 0%
         end: 256MB
         options: [ x-systemd.automount ]
-      - name: root
+      - name: root0
         fs: ext4
         start: 256MB
-        end: 4GB
+        end: 4096MB
+      - name: root1
+        fs: ext4
+        start: 4096MB
+        end: 7936MB
       - name: data
         fs: ext4
-        start: 4GB
+        start: 7936MB
         end: 100%
 
   - action: filesystem-deploy
     description: Deploying filesystem onto image
+
+  - action: overlay
+    source: fstab
+    destination: /etc/
 
   - action: run
     chroot: true
@@ -50,3 +58,7 @@ actions:
   - action: run
     chroot: true
     command: mkdir -p /boot/efi/EFI/BOOT && cp /boot/efi/EFI/debian/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
+
+  - action: run
+    chroot: true
+    command: grub-editenv /boot/efi/grubenv create

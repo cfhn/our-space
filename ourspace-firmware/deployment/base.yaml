@@ -26,12 +26,16 @@ actions:
       - htop
       - initramfs-tools
       - iproute2
+      - jq
       - libnss-myhostname
       - linux-image-amd64
       - nano
       - network-manager
       - openssh-server
       - openssl
+      - psmisc
+      - rauc
+      - rauc-service
       - sudo
       - systemd
       - systemd-sysv
@@ -55,6 +59,8 @@ actions:
       usermod -a -G sudo ourspace
       systemctl enable cage@tty1.service
       systemctl enable ourspace.service
+      systemctl enable rauc-mark-good.service
+      systemctl enable warden.timer
       mkdir -p /home/ourspace/.ssh/
       echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHDrMwsslvec7TeUJkrpnj6/04HsxDclgew5gPB61F24" >> /home/ourspace/.ssh/authorized_keys
 
