@@ -1,0 +1,66 @@
+#!/bin/sh
+exec tail -n +3 $0
+
+# set default menuentry (Slot A) and timeout (3s)
+default=0
+timeout=3
+
+any_ok=0
+
+set ORDER="A B"
+set A_OK=0
+set B_OK=0
+set A_TRY=0
+set B_TRY=0
+load_env --file (hd0,1)/grubenv
+
+# select bootable slot
+for SLOT in $ORDER; do
+    if [ "$SLOT" == "A" ]; then
+        INDEX=0
+        OK=$A_OK
+        TRY=$A_TRY
+        A_TRY=1
+    fi
+    if [ "$SLOT" == "B" ]; then
+        INDEX=1
+        OK=$B_OK
+        TRY=$B_TRY
+        B_TRY=1
+    fi
+    if [ "$OK" -eq 1 -a "$TRY" -eq 0 ]; then
+        default=$INDEX
+        any_ok=1
+        break
+    fi
+done
+
+# reset booted flags in case both sides have failed to boot
+if [ "$any_ok" -eq 0 ]; then
+    if [ "$A_OK" -eq 1 -a "$A_TRY" -eq 1 ]; then
+        A_TRY=0
+    fi
+    if [ "$B_OK" -eq 1 -a "$B_TRY" -eq 1 ]; then
+        B_TRY=0
+    fi
+fi
+
+save_env --file (hd0,1)/grubenv A_TRY A_OK B_TRY B_OK ORDER
+
+CMDLINE="panic=60 quiet"
+
+menuentry "Slot A (OK=$A_OK TRY=$A_TRY)" {
+  load_video
+  insmod gzio
+  insmod part_gpt
+  linux   (hd0,2)/vmlinuz root=/dev/sda2 $CMDLINE rauc.slot=A
+  initrd  (hd0,2)/initrd.img
+}
+
+menuentry "Slot B (OK=$B_OK TRY=$B_TRY)" {
+    load_video
+    insmod gzio
+    insmod part_gpt
+    linux   (hd0,3)/vmlinuz root=/dev/sda3 $CMDLINE rauc.slot=B
+    initrd  (hd0,3)/initrd.img
+}
