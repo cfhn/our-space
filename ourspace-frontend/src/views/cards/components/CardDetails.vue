@@ -3,13 +3,16 @@ import type {CardReadable, MemberReadable} from "@/client";
 import Input from "@/components/Input.vue";
 import CardInput from "@/views/cards/components/CardInput.vue";
 import MemberSelect from "@/views/members/components/MemberSelect.vue";
-import {watchEffect} from "vue";
+import {computed, watchEffect} from "vue";
+import {base64ToRfid, rfidToBase64} from "@/views/cards/cardutil.ts";
 
 const props = defineProps<{
   card: CardReadable;
   isEdit: boolean;
   memberId?: string;
 }>();
+
+const rfidValue = computed(() => base64ToRfid(props.card.rfid_value))
 
 watchEffect( () => {
   if (props.isEdit && props.memberId) {
@@ -25,7 +28,7 @@ watchEffect( () => {
     <Input class="onyx-grid-span-6" type="date" v-model="card.valid_from" :is-edit="isEdit" label="Valid From" />
     <Input class="onyx-grid-span-6" type="date" v-model="card.valid_to" :is-edit="isEdit" label="Valid To" />
     <div class="onyx-grid-span-12 card-input">
-      <Input type="text" label="RFID Value" v-model="card.rfid_value" :is-edit="isEdit" />
+      <Input type="text" label="RFID Value" :model-value="rfidValue" @update:model-value="card.rfid_value = rfidToBase64($event??'')" :is-edit="isEdit" />
       <CardInput v-model="card.rfid_value" v-if="isEdit" />
     </div>
   </div>

@@ -77,9 +77,7 @@ watch(searchTerm, async () => {
     <div v-if="selection">
       {{selection?.name}}
     </div>
-    <OnyxSkeleton class="selection-skeleton" v-else>
-
-    </OnyxSkeleton>
+    <OnyxSkeleton class="selection-skeleton" v-else />
   </div>
 </template>
 

@@ -2,7 +2,7 @@
 
 import {
   OnyxButton,
-  OnyxModalDialog,
+  OnyxModal,
   OnyxBottomBar,
   OnyxLoadingIndicator, OnyxIcon,
 } from "sit-onyx";
@@ -48,7 +48,7 @@ watch([isOpen, inputRef], () => {
 
 <template>
   <OnyxButton label="Scan Card" @click="isOpen = true" v-bind="$attrs" />
-  <OnyxModalDialog label="Scan Card" :open="isOpen" @close="isOpen = false">
+  <OnyxModal label="Scan Card" :open="isOpen" @close="isOpen = false">
     <template #default>
       <div class="loading-indicator">
         <OnyxLoadingIndicator type="circle" v-if="waiting" />
@@ -65,7 +65,7 @@ watch([isOpen, inputRef], () => {
         <OnyxButton label="Close" color="neutral" mode="plain" @click="isOpen = false" />
       </OnyxBottomBar>
     </template>
-  </OnyxModalDialog>
+  </OnyxModal>
 </template>
 
 <style scoped>

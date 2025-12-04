@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {OnyxFlyout, OnyxTag, OnyxListItem, OnyxIcon} from "sit-onyx";
+import {OnyxBasicPopover, OnyxTag, OnyxListItem, OnyxIcon} from "sit-onyx";
 import {computed, ref} from "vue";
 
 import xSmall from "@sit-onyx/icons/x-small.svg?raw";
@@ -69,7 +69,7 @@ const clickable = {
   <div class="form-elem">
     <label class="label onyx-text--small" for="taginput">{{label}}</label>
 
-    <OnyxFlyout label="Tag Input" :open="flyoutOpen" position="bottom" :fit-parent="true" v-if="isEdit">
+    <OnyxBasicPopover label="Tag Input" :open="flyoutOpen" position="bottom" :fit-parent="true" v-if="isEdit">
       <template #default>
         <div class="textbox">
           <OnyxTag v-for="tag in model" :label="tag" :clickable density="compact" @click="removeTag(tag)" />
@@ -97,7 +97,7 @@ const clickable = {
             v-if="!model?.includes(inputValue)"
           ><OnyxIcon label="New" :icon="plusSmall" />Add new tag "{{inputValue}}"</OnyxListItem>
       </template>
-    </OnyxFlyout>
+    </OnyxBasicPopover>
     <div class="tag-list" v-else>
       <OnyxTag v-for="tag in model" :label="tag" density="compact" />
     </div>

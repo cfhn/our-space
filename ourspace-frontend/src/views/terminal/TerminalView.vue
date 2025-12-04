@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {useEventSource, useTimeout, useTimeoutFn} from "@vueuse/core";
-import {ref, watch} from "vue";
+import {useDateFormat, useEventSource, useTimeout, useTimeoutFn} from "@vueuse/core";
+import {computed, ref, watch} from "vue";
 
 type Member = {
   id: string;
@@ -24,13 +24,32 @@ const {data} = useEventSource<string[], string>("http://localhost:8081/card-even
 });
 const member = ref<Member>();
 const card = ref<Card>();
-const backgroundColor = ref<string>("green");
-const cardValidTo = ref<string>("");
+
+const cardValidTo = computed(() => {
+  if (card.value === undefined) {
+    return undefined;
+  }
+
+  return new Date(card.value.validTo);
+});
+const cardValidToString = useDateFormat(cardValidTo, "DD.MM.YYYY")
 const countdown = ref<boolean>(false);
+const daysRemaining = computed(() => cardValidTo.value ? (cardValidTo.value.getTime() - Date.now()) / (1000 * 60 * 60 * 24) : undefined);
+const backgroundColor = computed(() => {
+  if (cardValidTo.value === undefined || daysRemaining.value === undefined) {
+    return "green";
+  }
+
+  if (daysRemaining.value <= 0) {
+    return "red"
+  } else if (daysRemaining.value <= 14) {
+    return "orange"
+  }
+
+  return "green"
+});
 
 const {start, stop} = useTimeoutFn(() => {
-  backgroundColor.value = "green";
-  cardValidTo.value = "";
   member.value = undefined;
   card.value = undefined;
   countdown.value = false;
@@ -45,26 +64,16 @@ watch(data, () => {
 
   stop();
 
+  member.value = undefined;
+  card.value = undefined;
+  countdown.value = false;
+
   const update: Update = JSON.parse(data.value);
 
   member.value = update.member;
   card.value = update.card;
-
-  const cardExpires = new Date(update.card.validTo);
-
-  console.log(cardExpires.getTime(), Date.now());
-  console.log(((cardExpires.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-
-  if (cardExpires.getTime() - Date.now() <= 0) {
-    backgroundColor.value = "red"
-  } else if (((cardExpires.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) <= 14) {
-    backgroundColor.value = "orange"
-  } else {
-    backgroundColor.value = "green"
-  }
-
-  cardValidTo.value = `${("00" + cardExpires.getDate()).slice(-2)}.${("00" + (cardExpires.getMonth() + 1)).slice(-2)}.${cardExpires.getFullYear()}`;
   countdown.value = true;
+
   start();
 });
 
@@ -75,11 +84,12 @@ watch(data, () => {
     <div :class="{'progress-inner': true, 'progress-inner-running': countdown}"></div>
   </div>
   <div
-    :class="{hero:true, 'hero-green': backgroundColor == 'green', 'hero-red': backgroundColor == 'red', 'hero-orange': backgroundColor=='orange'}">
+    :class="{hero:true, 'hero-green': backgroundColor === 'green', 'hero-red': backgroundColor === 'red', 'hero-orange': backgroundColor==='orange'}">
     <p v-if="!member && !card" class="text-big">Karte auflegen</p>
     <div v-if="member && card">
       <p class="text-medium">Hallo {{ member.name }}</p>
-      <p class="text-small">Deine Karte ist gültig bis zum {{ cardValidTo }}</p>
+      <p class="text-small">Deine Karte ist gültig bis zum {{ cardValidToString }} (noch {{daysRemaining?.toFixed(0)}} Tage)</p>
+      <p class="text-smaller" v-if="daysRemaining??0 <= 14">Erneuere deine Karte an der Kasse</p>
     </div>
   </div>
 </template>
@@ -136,6 +146,10 @@ watch(data, () => {
 
 .text-small {
   font-size: 64px;
+}
+
+.text-smaller {
+  font-size: 32px;
 }
 
 .hero-green {

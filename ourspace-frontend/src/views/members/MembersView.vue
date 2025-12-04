@@ -4,12 +4,12 @@ import {
   OnyxBottomBar,
   OnyxButton,
   OnyxDataGrid,
-  OnyxModalDialog,
+  OnyxModal,
   OnyxInput,
   OnyxPageLayout,
   OnyxIconButton,
   createFeature,
-  type ColumnConfig,
+  type ColumnConfig, type DataGridFeature,
 } from "sit-onyx";
 import {computed, ref, watchEffect, h, watch} from "vue";
 import {
@@ -139,7 +139,7 @@ const withCustomType = createFeature(() => ({
   },
 }))
 
-const features = [withCustomType()];
+const features = [withCustomType];
 
 watch([currentPageToken, searchValue, reload], async () => {
   const resp = await memberServiceListMembers({
@@ -179,7 +179,7 @@ watch(searchValue, () => {
       <OnyxButton label="Back to start" density="compact" :disabled="isFirstPage" @click="firstPage" color="neutral" />
       <OnyxButton label="Next Page" density="compact" :disabled="!shouldShowNextPage" @click="nextPage"/>
     </div>
-    <OnyxModalDialog label="Delete member" :open="deleteMemberDialogOpenFor !== undefined">
+    <OnyxModal label="Delete member" :open="deleteMemberDialogOpenFor !== undefined">
       <template #default>
         <div class="modal">
           <p>
@@ -198,7 +198,7 @@ watch(searchValue, () => {
           <OnyxButton label="Delete" color="danger" mode="plain" @click="deleteMember(deleteMemberDialogOpenFor ?? '')" />
         </OnyxBottomBar>
       </template>
-    </OnyxModalDialog>
+    </OnyxModal>
     <template #footer>
       <OnyxBottomBar>
         <OnyxButton label="New" mode="plain" link="/members/new"/>

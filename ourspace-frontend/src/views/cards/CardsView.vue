@@ -17,6 +17,7 @@ import {
 import {computed, h, ref, watch, watchEffect} from "vue";
 import CardActions from "@/views/cards/components/CardActions.vue";
 import CardInput from "@/views/cards/components/CardInput.vue";
+import {rfidToBase64} from "@/views/cards/cardutil.ts";
 
 type CardEntry = {
   id: string;
@@ -67,7 +68,7 @@ const withCustomType = createFeature(() => ({
   }
 }));
 
-const features = [withCustomType()];
+const features = [withCustomType];
 
 watchEffect(async () => {
   const resp = await cardServiceListCards({
@@ -76,7 +77,7 @@ watchEffect(async () => {
       sort_direction: "SORT_DIRECTION_DESCENDING",
       page_size: 10,
       page_token: currentPageToken.value,
-      rfid_value: searchValue.value != "" ? searchValue.value : undefined,
+      rfid_value: searchValue.value != "" ? rfidToBase64(searchValue.value) : undefined,
     }
   });
 
