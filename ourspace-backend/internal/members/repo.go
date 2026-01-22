@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/cfhn/our-space/ourspace-backend/proto"
+	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 )
 
 var ErrNotFound = errors.New("member not found")
@@ -101,7 +101,8 @@ func (p *Postgres) ListMembers(
 	ctx context.Context, pageSize int32, token *pb.MemberPageToken, sortField pb.MemberField,
 	sortDirection pb.SortDirection, filters *Filters,
 ) ([]*pb.Member, error) {
-	paginationCondition, paginationValues := generatePaginationQuery(token, 9)
+	const offset int = 9
+	paginationCondition, paginationValues := generatePaginationQuery(token, offset)
 
 	var (
 		nameContains          = wrapIlike(filters.NameContains)
