@@ -48,7 +48,7 @@ func (p *Postgres) GetActivePresence(ctx context.Context, memberId string) (*pb.
 	return presence, nil
 }
 
-func (p *Postgres) GetPastPresence(ctx context.Context, presenceId string) (*pb.Presence, error) {
+func (p *Postgres) GetPresenceByID(ctx context.Context, presenceId string) (*pb.Presence, error) {
 	row := p.db.QueryRowContext(ctx, `SELECT from presence WHERE member_id = $1 and checkout_time is NULL
 	`, presenceId)
 
@@ -87,12 +87,12 @@ func scanPresence(in scanner) (*pb.Presence, error) {
 	return presence, nil
 }
 
-func (p *Postgres) UpdatePresence(ctx context.Context, presence pb.Presence, fieldMask *fieldmaskpb.FieldMask) (*pb.Presence, error) {
+func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fieldMask *fieldmaskpb.FieldMask) (*pb.Presence, error) {
 	var (
+		memberId     string
 		checkinTime  sql.Null[time.Time]
 		checkoutTime sql.Null[time.Time]
 	)
-
 	/*
 		Fieldmask contains Updated Informtions
 		Fieldmask has to be Validated by the Service
@@ -100,29 +100,45 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence pb.Presence, fie
 		DB changes the given informations in given Presence
 		cases: checkin_time, checkout, member_id(?),
 	*/
-	for _, path := range fieldMask.Paths {
-		switch path {
-		case "checkin_time":
-			checkinTime = sql.Null[time.Time]{V: presence.CheckinTime.AsTime(), Valid: true}
-		case "checkout_time":
-			checkoutTime = sql.Null[time.Time]{V: time.Now(), Valid: true}
+	if fieldMask != nil {
+		for i, path := range fieldMask.Paths {
+			switch path {
+			case "member_id":
+				memberId = fieldMask.GetPaths()[i+1]
+			case "checkin_time":
+				checkinTime = sql.Null[time.Time]{V: presence.CheckinTime.AsTime(), Valid: true}
+			case "checkout_time":
+				checkoutTime = sql.Null[time.Time]{V: presence.CheckoutTime.AsTime(), Valid: true}
+			}
 		}
 	}
+
 	_, err := p.db.ExecContext(ctx, `
 		update presences
-		set
-			name = coalesce($2, name),
+		set,
 			checkin_time = coalesce($2, checkin_time),
 			checkout_time = coalesce($3, checkout_time),
-			age_category = coalesce($6, age_category),
-			tags = case when $7 then $8 else tags end
+			member_id = coalesce($4, member_id)
 		where id = $1
-	`, presence.Id, checkinTime, checkoutTime)
+	`, presence.Id, checkinTime, checkoutTime, memberId)
 	if err != nil {
 		return nil, err
 	}
 
-	return p.GetPastPresence(ctx, presence.Id)
+	return p.GetPresenceByID(ctx, presence.Id)
 }
 
-//GetPresence
+func (p *Postgres) CheckoutPresence(ctx context.Context, memberId string) (*pb.Presence, error) {
+
+	mask, err := fieldmaskpb.New(&pb.UpdatePresenceRequest{}, "checkout_Time")
+	if err != nil {
+		return nil, err
+	}
+	presence, err := p.GetActivePresence(ctx, memberId)
+	if err != nil {
+		return nil, err
+	}
+	presence.CheckoutTime = timestamppb.Now()
+	return p.UpdatePresence(ctx, presence, mask)
+
+}

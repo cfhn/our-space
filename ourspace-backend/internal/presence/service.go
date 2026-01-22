@@ -21,13 +21,9 @@ func NewService(repo *Postgres) *Service {
 }
 
 func (s Service) Checkin(ctx context.Context, request pb.CheckinRequest) (*pb.Presence, error) {
-	if request.MemberId == "" {
-		validationError := []*errdetails.BadRequest_FieldViolation{{
-			Field:       "member_id",
-			Description: "member field must not be empty",
-			Reason:      "FIELD_EMPTY",
-		}}
-		return nil, status.FieldViolations(validationError)
+	_, err := s.ValidateRequest(request.MemberId)
+	if err != nil {
+		return nil, status.Internal(err)
 	}
 
 	presence, err := s.repo.CreatePresence(ctx, request.MemberId)
@@ -39,10 +35,28 @@ func (s Service) Checkin(ctx context.Context, request pb.CheckinRequest) (*pb.Pr
 
 // Checkout
 func (s Service) Checkout(ctx context.Context, request pb.CheckoutRequest) (*pb.Presence, error) {
-	//Request Validity; Search Presence with Member
-	//Get Time
-	//Set Checkout Time
-	return nil, errors.ErrUnsupported
+	_, err := s.ValidateRequest(request.MemberId)
+	if err != nil {
+		return nil, status.Internal(err)
+	}
+
+	presence, err := s.repo.CheckoutPresence(ctx, request.MemberId)
+	if err != nil {
+		return nil, status.Internal(err)
+	}
+
+	return presence, nil
+}
+func (s Service) ValidateRequest(member_id string) (bool, error) {
+	if member_id == "" {
+		validationError := []*errdetails.BadRequest_FieldViolation{{
+			Field:       "member_id",
+			Description: "member field must not be empty",
+			Reason:      "FIELD_EMPTY",
+		}}
+		return false, status.FieldViolations(validationError)
+	}
+	return true, nil
 }
 
 // ListPresences
@@ -52,7 +66,8 @@ func (s Service) ListPresences(ctx context.Context, request pb.ListPresencesRequ
 }
 
 func (s Service) UpdatePresence(ctx context.Context, request pb.UpdatePresenceRequest) (*pb.Presence, error) {
-	//NOT YET IMPLEMENTED
+	s.ValidateRequest(request.Presence.MemberId)
+	s.repo.UpdatePresence(ctx, request.GetPresence(), request.GetFieldMask())
 	return nil, errors.ErrUnsupported
 }
 
