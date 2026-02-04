@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"time"
 
-	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 )
 
 type Postgres struct {
@@ -141,4 +142,63 @@ func (p *Postgres) CheckoutPresence(ctx context.Context, memberId string) (*pb.P
 	presence.CheckoutTime = timestamppb.Now()
 	return p.UpdatePresence(ctx, presence, mask)
 
+}
+
+type Filters struct {
+	CheckinTimeBefore  time.Time
+	CheckinTimeAfter   time.Time
+	CheckoutTimeBefore time.Time
+	CheckoutTimeAfter  time.Time
+	MemberId           string
+}
+
+func (p *Postgres) ListMembers(
+	ctx context.Context, pageSize int32, token, sortDirection pb.SortDirection, filters *Filters) ([]*pb.Presence, error) {
+	const offset int = 9
+	//	paginationCondition, paginationValues := generatePaginationQuery(token, offset)
+	var (
+		CheckinTimeBefore  = sql.Null[time.Time]{V: filters.CheckinTimeBefore, Valid: !filters.CheckinTimeBefore.IsZero()}
+		CheckinTimeAfter   = sql.Null[time.Time]{V: filters.CheckinTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
+		CheckoutTimeBefore = sql.Null[time.Time]{V: filters.CheckoutTimeBefore, Valid: !filters.CheckoutTimeBefore.IsZero()}
+		CheckoutTimeAfter  = sql.Null[time.Time]{V: filters.CheckoutTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
+		MemberId           string
+	)
+	values := []any{
+		CheckinTimeBefore,
+		CheckinTimeAfter,
+		CheckoutTimeBefore,
+		CheckoutTimeAfter,
+		MemberId,
+		pageSize,
+	}
+	rows, err := p.db.QueryContext(ctx, `
+		select member_id, checkin_time_before,checkin_time_after,checkout_time_before,checkout_time_after from presences
+		where
+		    ($1::text is null OR name ilike $1)
+		and ($2::timestamptz is null OR checkin_time_before < $2)
+		and ($3::timestamptz is null OR checkin_time_after > $3)
+		and ($4::timestamptz is null OR checkout_time_before < $4)
+		and ($5::timestamptz is null OR checkout_time_after > $5)
+		limit $6
+	`, values...)
+	if err != nil {
+		return nil, err
+	}
+
+	presences := make([]*pb.Presence, 0, pageSize)
+
+	for rows.Next() {
+		presence, err := scanPresence(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		presences = append(presences, presence)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return presences, nil
 }
