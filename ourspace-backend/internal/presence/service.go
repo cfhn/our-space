@@ -9,6 +9,7 @@ import (
 	"github.com/cfhn/our-space/pkg/status"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 var ErrFieldUnknown = errors.New("unknown field")
@@ -22,7 +23,7 @@ func NewService(repo *Postgres) *Service {
 	return &Service{repo: repo}
 }
 
-func (s Service) Checkin(ctx context.Context, request pb.CheckinRequest) (*pb.Presence, error) {
+func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.Presence, error) {
 	_, err := s.ValidateRequest(request.MemberId)
 	if err != nil {
 		return nil, status.Internal(err)
@@ -36,7 +37,7 @@ func (s Service) Checkin(ctx context.Context, request pb.CheckinRequest) (*pb.Pr
 }
 
 // Checkout
-func (s Service) Checkout(ctx context.Context, request pb.CheckoutRequest) (*pb.Presence, error) {
+func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb.Presence, error) {
 	_, err := s.ValidateRequest(request.MemberId)
 	if err != nil {
 		return nil, status.Internal(err)
@@ -61,14 +62,13 @@ func (s Service) ValidateRequest(member_id string) (bool, error) {
 	return true, nil
 }
 
-// ListPresences
-func (s Service) ListPresences(ctx context.Context, request pb.ListPresencesRequest) (*pb.ListPresencesResponse, error) {
+func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesRequest) (*pb.ListPresencesResponse, error) {
 	pageTokenBytes, err := base64.RawStdEncoding.DecodeString(request.PageToken)
 	if err != nil {
 		return nil, err
 	}
 
-	pageToken := &pb.PageToken
+	pageToken := &pb.MemberPageToken{}
 
 	err = proto.Unmarshal(pageTokenBytes, pageToken)
 	if err != nil {
@@ -97,28 +97,28 @@ func (s Service) ListPresences(ctx context.Context, request pb.ListPresencesRequ
 		pageSize = 50
 	}
 
-	members, err := s.repo.ListMembers(ctx, pageSize+1, pageToken, pageToken.Direction, filters)
+	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, pageToken.Direction, filters)
 	if err != nil {
 		return nil, err
 	}
 
 	var nextPageToken string
 
-	if len(members) > int(pageSize) {
-		members = members[:pageSize]
+	if len(presences) > int(pageSize) {
+		presences = presences[:pageSize]
 
 		field := pb.MemberField_MEMBER_FIELD_ID
 		if pageToken.Field != pb.MemberField_MEMBER_FIELD_UNKNOWN {
 			field = pageToken.Field
-		} else if request.SortBy != pb.MemberField_MEMBER_FIELD_UNKNOWN {
-			field = request.SortBy
-		}
+		} // else if request.SortBy != pb.MemberField_MEMBER_FIELD_UNKNOWN {
+		// 	field = request.SortBy
+		// }
 
 		direction := pb.SortDirection_SORT_DIRECTION_ASCENDING
 		if pageToken.Direction != pb.SortDirection_SORT_DIRECTION_DEFAULT {
 			direction = pageToken.Direction
 
-			lastValue, err := getFieldValue(members[pageSize-1], field)
+			lastValue, err := getFieldValue(presences[pageSize-1], field)
 			if err != nil {
 				return nil, err
 			}
@@ -127,7 +127,7 @@ func (s Service) ListPresences(ctx context.Context, request pb.ListPresencesRequ
 				Field:     field,
 				LastValue: lastValue,
 				Direction: direction,
-				LastId:    members[pageSize-1].Id,
+				LastId:    presences[pageSize-1].Id,
 			}
 
 			nextPageTokenBytes, err := proto.Marshal(pbNextPageToken)
@@ -137,22 +137,42 @@ func (s Service) ListPresences(ctx context.Context, request pb.ListPresencesRequ
 
 			nextPageToken = base64.RawStdEncoding.EncodeToString(nextPageTokenBytes)
 		}
+	}
 
-		return &pb.ListPresencesResponse{
-			Presence:      pre,
-			NextPageToken: nextPageToken,
-		}, nil
+	return &pb.ListPresencesResponse{
+		Presence:      presences,
+		NextPageToken: nextPageToken,
+	}, nil
+
+}
+func getFieldValue(presence *pb.Presence, field pb.MemberField) (string, error) {
+	switch field {
+	case pb.MemberField_MEMBER_FIELD_ID:
+		return presence.Id, nil
+	// case pb.MemberField_MEMBER_FIELD_NAME:
+	// 	return member.Name, nil
+	// case pb.MemberField_MEMBER_FIELD_MEMBERSHIP_START:
+	// 	return member.MembershipStart.AsTime().Format(time.RFC3339), nil
+	// case pb.MemberField_MEMBER_FIELD_MEMBERSHIP_END:
+	// 	return member.MembershipEnd.AsTime().Format(time.RFC3339), nil
+	// case pb.MEMBER_FIELD
+	default:
+		return "", ErrFieldUnknown
 	}
 }
 
-func (s Service) UpdatePresence(ctx context.Context, request pb.UpdatePresenceRequest) (*pb.Presence, error) {
+func (s Service) UpdatePresence(ctx context.Context, request *pb.UpdatePresenceRequest) (*pb.Presence, error) {
 	s.ValidateRequest(request.Presence.MemberId)
 	s.repo.UpdatePresence(ctx, request.GetPresence(), request.GetFieldMask())
 	return nil, errors.ErrUnsupported
 }
 
 // DeletePresence
-func (s Service) DeletePresences(ctx context.Context, request pb.DeletePresenceRequest) (*pb.Member, error) {
-	//NOT YET IMPLEMENTED
-	return nil, errors.ErrUnsupported
+func (s Service) DeletePresence(ctx context.Context, request *pb.DeletePresenceRequest) (*emptypb.Empty, error) {
+	err := s.repo.DeletePresence(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
 }

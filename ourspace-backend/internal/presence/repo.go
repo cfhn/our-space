@@ -152,8 +152,8 @@ type Filters struct {
 	MemberId           string
 }
 
-func (p *Postgres) ListMembers(
-	ctx context.Context, pageSize int32, token, sortDirection pb.SortDirection, filters *Filters) ([]*pb.Presence, error) {
+func (p *Postgres) ListPresences(
+	ctx context.Context, pageSize int32, token *pb.MemberPageToken, sortDirection pb.SortDirection, filters *Filters) ([]*pb.Presence, error) {
 	const offset int = 9
 	//	paginationCondition, paginationValues := generatePaginationQuery(token, offset)
 	var (
@@ -201,4 +201,13 @@ func (p *Postgres) ListMembers(
 	}
 
 	return presences, nil
+}
+
+func (p *Postgres) DeletePresence(ctx context.Context, id string) error {
+	_, err := p.db.ExecContext(ctx, `delete from presence where id = $1`, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
