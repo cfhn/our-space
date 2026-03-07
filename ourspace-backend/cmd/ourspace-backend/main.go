@@ -21,7 +21,10 @@ import (
 	"github.com/cfhn/our-space/ourspace-backend/internal/cards"
 	"github.com/cfhn/our-space/ourspace-backend/internal/config"
 	"github.com/cfhn/our-space/ourspace-backend/internal/members"
+<<<<<<< HEAD
 	"github.com/cfhn/our-space/ourspace-backend/internal/presence"
+=======
+>>>>>>> 3e472d1 (Custom member properties (#27))
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/database"
 	"github.com/cfhn/our-space/pkg/log"
