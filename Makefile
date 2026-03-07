@@ -17,13 +17,32 @@ endef
 # this creates a target for each go dependency to be referenced in other targets
 $(foreach dep, $(GO_DEPENDENCIES), $(eval $(call make-go-dependency, $(dep))))
 
+.PHONY: protolint
 protolint: $(wildcard **/proto/buf.lock) bin/protoc-gen-buf-lint ## Lints your protobuf files
 	bin/buf lint
 
+.PHONY: protobreaking
 protobreaking: $(wildcard **/proto/buf.lock) bin/protoc-gen-buf-breaking ## Compares your current protobuf with the version on main to find breaking changes
 	bin/buf breaking --against '.git#branch=main'
 
+.PHONY: generate
 generate: ## Generates code from protobuf files
 generate: bin/buf bin/protoc-gen-grpc-gateway bin/protoc-gen-openapi $(wildcard **/proto/buf.lock) bin/protoc-gen-go bin/protoc-gen-go-grpc bin/protoc-gen-validate
 	PATH=$(PWD)/bin:$$PATH buf generate
 	cd ourspace-frontend && pnpm run openapi-ts
+
+.PHONY: setup
+setup: dependencies generate
+	go run ./scripts/gen_signing_key -path ./ourspace-backend/signing_key.pem -public-path ./ourspace-backend/verification_key.pem
+	@echo ""
+	@echo ""
+	@echo "Setup complete. After running the backend, run \"make create-user\" to create the first user in the database"
+
+.PHONY: dependencies
+dependencies:
+	cd ourspace-backend && go mod download -x && cd ..
+	cd ourspace-frontend && pnpm install && cd ..
+
+.PHONY: create-user
+create-user:
+	go run ./scripts/create_user
