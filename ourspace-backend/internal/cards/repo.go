@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/cfhn/our-space/ourspace-backend/proto"
+	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 )
 
 var ErrNotFound = errors.New("card not found")
@@ -41,7 +41,6 @@ func (p *Postgres) CreateCard(ctx context.Context, card *pb.Card) (*pb.Card, err
 		insert into cards (id, member_id, rfid_value, validity)
 		values ($1, $2, $3, tstzrange($4, $5));
 	`, card.Id, card.MemberId, card.RfidValue, card.ValidFrom.AsTime(), card.ValidTo.AsTime())
-
 	if err != nil {
 		return nil, err
 	}
@@ -60,6 +59,7 @@ func (p *Postgres) GetCard(ctx context.Context, id string) (*pb.Card, error) {
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, ErrNotFound
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +169,6 @@ func getSort(sortField pb.CardField, direction pb.SortDirection, token *pb.CardP
 	}
 
 	return fieldName + order + ", id" + order
-
 }
 
 func (p *Postgres) UpdateCard(
