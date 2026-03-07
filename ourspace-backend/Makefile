@@ -38,6 +38,9 @@ out/bin:
 lint: fmt download ## Lints all code with golangci-lint
 	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run
 
+lint-fix: fmt download ## Lints all code with golangci-lint
+	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run --fix
+
 lint-reports: out/lint.xml
 
 .PHONY: out/lint.xml

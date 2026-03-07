@@ -34,6 +34,7 @@ func (s *Service) generateTokens(
 	})
 
 	signignKey := s.signingKey.Load()
+
 	kid, err := PublicKeyFingerprint(&signignKey.PublicKey)
 	if err != nil {
 		return "", time.Time{}, "", time.Time{}, err
@@ -79,6 +80,7 @@ func timeMin(a, b time.Time) time.Time {
 	if a.Before(b) {
 		return a
 	}
+
 	return b
 }
 
@@ -87,7 +89,9 @@ func PublicKeyFingerprint(publicKey *ecdsa.PublicKey) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	hash := sha256.Sum256(signingKeyBytes)
 	kid := base64.RawStdEncoding.EncodeToString(hash[:])
+
 	return kid, nil
 }

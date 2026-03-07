@@ -20,12 +20,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MemberService_CreateMember_FullMethodName   = "/ourspace_backend.proto.MemberService/CreateMember"
-	MemberService_GetMember_FullMethodName      = "/ourspace_backend.proto.MemberService/GetMember"
-	MemberService_ListMembers_FullMethodName    = "/ourspace_backend.proto.MemberService/ListMembers"
-	MemberService_UpdateMember_FullMethodName   = "/ourspace_backend.proto.MemberService/UpdateMember"
-	MemberService_DeleteMember_FullMethodName   = "/ourspace_backend.proto.MemberService/DeleteMember"
-	MemberService_ListMemberTags_FullMethodName = "/ourspace_backend.proto.MemberService/ListMemberTags"
+	MemberService_CreateMember_FullMethodName          = "/ourspace_backend.proto.MemberService/CreateMember"
+	MemberService_GetMember_FullMethodName             = "/ourspace_backend.proto.MemberService/GetMember"
+	MemberService_ListMembers_FullMethodName           = "/ourspace_backend.proto.MemberService/ListMembers"
+	MemberService_UpdateMember_FullMethodName          = "/ourspace_backend.proto.MemberService/UpdateMember"
+	MemberService_DeleteMember_FullMethodName          = "/ourspace_backend.proto.MemberService/DeleteMember"
+	MemberService_ListMemberTags_FullMethodName        = "/ourspace_backend.proto.MemberService/ListMemberTags"
+	MemberService_CreateMemberAttribute_FullMethodName = "/ourspace_backend.proto.MemberService/CreateMemberAttribute"
+	MemberService_GetMemberAttribute_FullMethodName    = "/ourspace_backend.proto.MemberService/GetMemberAttribute"
+	MemberService_ListMemberAttributes_FullMethodName  = "/ourspace_backend.proto.MemberService/ListMemberAttributes"
+	MemberService_UpdateMemberAttribute_FullMethodName = "/ourspace_backend.proto.MemberService/UpdateMemberAttribute"
+	MemberService_DeleteMemberAttribute_FullMethodName = "/ourspace_backend.proto.MemberService/DeleteMemberAttribute"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -38,6 +43,11 @@ type MemberServiceClient interface {
 	UpdateMember(ctx context.Context, in *UpdateMemberRequest, opts ...grpc.CallOption) (*Member, error)
 	DeleteMember(ctx context.Context, in *DeleteMemberRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListMemberTags(ctx context.Context, in *ListMemberTagsRequest, opts ...grpc.CallOption) (*ListMemberTagsResponse, error)
+	CreateMemberAttribute(ctx context.Context, in *CreateMemberAttributeRequest, opts ...grpc.CallOption) (*MemberAttribute, error)
+	GetMemberAttribute(ctx context.Context, in *GetMemberAttributeRequest, opts ...grpc.CallOption) (*MemberAttribute, error)
+	ListMemberAttributes(ctx context.Context, in *ListMemberAttributesRequest, opts ...grpc.CallOption) (*ListMemberAttributesResponse, error)
+	UpdateMemberAttribute(ctx context.Context, in *UpdateMemberAttributeRequest, opts ...grpc.CallOption) (*MemberAttribute, error)
+	DeleteMemberAttribute(ctx context.Context, in *DeleteMemberAttributeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type memberServiceClient struct {
@@ -108,6 +118,56 @@ func (c *memberServiceClient) ListMemberTags(ctx context.Context, in *ListMember
 	return out, nil
 }
 
+func (c *memberServiceClient) CreateMemberAttribute(ctx context.Context, in *CreateMemberAttributeRequest, opts ...grpc.CallOption) (*MemberAttribute, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MemberAttribute)
+	err := c.cc.Invoke(ctx, MemberService_CreateMemberAttribute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *memberServiceClient) GetMemberAttribute(ctx context.Context, in *GetMemberAttributeRequest, opts ...grpc.CallOption) (*MemberAttribute, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MemberAttribute)
+	err := c.cc.Invoke(ctx, MemberService_GetMemberAttribute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *memberServiceClient) ListMemberAttributes(ctx context.Context, in *ListMemberAttributesRequest, opts ...grpc.CallOption) (*ListMemberAttributesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMemberAttributesResponse)
+	err := c.cc.Invoke(ctx, MemberService_ListMemberAttributes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *memberServiceClient) UpdateMemberAttribute(ctx context.Context, in *UpdateMemberAttributeRequest, opts ...grpc.CallOption) (*MemberAttribute, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MemberAttribute)
+	err := c.cc.Invoke(ctx, MemberService_UpdateMemberAttribute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *memberServiceClient) DeleteMemberAttribute(ctx context.Context, in *DeleteMemberAttributeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, MemberService_DeleteMemberAttribute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemberServiceServer is the server API for MemberService service.
 // All implementations must embed UnimplementedMemberServiceServer
 // for forward compatibility.
@@ -118,6 +178,11 @@ type MemberServiceServer interface {
 	UpdateMember(context.Context, *UpdateMemberRequest) (*Member, error)
 	DeleteMember(context.Context, *DeleteMemberRequest) (*emptypb.Empty, error)
 	ListMemberTags(context.Context, *ListMemberTagsRequest) (*ListMemberTagsResponse, error)
+	CreateMemberAttribute(context.Context, *CreateMemberAttributeRequest) (*MemberAttribute, error)
+	GetMemberAttribute(context.Context, *GetMemberAttributeRequest) (*MemberAttribute, error)
+	ListMemberAttributes(context.Context, *ListMemberAttributesRequest) (*ListMemberAttributesResponse, error)
+	UpdateMemberAttribute(context.Context, *UpdateMemberAttributeRequest) (*MemberAttribute, error)
+	DeleteMemberAttribute(context.Context, *DeleteMemberAttributeRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMemberServiceServer()
 }
 
@@ -145,6 +210,21 @@ func (UnimplementedMemberServiceServer) DeleteMember(context.Context, *DeleteMem
 }
 func (UnimplementedMemberServiceServer) ListMemberTags(context.Context, *ListMemberTagsRequest) (*ListMemberTagsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListMemberTags not implemented")
+}
+func (UnimplementedMemberServiceServer) CreateMemberAttribute(context.Context, *CreateMemberAttributeRequest) (*MemberAttribute, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMemberAttribute not implemented")
+}
+func (UnimplementedMemberServiceServer) GetMemberAttribute(context.Context, *GetMemberAttributeRequest) (*MemberAttribute, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMemberAttribute not implemented")
+}
+func (UnimplementedMemberServiceServer) ListMemberAttributes(context.Context, *ListMemberAttributesRequest) (*ListMemberAttributesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListMemberAttributes not implemented")
+}
+func (UnimplementedMemberServiceServer) UpdateMemberAttribute(context.Context, *UpdateMemberAttributeRequest) (*MemberAttribute, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMemberAttribute not implemented")
+}
+func (UnimplementedMemberServiceServer) DeleteMemberAttribute(context.Context, *DeleteMemberAttributeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMemberAttribute not implemented")
 }
 func (UnimplementedMemberServiceServer) mustEmbedUnimplementedMemberServiceServer() {}
 func (UnimplementedMemberServiceServer) testEmbeddedByValue()                       {}
@@ -275,6 +355,96 @@ func _MemberService_ListMemberTags_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_CreateMemberAttribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateMemberAttributeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).CreateMemberAttribute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_CreateMemberAttribute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).CreateMemberAttribute(ctx, req.(*CreateMemberAttributeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MemberService_GetMemberAttribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMemberAttributeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).GetMemberAttribute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_GetMemberAttribute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).GetMemberAttribute(ctx, req.(*GetMemberAttributeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MemberService_ListMemberAttributes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMemberAttributesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).ListMemberAttributes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_ListMemberAttributes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).ListMemberAttributes(ctx, req.(*ListMemberAttributesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MemberService_UpdateMemberAttribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMemberAttributeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).UpdateMemberAttribute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_UpdateMemberAttribute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).UpdateMemberAttribute(ctx, req.(*UpdateMemberAttributeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MemberService_DeleteMemberAttribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMemberAttributeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).DeleteMemberAttribute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_DeleteMemberAttribute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).DeleteMemberAttribute(ctx, req.(*DeleteMemberAttributeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemberService_ServiceDesc is the grpc.ServiceDesc for MemberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -305,6 +475,26 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMemberTags",
 			Handler:    _MemberService_ListMemberTags_Handler,
+		},
+		{
+			MethodName: "CreateMemberAttribute",
+			Handler:    _MemberService_CreateMemberAttribute_Handler,
+		},
+		{
+			MethodName: "GetMemberAttribute",
+			Handler:    _MemberService_GetMemberAttribute_Handler,
+		},
+		{
+			MethodName: "ListMemberAttributes",
+			Handler:    _MemberService_ListMemberAttributes_Handler,
+		},
+		{
+			MethodName: "UpdateMemberAttribute",
+			Handler:    _MemberService_UpdateMemberAttribute_Handler,
+		},
+		{
+			MethodName: "DeleteMemberAttribute",
+			Handler:    _MemberService_DeleteMemberAttribute_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
