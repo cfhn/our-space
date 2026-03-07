@@ -579,6 +579,156 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /v1/member-attributes:
+        get:
+            tags:
+                - MemberService
+            operationId: MemberService_ListMemberAttributes
+            parameters:
+                - name: page_size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_token
+                  in: query
+                  schema:
+                    type: string
+                - name: sort_by
+                  in: query
+                  schema:
+                    enum:
+                        - MEMBER_ATTRIBUTE_FIELD_UNKNOWN
+                        - MEMBER_ATTRIBUTE_FIELD_ID
+                        - MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME
+                        - MEMBER_ATTRIBUTE_FIELD_DISPLAY_NAME
+                        - MEMBER_ATTRIBUTE_FIELD_TYPE
+                    type: string
+                    format: enum
+                - name: sort_direction
+                  in: query
+                  schema:
+                    enum:
+                        - SORT_DIRECTION_DEFAULT
+                        - SORT_DIRECTION_ASCENDING
+                        - SORT_DIRECTION_DESCENDING
+                    type: string
+                    format: enum
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListMemberAttributesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - MemberService
+            operationId: MemberService_CreateMemberAttribute
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/MemberAttribute'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MemberAttribute'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/member-attributes/{attribute.id}:
+        patch:
+            tags:
+                - MemberService
+            operationId: MemberService_UpdateMemberAttribute
+            parameters:
+                - name: attribute.id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: field_mask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/MemberAttribute'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MemberAttribute'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/member-attributes/{id}:
+        get:
+            tags:
+                - MemberService
+            operationId: MemberService_GetMemberAttribute
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MemberAttribute'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - MemberService
+            operationId: MemberService_DeleteMemberAttribute
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /v1/member-tags:
         get:
             tags:
@@ -1094,6 +1244,15 @@ components:
                         $ref: '#/components/schemas/Card'
                 next_page_token:
                     type: string
+        ListMemberAttributesResponse:
+            type: object
+            properties:
+                attributes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/MemberAttribute'
+                next_page_token:
+                    type: string
         ListMemberTagsResponse:
             type: object
             properties:
@@ -1214,6 +1373,31 @@ components:
                         type: string
                 member_login:
                     $ref: '#/components/schemas/MemberLogin'
+                additional_attributes:
+                    type: object
+                    additionalProperties:
+                        type: string
+        MemberAttribute:
+            type: object
+            properties:
+                id:
+                    type: string
+                technical_name:
+                    type: string
+                display_name:
+                    type: string
+                type:
+                    enum:
+                        - TYPE_UNKNOWN
+                        - TYPE_TEXT_SINGLE_LINE
+                        - TYPE_TEXT_MULI_LINE
+                        - TYPE_NUMBER
+                        - TYPE_DATE
+                        - TYPE_DATETIME
+                    type: string
+                    format: enum
+                description:
+                    type: string
         MemberLogin:
             type: object
             properties:

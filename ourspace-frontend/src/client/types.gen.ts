@@ -66,6 +66,11 @@ export type ListCardsResponseWritable = {
     next_page_token: string;
 };
 
+export type ListMemberAttributesResponse = {
+    attributes?: Array<MemberAttribute>;
+    next_page_token?: string;
+};
+
 export type ListMemberTagsResponse = {
     tags?: Array<string>;
     next_page_token?: string;
@@ -134,6 +139,9 @@ export type MemberReadable = {
     age_category: 'AGE_CATEGORY_UNKNOWN' | 'AGE_CATEGORY_UNDERAGE' | 'AGE_CATEGORY_ADULT';
     tags: Array<string>;
     member_login?: MemberLoginReadable;
+    additional_attributes?: {
+        [key: string]: string;
+    };
 };
 
 export type MemberWritable = {
@@ -143,6 +151,17 @@ export type MemberWritable = {
     age_category: 'AGE_CATEGORY_UNKNOWN' | 'AGE_CATEGORY_UNDERAGE' | 'AGE_CATEGORY_ADULT';
     tags: Array<string>;
     member_login?: MemberLoginWritable;
+    additional_attributes?: {
+        [key: string]: string;
+    };
+};
+
+export type MemberAttribute = {
+    id?: string;
+    technical_name?: string;
+    display_name?: string;
+    type?: 'TYPE_UNKNOWN' | 'TYPE_TEXT_SINGLE_LINE' | 'TYPE_TEXT_MULI_LINE' | 'TYPE_NUMBER' | 'TYPE_DATE' | 'TYPE_DATETIME';
+    description?: string;
 };
 
 export type MemberLoginReadable = {
@@ -674,6 +693,142 @@ export type CardServiceGetCardResponses = {
 };
 
 export type CardServiceGetCardResponse = CardServiceGetCardResponses[keyof CardServiceGetCardResponses];
+
+export type MemberServiceListMemberAttributesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        page_size?: number;
+        page_token?: string;
+        sort_by?: 'MEMBER_ATTRIBUTE_FIELD_UNKNOWN' | 'MEMBER_ATTRIBUTE_FIELD_ID' | 'MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME' | 'MEMBER_ATTRIBUTE_FIELD_DISPLAY_NAME' | 'MEMBER_ATTRIBUTE_FIELD_TYPE';
+        sort_direction?: 'SORT_DIRECTION_DEFAULT' | 'SORT_DIRECTION_ASCENDING' | 'SORT_DIRECTION_DESCENDING';
+    };
+    url: '/v1/member-attributes';
+};
+
+export type MemberServiceListMemberAttributesErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type MemberServiceListMemberAttributesError = MemberServiceListMemberAttributesErrors[keyof MemberServiceListMemberAttributesErrors];
+
+export type MemberServiceListMemberAttributesResponses = {
+    /**
+     * OK
+     */
+    200: ListMemberAttributesResponse;
+};
+
+export type MemberServiceListMemberAttributesResponse = MemberServiceListMemberAttributesResponses[keyof MemberServiceListMemberAttributesResponses];
+
+export type MemberServiceCreateMemberAttributeData = {
+    body: MemberAttribute;
+    path?: never;
+    query?: never;
+    url: '/v1/member-attributes';
+};
+
+export type MemberServiceCreateMemberAttributeErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type MemberServiceCreateMemberAttributeError = MemberServiceCreateMemberAttributeErrors[keyof MemberServiceCreateMemberAttributeErrors];
+
+export type MemberServiceCreateMemberAttributeResponses = {
+    /**
+     * OK
+     */
+    200: MemberAttribute;
+};
+
+export type MemberServiceCreateMemberAttributeResponse = MemberServiceCreateMemberAttributeResponses[keyof MemberServiceCreateMemberAttributeResponses];
+
+export type MemberServiceUpdateMemberAttributeData = {
+    body: MemberAttribute;
+    path: {
+        'attribute.id': string;
+    };
+    query?: {
+        field_mask?: string;
+    };
+    url: '/v1/member-attributes/{attribute.id}';
+};
+
+export type MemberServiceUpdateMemberAttributeErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type MemberServiceUpdateMemberAttributeError = MemberServiceUpdateMemberAttributeErrors[keyof MemberServiceUpdateMemberAttributeErrors];
+
+export type MemberServiceUpdateMemberAttributeResponses = {
+    /**
+     * OK
+     */
+    200: MemberAttribute;
+};
+
+export type MemberServiceUpdateMemberAttributeResponse = MemberServiceUpdateMemberAttributeResponses[keyof MemberServiceUpdateMemberAttributeResponses];
+
+export type MemberServiceDeleteMemberAttributeData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/member-attributes/{id}';
+};
+
+export type MemberServiceDeleteMemberAttributeErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type MemberServiceDeleteMemberAttributeError = MemberServiceDeleteMemberAttributeErrors[keyof MemberServiceDeleteMemberAttributeErrors];
+
+export type MemberServiceDeleteMemberAttributeResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type MemberServiceGetMemberAttributeData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/member-attributes/{id}';
+};
+
+export type MemberServiceGetMemberAttributeErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type MemberServiceGetMemberAttributeError = MemberServiceGetMemberAttributeErrors[keyof MemberServiceGetMemberAttributeErrors];
+
+export type MemberServiceGetMemberAttributeResponses = {
+    /**
+     * OK
+     */
+    200: MemberAttribute;
+};
+
+export type MemberServiceGetMemberAttributeResponse = MemberServiceGetMemberAttributeResponses[keyof MemberServiceGetMemberAttributeResponses];
 
 export type MemberServiceListMemberTagsData = {
     body?: never;

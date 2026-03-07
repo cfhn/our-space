@@ -14,15 +14,14 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"google.golang.org/grpc/credentials/insecure"
-
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/cfhn/our-space/ourspace-backend/internal/auth"
 	"github.com/cfhn/our-space/ourspace-backend/internal/cards"
 	"github.com/cfhn/our-space/ourspace-backend/internal/config"
 	"github.com/cfhn/our-space/ourspace-backend/internal/members"
-	"github.com/cfhn/our-space/ourspace-backend/proto"
+	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/database"
 	"github.com/cfhn/our-space/pkg/log"
 	"github.com/cfhn/our-space/pkg/setup"
@@ -141,6 +140,7 @@ func loadKeys(privateKeyPath, publicKeysPath string) (*ecdsa.PrivateKey, map[str
 	if err != nil {
 		return nil, nil, err
 	}
+
 	block, _ := pem.Decode(pemContent)
 	if block == nil {
 		return nil, nil, fmt.Errorf("public key not found")
@@ -191,6 +191,7 @@ func loadKeys(privateKeyPath, publicKeysPath string) (*ecdsa.PrivateKey, map[str
 
 	// Always add the current signing key to the verification keys
 	signingPublicKey := privateKey.Public().(*ecdsa.PublicKey)
+
 	b, err := signingPublicKey.Bytes()
 	if err != nil {
 		return nil, nil, err

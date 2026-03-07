@@ -14,7 +14,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/cfhn/our-space/ourspace-backend/proto"
+	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/pwhash"
 	"github.com/cfhn/our-space/pkg/setup"
 	"github.com/cfhn/our-space/pkg/status"
@@ -29,7 +29,7 @@ const (
 
 type Repository interface {
 	FindUserLoginDetails(ctx context.Context, username string) (*LoginDetails, error)
-	FindApiKey(ctx context.Context, apiKey string) (*ApiKeyDetails, error)
+	FindAPIKey(ctx context.Context, apiKey string) (*APIKeyDetails, error)
 	UpdateHash(ctx context.Context, username, password string) error
 }
 
@@ -41,9 +41,9 @@ type LoginDetails struct {
 	FullName string
 }
 
-type ApiKeyDetails struct {
+type APIKeyDetails struct {
 	ID       string
-	MemberId string
+	MemberID string
 }
 
 type Service struct {
@@ -89,6 +89,7 @@ func (s *Service) passwordLogin(ctx context.Context, credentials *pb.LoginPasswo
 	if errors.Is(err, ErrUserNotFound) {
 		return nil, status.Unauthenticated()
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -128,14 +129,15 @@ func (s *Service) passwordLogin(ctx context.Context, credentials *pb.LoginPasswo
 }
 
 func (s *Service) apiKeyLogin(ctx context.Context, credentials *pb.LoginApiKey) (*pb.LoginResponse, error) {
-	apiKeyDetails, err := s.repo.FindApiKey(ctx, credentials.ApiKey)
+	apiKeyDetails, err := s.repo.FindAPIKey(ctx, credentials.ApiKey)
 	if err != nil {
 		return nil, err
 	}
 
-	if errors.Is(err, ErrApiKeyNotFound) {
+	if errors.Is(err, ErrAPIKeyNotFound) {
 		return nil, status.Unauthenticated()
 	}
+
 	if err != nil {
 		return nil, status.Internal(err)
 	}
@@ -164,6 +166,7 @@ func (s *Service) Refresh(ctx context.Context, request *pb.RefreshRequest) (*pb.
 	}
 
 	var refreshTokenClaims setup.RefreshTokenClaims
+
 	_, err := jwt.ParseWithClaims(refreshTokens[0], &refreshTokenClaims, func(token *jwt.Token) (any, error) {
 		kid, ok := token.Header["kid"].(string)
 		if !ok {
@@ -171,6 +174,7 @@ func (s *Service) Refresh(ctx context.Context, request *pb.RefreshRequest) (*pb.
 		}
 
 		keys := s.publicKeys.Load()
+
 		return (*keys)[kid], nil
 	}, jwt.WithExpirationRequired(), jwt.WithValidMethods([]string{jwt.SigningMethodES256.Name}))
 	if err != nil {
@@ -195,6 +199,7 @@ func (s *Service) Refresh(ctx context.Context, request *pb.RefreshRequest) (*pb.
 	if errors.Is(err, ErrSessionExceedsLifetime) {
 		return nil, status.Unauthenticated()
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -237,12 +242,14 @@ func CookieRewriter(_ context.Context, w http.ResponseWriter, m proto.Message) e
 			HttpOnly: true,
 			SameSite: http.SameSiteLaxMode,
 		})
+
 		return nil
 	default:
 		return nil
 	}
 
 	refreshToken = loginSuccess.RefreshToken
+
 	if loginSuccess.RefreshTokenExpiry != nil {
 		expiry = loginSuccess.RefreshTokenExpiry.AsTime()
 	}

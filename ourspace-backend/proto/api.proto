@@ -110,6 +110,38 @@ service MemberService {
       tags: "Members"
     };
   }
+
+  rpc CreateMemberAttribute(CreateMemberAttributeRequest) returns (MemberAttribute) {
+    option(google.api.http) = {
+      post: "/v1/member-attributes"
+      body: "attribute"
+    };
+  };
+
+  rpc GetMemberAttribute(GetMemberAttributeRequest) returns (MemberAttribute) {
+    option(google.api.http) = {
+      get: "/v1/member-attributes/{id}"
+    };
+  };
+
+  rpc ListMemberAttributes(ListMemberAttributesRequest) returns (ListMemberAttributesResponse) {
+    option(google.api.http) = {
+      get: "/v1/member-attributes"
+    };
+  };
+
+  rpc UpdateMemberAttribute(UpdateMemberAttributeRequest) returns (MemberAttribute)  {
+    option(google.api.http) = {
+      patch: "/v1/member-attributes/{attribute.id}"
+      body: "attribute"
+    };
+  };
+
+  rpc DeleteMemberAttribute(DeleteMemberAttributeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/member-attributes/{id}"
+    };
+  };
 }
 
 message CreateMemberRequest {
@@ -135,6 +167,7 @@ message Member {
   AgeCategory age_category = 5 [json_name="age_category"];
   repeated string tags = 6;
   optional MemberLogin member_login = 7 [json_name="member_login"];
+  map<string, string> additional_attributes = 8 [json_name="additional_attributes"];
 }
 
 message MemberLogin {
@@ -219,6 +252,59 @@ message ListMemberTagsResponse {
 
 message MemberTagsPageToken {
   int32 offset = 1;
+}
+enum MemberAttributeField {
+  MEMBER_ATTRIBUTE_FIELD_UNKNOWN = 0;
+  MEMBER_ATTRIBUTE_FIELD_ID = 1;
+  MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME = 2;
+  MEMBER_ATTRIBUTE_FIELD_DISPLAY_NAME = 3;
+  MEMBER_ATTRIBUTE_FIELD_TYPE = 4;
+}
+
+message CreateMemberAttributeRequest {
+  MemberAttribute attribute = 1;
+}
+message GetMemberAttributeRequest {
+  string id = 1;
+}
+message ListMemberAttributesRequest {
+  int32 page_size = 1 [json_name="page_size"];
+  string page_token = 2 [json_name="page_token"];
+
+  MemberAttributeField sort_by = 3 [json_name="sort_by"];
+  SortDirection sort_direction = 4 [json_name="sort_direction"];
+}
+message ListMemberAttributesResponse {
+  repeated MemberAttribute attributes = 1;
+  string next_page_token = 2;
+}
+message UpdateMemberAttributeRequest {
+  MemberAttribute attribute = 1;
+  google.protobuf.FieldMask field_mask = 2;
+}
+message DeleteMemberAttributeRequest {
+  string id = 1;
+}
+message MemberAttribute {
+  string id = 1;
+  string technical_name = 2 [json_name="technical_name", (google.api.field_behavior)=IMMUTABLE];
+  string display_name = 3 [json_name="display_name"];
+  enum Type {
+    TYPE_UNKNOWN = 0;
+    TYPE_TEXT_SINGLE_LINE = 1;
+    TYPE_TEXT_MULI_LINE = 2;
+    TYPE_NUMBER = 3;
+    TYPE_DATE = 4;
+    TYPE_DATETIME = 5;
+  }
+  Type type = 4 [(google.api.field_behavior)=IMMUTABLE];
+  string description = 5;
+}
+message MemberAttributePageToken {
+  MemberAttributeField field = 1;
+  string last_value = 2 [json_name="last_value"];
+  SortDirection direction = 3;
+  string last_id = 4 [json_name="last_id"];
 }
 
 service CardService {

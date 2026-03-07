@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/cfhn/our-space/ourspace-backend/proto"
+	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/status"
 )
 
@@ -149,9 +149,11 @@ func (s *Service) GetCard(ctx context.Context, request *pb.GetCardRequest) (*pb.
 	if errors.Is(err, ErrNotFound) {
 		return nil, status.NotFound()
 	}
+
 	if err != nil {
 		return nil, status.Internal(err)
 	}
+
 	return card, nil
 }
 
@@ -172,9 +174,11 @@ func (s *Service) ListCards(ctx context.Context, request *pb.ListCardsRequest) (
 	if request.MemberId != "" {
 		filters.MemberID = request.MemberId
 	}
+
 	if request.ValidOn != nil {
 		filters.ValidOn = request.ValidOn.AsTime()
 	}
+
 	if len(request.RfidValue) != 0 {
 		filters.RfidValue = request.RfidValue
 	}

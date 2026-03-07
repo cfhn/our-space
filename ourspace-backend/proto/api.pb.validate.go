@@ -253,6 +253,8 @@ func (m *Member) validate(all bool) error {
 
 	// no validation rules for AgeCategory
 
+	// no validation rules for AdditionalAttributes
+
 	if m.MemberLogin != nil {
 
 		if all {
@@ -1641,6 +1643,978 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MemberTagsPageTokenValidationError{}
+
+// Validate checks the field values on CreateMemberAttributeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateMemberAttributeRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateMemberAttributeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateMemberAttributeRequestMultiError, or nil if none found.
+func (m *CreateMemberAttributeRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateMemberAttributeRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetAttribute()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateMemberAttributeRequestValidationError{
+					field:  "Attribute",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateMemberAttributeRequestValidationError{
+					field:  "Attribute",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAttribute()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateMemberAttributeRequestValidationError{
+				field:  "Attribute",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateMemberAttributeRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateMemberAttributeRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateMemberAttributeRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateMemberAttributeRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateMemberAttributeRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateMemberAttributeRequestMultiError) AllErrors() []error { return m }
+
+// CreateMemberAttributeRequestValidationError is the validation error returned
+// by CreateMemberAttributeRequest.Validate if the designated constraints
+// aren't met.
+type CreateMemberAttributeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateMemberAttributeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateMemberAttributeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateMemberAttributeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateMemberAttributeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateMemberAttributeRequestValidationError) ErrorName() string {
+	return "CreateMemberAttributeRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateMemberAttributeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateMemberAttributeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateMemberAttributeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateMemberAttributeRequestValidationError{}
+
+// Validate checks the field values on GetMemberAttributeRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetMemberAttributeRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMemberAttributeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMemberAttributeRequestMultiError, or nil if none found.
+func (m *GetMemberAttributeRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMemberAttributeRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return GetMemberAttributeRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMemberAttributeRequestMultiError is an error wrapping multiple validation
+// errors returned by GetMemberAttributeRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetMemberAttributeRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMemberAttributeRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMemberAttributeRequestMultiError) AllErrors() []error { return m }
+
+// GetMemberAttributeRequestValidationError is the validation error returned by
+// GetMemberAttributeRequest.Validate if the designated constraints aren't met.
+type GetMemberAttributeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMemberAttributeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMemberAttributeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMemberAttributeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMemberAttributeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMemberAttributeRequestValidationError) ErrorName() string {
+	return "GetMemberAttributeRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetMemberAttributeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMemberAttributeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMemberAttributeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMemberAttributeRequestValidationError{}
+
+// Validate checks the field values on ListMemberAttributesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListMemberAttributesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListMemberAttributesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListMemberAttributesRequestMultiError, or nil if none found.
+func (m *ListMemberAttributesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListMemberAttributesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageSize
+
+	// no validation rules for PageToken
+
+	// no validation rules for SortBy
+
+	// no validation rules for SortDirection
+
+	if len(errors) > 0 {
+		return ListMemberAttributesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListMemberAttributesRequestMultiError is an error wrapping multiple
+// validation errors returned by ListMemberAttributesRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListMemberAttributesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListMemberAttributesRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListMemberAttributesRequestMultiError) AllErrors() []error { return m }
+
+// ListMemberAttributesRequestValidationError is the validation error returned
+// by ListMemberAttributesRequest.Validate if the designated constraints
+// aren't met.
+type ListMemberAttributesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListMemberAttributesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListMemberAttributesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListMemberAttributesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListMemberAttributesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListMemberAttributesRequestValidationError) ErrorName() string {
+	return "ListMemberAttributesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListMemberAttributesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListMemberAttributesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListMemberAttributesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListMemberAttributesRequestValidationError{}
+
+// Validate checks the field values on ListMemberAttributesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListMemberAttributesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListMemberAttributesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListMemberAttributesResponseMultiError, or nil if none found.
+func (m *ListMemberAttributesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListMemberAttributesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListMemberAttributesResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListMemberAttributesResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListMemberAttributesResponseValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for NextPageToken
+
+	if len(errors) > 0 {
+		return ListMemberAttributesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListMemberAttributesResponseMultiError is an error wrapping multiple
+// validation errors returned by ListMemberAttributesResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListMemberAttributesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListMemberAttributesResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListMemberAttributesResponseMultiError) AllErrors() []error { return m }
+
+// ListMemberAttributesResponseValidationError is the validation error returned
+// by ListMemberAttributesResponse.Validate if the designated constraints
+// aren't met.
+type ListMemberAttributesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListMemberAttributesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListMemberAttributesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListMemberAttributesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListMemberAttributesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListMemberAttributesResponseValidationError) ErrorName() string {
+	return "ListMemberAttributesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListMemberAttributesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListMemberAttributesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListMemberAttributesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListMemberAttributesResponseValidationError{}
+
+// Validate checks the field values on UpdateMemberAttributeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateMemberAttributeRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateMemberAttributeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateMemberAttributeRequestMultiError, or nil if none found.
+func (m *UpdateMemberAttributeRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateMemberAttributeRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetAttribute()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateMemberAttributeRequestValidationError{
+					field:  "Attribute",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateMemberAttributeRequestValidationError{
+					field:  "Attribute",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAttribute()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateMemberAttributeRequestValidationError{
+				field:  "Attribute",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetFieldMask()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateMemberAttributeRequestValidationError{
+					field:  "FieldMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateMemberAttributeRequestValidationError{
+					field:  "FieldMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFieldMask()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateMemberAttributeRequestValidationError{
+				field:  "FieldMask",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateMemberAttributeRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateMemberAttributeRequestMultiError is an error wrapping multiple
+// validation errors returned by UpdateMemberAttributeRequest.ValidateAll() if
+// the designated constraints aren't met.
+type UpdateMemberAttributeRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateMemberAttributeRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateMemberAttributeRequestMultiError) AllErrors() []error { return m }
+
+// UpdateMemberAttributeRequestValidationError is the validation error returned
+// by UpdateMemberAttributeRequest.Validate if the designated constraints
+// aren't met.
+type UpdateMemberAttributeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateMemberAttributeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateMemberAttributeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateMemberAttributeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateMemberAttributeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateMemberAttributeRequestValidationError) ErrorName() string {
+	return "UpdateMemberAttributeRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateMemberAttributeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateMemberAttributeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateMemberAttributeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateMemberAttributeRequestValidationError{}
+
+// Validate checks the field values on DeleteMemberAttributeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteMemberAttributeRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteMemberAttributeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteMemberAttributeRequestMultiError, or nil if none found.
+func (m *DeleteMemberAttributeRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteMemberAttributeRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteMemberAttributeRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteMemberAttributeRequestMultiError is an error wrapping multiple
+// validation errors returned by DeleteMemberAttributeRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteMemberAttributeRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteMemberAttributeRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteMemberAttributeRequestMultiError) AllErrors() []error { return m }
+
+// DeleteMemberAttributeRequestValidationError is the validation error returned
+// by DeleteMemberAttributeRequest.Validate if the designated constraints
+// aren't met.
+type DeleteMemberAttributeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteMemberAttributeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteMemberAttributeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteMemberAttributeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteMemberAttributeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteMemberAttributeRequestValidationError) ErrorName() string {
+	return "DeleteMemberAttributeRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteMemberAttributeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteMemberAttributeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteMemberAttributeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteMemberAttributeRequestValidationError{}
+
+// Validate checks the field values on MemberAttribute with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *MemberAttribute) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MemberAttribute with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MemberAttributeMultiError, or nil if none found.
+func (m *MemberAttribute) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MemberAttribute) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for TechnicalName
+
+	// no validation rules for DisplayName
+
+	// no validation rules for Type
+
+	// no validation rules for Description
+
+	if len(errors) > 0 {
+		return MemberAttributeMultiError(errors)
+	}
+
+	return nil
+}
+
+// MemberAttributeMultiError is an error wrapping multiple validation errors
+// returned by MemberAttribute.ValidateAll() if the designated constraints
+// aren't met.
+type MemberAttributeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MemberAttributeMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MemberAttributeMultiError) AllErrors() []error { return m }
+
+// MemberAttributeValidationError is the validation error returned by
+// MemberAttribute.Validate if the designated constraints aren't met.
+type MemberAttributeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MemberAttributeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MemberAttributeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MemberAttributeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MemberAttributeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MemberAttributeValidationError) ErrorName() string { return "MemberAttributeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e MemberAttributeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMemberAttribute.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MemberAttributeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MemberAttributeValidationError{}
+
+// Validate checks the field values on MemberAttributePageToken with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MemberAttributePageToken) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MemberAttributePageToken with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MemberAttributePageTokenMultiError, or nil if none found.
+func (m *MemberAttributePageToken) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MemberAttributePageToken) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Field
+
+	// no validation rules for LastValue
+
+	// no validation rules for Direction
+
+	// no validation rules for LastId
+
+	if len(errors) > 0 {
+		return MemberAttributePageTokenMultiError(errors)
+	}
+
+	return nil
+}
+
+// MemberAttributePageTokenMultiError is an error wrapping multiple validation
+// errors returned by MemberAttributePageToken.ValidateAll() if the designated
+// constraints aren't met.
+type MemberAttributePageTokenMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MemberAttributePageTokenMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MemberAttributePageTokenMultiError) AllErrors() []error { return m }
+
+// MemberAttributePageTokenValidationError is the validation error returned by
+// MemberAttributePageToken.Validate if the designated constraints aren't met.
+type MemberAttributePageTokenValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MemberAttributePageTokenValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MemberAttributePageTokenValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MemberAttributePageTokenValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MemberAttributePageTokenValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MemberAttributePageTokenValidationError) ErrorName() string {
+	return "MemberAttributePageTokenValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MemberAttributePageTokenValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMemberAttributePageToken.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MemberAttributePageTokenValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MemberAttributePageTokenValidationError{}
 
 // Validate checks the field values on Card with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
