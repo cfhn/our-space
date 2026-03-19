@@ -19,8 +19,6 @@ import  (
 
 type Service struct {
 	repo *Postgres
-	
-	GetBriefingType(ctx context.Context, request *pb.GetBriefingTypeRequest)(*pbBriefingType, error)
 }
 
 
@@ -30,11 +28,26 @@ func NewService(repo *Postgres) * Service {
 
 
 func (s Service) CreateBriefingType(ctx context.Context, request *pb.CreateBriefingTypeRequest) (*pb.BriefingType) {
-	briefingTypeAttributes, err := s.validateCreateBriefingType(ctx, request)
+	fieldViolations, err := s.validateCreateBriefingType(ctx, request)
 	if err != nil {
 		return nil, status.Internal(err)
 	}
-	if request.
+
+	if len(fieldViolations) != 0 {
+		return nil, status.FieldViolations(fieldViolations)
+	}
+
+	if request.BriefingTypeId != "" {
+		request.BriefingType.Id = request.Id
+	} else {
+		request.Card.Id = uuid.New().String()
+	}
+
+	card, err := s.repo.CreateBriefingType(ctx, request.BriefingType)
+	if err != nil{
+		return nil, status.Internal(err)
+	}
+	return card, nil
 }
 
 func (s *Service) validateCreateBriefingType (ctx context.Context, request *pb.CreateBriefingTypeRequest,) ([]*errdetails.BadRequest_FieldViolation, error) {
@@ -70,10 +83,10 @@ func (s *Service) validateCreateBriefingType (ctx context.Context, request *pb.C
 			Reason: "FIELD_EMPTY"
 		})
 	}
-	if len(request.description) > 1024 {
+	if len(request.description) > 10240 {
 		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field: "briefingType.description"
-			Description: "description length must be less than 1024"
+			Description: "description length must be less than 10240"
 			Reason: "FIELD_TOO_BIG"
 		})
 	}
@@ -87,3 +100,15 @@ func (s *Service) validateCreateBriefingType (ctx context.Context, request *pb.C
 	}
 	return fieldViolations, nil
 }
+
+func (s *Service) DeleteBriefingType(ctx context.Context, request *pb.DeleteBriefingTypeRequest) (*emptypb.Empty, error){
+	err := s.repo.DeleteBriefingType(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	// todo: set to inactive instead if there exist briefings of this type?
+	return &emptypb.Empty{}, nil
+}
+
+
+
