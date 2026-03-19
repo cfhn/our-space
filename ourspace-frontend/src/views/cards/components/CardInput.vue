@@ -1,54 +1,29 @@
 <script setup lang="ts">
+import { OnyxButton, OnyxModal, OnyxBottomBar, OnyxLoadingIndicator, OnyxIcon } from 'sit-onyx'
+import { ref } from 'vue'
+import check from '@sit-onyx/icons/check.svg?raw'
 
-import {
-  OnyxButton,
-  OnyxModalDialog,
-  OnyxBottomBar,
-  OnyxLoadingIndicator, OnyxIcon,
-} from "sit-onyx";
-import {ref, useTemplateRef, watch} from "vue";
-import check from "@sit-onyx/icons/check.svg?raw";
+const modelValue = defineModel<string>()
 
-const props = defineProps<{
-  modelValue: string;
-}>();
-const emits = defineEmits(['update:modelValue']);
+const isOpen = ref(false)
+const waiting = ref(true)
+const inputValue = ref('')
 
-const isOpen = ref<boolean>(false);
-const waiting = ref(true);
-const inputRef = useTemplateRef<HTMLInputElement>("inputRef");
+const onSubmit = () => {
+  waiting.value = false
+  modelValue.value = inputValue.value
+  inputValue.value = ''
 
-const onKey = (ev: KeyboardEvent) => {
-  if (ev.code === "Enter") {
-    ev.preventDefault();
-
-    waiting.value = false;
-    emits('update:modelValue', inputRef.value?.value);
-
-    setTimeout(() => {
-      isOpen.value = false;
-      waiting.value = true;
-      if (inputRef.value) {
-        inputRef.value.value = "";
-      }
-    }, 500);
-  }
-};
-
-watch([isOpen, inputRef], () => {
-  if (!isOpen.value) {
-    return;
-  }
-
-  console.log('focusing', inputRef.value);
-  setTimeout(() => inputRef.value?.focus(), 0);
-  console.log('current focus', document.activeElement);
-})
+  setTimeout(() => {
+    isOpen.value = false
+    waiting.value = true
+  }, 500)
+}
 </script>
 
 <template>
   <OnyxButton label="Scan Card" @click="isOpen = true" v-bind="$attrs" />
-  <OnyxModalDialog label="Scan Card" :open="isOpen" @close="isOpen = false">
+  <OnyxModal label="Scan Card" :open="isOpen" @close="isOpen = false">
     <template #default>
       <div class="loading-indicator">
         <OnyxLoadingIndicator type="circle" v-if="waiting" />
@@ -57,7 +32,16 @@ watch([isOpen, inputRef], () => {
       <div class="modal">
         Ensure a NFC Scanner is connected. Then hold the card onto the scanner.
       </div>
-      <input type="text" class="nfc-input" aria-label="NFC Scan value" ref="inputRef" @keydown="onKey" @focusout="isOpen = false"/>
+      <form @submit.prevent="onSubmit">
+        <input
+          type="text"
+          class="nfc-input"
+          aria-label="NFC Scan value"
+          v-model="inputValue"
+          autofocus
+          @focusout="isOpen = false"
+        />
+      </form>
     </template>
 
     <template #footer>
@@ -65,7 +49,7 @@ watch([isOpen, inputRef], () => {
         <OnyxButton label="Close" color="neutral" mode="plain" @click="isOpen = false" />
       </OnyxBottomBar>
     </template>
-  </OnyxModalDialog>
+  </OnyxModal>
 </template>
 
 <style scoped>
@@ -77,7 +61,7 @@ watch([isOpen, inputRef], () => {
 .loading-indicator {
   display: flex;
   justify-content: center;
-  margin: var(--onyx-density-xl)
+  margin: var(--onyx-density-xl);
 }
 
 .nfc-input {

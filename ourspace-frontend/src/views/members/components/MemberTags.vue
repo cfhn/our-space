@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import {OnyxBadge} from "sit-onyx";
+import { OnyxBadge } from 'sit-onyx'
 
 const props = defineProps<{
-  tags: string[];
+  tags: string[]
 }>()
 </script>
 
 <template>
-<div>
-  <OnyxBadge v-for="tag in props.tags"
-             color="neutral"
-             density="compact"
-             class="tag-badge"
-  >{{tag}}</OnyxBadge>
-</div>
+  <div>
+    <OnyxBadge
+      v-for="tag in props.tags"
+      color="neutral"
+      density="compact"
+      class="tag-badge"
+      :key="tag"
+    >
+      {{ tag }}
+    </OnyxBadge>
+  </div>
 </template>
 
 <style scoped>

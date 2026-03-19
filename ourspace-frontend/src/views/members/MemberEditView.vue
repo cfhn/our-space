@@ -8,8 +8,8 @@ import {
   OnyxIcon,
   OnyxIconButton,
   OnyxPageLayout,
-} from "sit-onyx";
-import {computed, ref, watchEffect} from "vue";
+} from 'sit-onyx'
+import { computed, ref, watchEffect } from 'vue'
 import {
   cardServiceListCards,
   type CardServiceListCardsResponse,
@@ -17,170 +17,173 @@ import {
   memberServiceCreateMember,
   memberServiceGetMember,
   type MemberServiceGetMemberResponse,
-  memberServiceUpdateMember, type MemberWritable
-} from "@/client";
-import MemberDetails from "@/views/members/components/MemberDetails.vue";
+  memberServiceUpdateMember,
+  type MemberWritable,
+} from '@/client'
+import MemberDetails from '@/views/members/components/MemberDetails.vue'
 
-import userCompanyId from "@sit-onyx/icons/user-company-id.svg?raw";
-import iconEdit from "@sit-onyx/icons/edit.svg?raw";
-import {useRouter} from "vue-router";
-import Card from "@/views/cards/components/Card.vue";
+import userCompanyId from '@sit-onyx/icons/user-company-id.svg?raw'
+import iconEdit from '@sit-onyx/icons/edit.svg?raw'
+import { useRouter } from 'vue-router'
+import MemberCard from '@/views/cards/components/MemberCard.vue'
 
-const props = defineProps<{ id: string }>();
+const props = defineProps<{ id: string }>()
 const member = ref<MemberServiceGetMemberResponse>({
-  id: "",
-  name: "",
-  age_category: "AGE_CATEGORY_UNKNOWN",
+  id: '',
+  name: '',
+  age_category: 'AGE_CATEGORY_UNKNOWN',
   membership_start: new Date().toISOString(),
   membership_end: undefined,
   tags: [],
-});
-let memberOriginal: MemberServiceGetMemberResponse = {...member.value};
-const cards = ref<CardServiceListCardsResponse>();
-const isEdit = ref<boolean>(false);
+})
+let memberOriginal: MemberServiceGetMemberResponse = { ...member.value }
+const cards = ref<CardServiceListCardsResponse>()
+const isEdit = ref<boolean>(false)
 const isCreate = computed<boolean>(() => !props.id)
-const router = useRouter();
+const router = useRouter()
 
 const back = () => {
-  router.back();
-};
+  router.back()
+}
 
 const cancelEditing = () => {
   if (!member.value) {
-    member.value = {...memberOriginal};
-    isEdit.value = false;
+    member.value = { ...memberOriginal }
+    isEdit.value = false
 
-    return;
+    return
   }
 
   if (changedFields(member.value, memberOriginal).length !== 0) {
-    if (!confirm("Unsaved changes. Do you really want to cancel editing?")) {
-      return;
+    if (!confirm('Unsaved changes. Do you really want to cancel editing?')) {
+      return
     }
   }
 
-  member.value = {...memberOriginal};
-  isEdit.value = false;
+  member.value = { ...memberOriginal }
+  isEdit.value = false
 }
 
 const changedFields = (member: MemberWritable, memberOriginal: MemberReadable): string[] => {
-  const changedFields = [];
+  const changedFields = []
   if (member.name !== memberOriginal.name) {
-    changedFields.push("name");
+    changedFields.push('name')
   }
   if (member.membership_start !== memberOriginal.membership_start) {
-    changedFields.push("membership_start");
+    changedFields.push('membership_start')
   }
   if (member.membership_end !== memberOriginal.membership_end) {
-    changedFields.push("membership_end");
+    changedFields.push('membership_end')
   }
   if (member.age_category !== memberOriginal.age_category) {
-    changedFields.push("age_category");
+    changedFields.push('age_category')
   }
-  if (!member.tags.every(value => memberOriginal.tags.includes(value))) {
-    changedFields.push("tags");
+  if (!member.tags.every((value) => memberOriginal.tags.includes(value))) {
+    changedFields.push('tags')
   }
   if (
-    (member.member_login?.password !== undefined && member.member_login.password !== "") ||
+    (member.member_login?.password !== undefined && member.member_login.password !== '') ||
     (member.member_login !== undefined && memberOriginal.member_login === undefined) ||
     (member.member_login === undefined && memberOriginal.member_login !== undefined) ||
-    (member.member_login?.username !== memberOriginal.member_login?.username)
+    member.member_login?.username !== memberOriginal.member_login?.username
   ) {
-    changedFields.push("member_login");
+    changedFields.push('member_login')
   }
-  return changedFields;
+  return changedFields
 }
 
 const shouldEnableSave = computed(() => {
   if (!isEdit.value && !isCreate.value) {
-    return false;
+    return false
   }
 
   if (!member.value) {
-    return false;
+    return false
   }
 
-  return changedFields(member.value, memberOriginal).length !== 0;
+  return changedFields(member.value, memberOriginal).length !== 0
 })
 
 const save = async () => {
   if (!member.value) {
-    return;
+    return
   }
 
   if (isCreate.value) {
     const resp = await memberServiceCreateMember({
       body: {
         ...member.value,
-        membership_end: member.value.membership_end !== "" ? member.value.membership_end : undefined,
+        membership_end:
+          member.value.membership_end !== '' ? member.value.membership_end : undefined,
       },
     })
     if (resp.error) {
-      console.log(resp.error);
-      return;
+      console.log(resp.error)
+      return
     }
 
-    await router.push(`/members/${resp.data.id}`);
+    await router.push(`/members/${resp.data.id}`)
   } else if (isEdit.value) {
     const resp = await memberServiceUpdateMember({
       body: {
         ...member.value,
-        membership_end: member.value.membership_end !== "" ? member.value.membership_end : undefined,
+        membership_end:
+          member.value.membership_end !== '' ? member.value.membership_end : undefined,
       },
       query: {
-        field_mask: changedFields(member.value, memberOriginal).join(","),
+        field_mask: changedFields(member.value, memberOriginal).join(','),
       },
       path: {
-        "member.id": props.id,
-      }
+        'member.id': props.id,
+      },
     })
     if (resp.error) {
-      console.log(resp.error);
+      console.log(resp.error)
       return
     }
 
-    member.value = resp.data;
-    memberOriginal = resp.data;
-    isEdit.value = false;
+    member.value = resp.data
+    memberOriginal = resp.data
+    isEdit.value = false
   }
-};
+}
 
 watchEffect(async () => {
   if (!props.id) {
-    return;
+    return
   }
 
   const resp = await memberServiceGetMember({
-    path: {id: props.id},
-  });
+    path: { id: props.id },
+  })
 
   if (resp.error) {
-    console.log(resp.error);
+    console.log(resp.error)
   } else {
-    console.log(resp.data);
-    member.value = resp.data;
-    memberOriginal = {...resp.data};
+    console.log(resp.data)
+    member.value = resp.data
+    memberOriginal = { ...resp.data }
   }
-});
+})
 
 watchEffect(async () => {
   if (isCreate.value) {
-    return;
+    return
   }
 
   const resp = await cardServiceListCards({
     query: {
       member_id: props.id,
       page_size: 10,
-      sort_by: "CARD_FIELD_VALID_TO",
-      sort_direction: "SORT_DIRECTION_DESCENDING"
+      sort_by: 'CARD_FIELD_VALID_TO',
+      sort_direction: 'SORT_DIRECTION_DESCENDING',
     },
-  });
+  })
 
   if (resp.error) {
-    console.log(resp.error);
+    console.log(resp.error)
   } else {
-    cards.value = resp.data;
+    cards.value = resp.data
   }
 })
 </script>
@@ -190,11 +193,12 @@ watchEffect(async () => {
     <div class="onyx-grid">
       <div class="onyx-grid-span-6">
         <OnyxForm v-if="member" ref="memberForm">
-          <OnyxHeadline is="h1" v-if="!isCreate">Member
-            <OnyxIconButton label="Edit" :icon="iconEdit" @click="isEdit = true" v-if="!isEdit"/>
+          <OnyxHeadline is="h1" v-if="!isCreate"
+            >Member
+            <OnyxIconButton label="Edit" :icon="iconEdit" @click="isEdit = true" v-if="!isEdit" />
           </OnyxHeadline>
           <OnyxHeadline is="h1" v-if="isCreate">Create new Member</OnyxHeadline>
-          <MemberDetails :member="member" :is-edit="isEdit || isCreate"/>
+          <MemberDetails :member="member" :is-edit="isEdit || isCreate" />
         </OnyxForm>
       </div>
       <div class="onyx-grid-span-6" v-if="!isCreate">
@@ -202,23 +206,40 @@ watchEffect(async () => {
         <OnyxEmpty v-if="cards?.cards.length == 0" class="card-empty">
           No cards assigned to this member
           <template #icon>
-            <OnyxIcon :icon="userCompanyId" size="48px"/>
+            <OnyxIcon :icon="userCompanyId" size="48px" />
           </template>
           <template #buttons>
             <OnyxButton label="Add Card" :link="`/cards/new?memberId=${member.id}`"></OnyxButton>
           </template>
         </OnyxEmpty>
-        <Card v-for="card of cards?.cards" :card :member v-if="member" class="card"/>
+        <template v-if="member">
+          <MemberCard v-for="card of cards?.cards" :card :member class="card" :key="card.id" />
+        </template>
       </div>
     </div>
     <template #footer>
       <OnyxBottomBar>
-        <OnyxButton label="Back" mode="plain" color="neutral" @click="back"
-                    v-if="!isEdit"></OnyxButton>
-        <OnyxButton label="Cancel" mode="plain" color="neutral" @click="cancelEditing"
-                    v-if="isEdit"></OnyxButton>
-        <OnyxButton label="Save" mode="plain" color="primary" :disabled="!shouldEnableSave"
-                    @click="save"></OnyxButton>
+        <OnyxButton
+          label="Back"
+          mode="plain"
+          color="neutral"
+          @click="back"
+          v-if="!isEdit"
+        ></OnyxButton>
+        <OnyxButton
+          label="Cancel"
+          mode="plain"
+          color="neutral"
+          @click="cancelEditing"
+          v-if="isEdit"
+        ></OnyxButton>
+        <OnyxButton
+          label="Save"
+          mode="plain"
+          color="primary"
+          :disabled="!shouldEnableSave"
+          @click="save"
+        ></OnyxButton>
       </OnyxBottomBar>
     </template>
   </OnyxPageLayout>

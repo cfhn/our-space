@@ -1,31 +1,48 @@
 <script setup lang="ts">
-import type {CardReadable, MemberReadable} from "@/client";
-import Input from "@/components/Input.vue";
-import CardInput from "@/views/cards/components/CardInput.vue";
-import MemberSelect from "@/views/members/components/MemberSelect.vue";
-import {watchEffect} from "vue";
+import type { CardReadable } from '@/client'
+import DynamicInput from '@/components/DynamicInput.vue'
+import CardInput from '@/views/cards/components/CardInput.vue'
+import MemberSelect from '@/views/members/components/MemberSelect.vue'
+import { watchEffect } from 'vue'
 
 const props = defineProps<{
-  card: CardReadable;
-  isEdit: boolean;
-  memberId?: string;
-}>();
+  isEdit: boolean
+  memberId?: string
+}>()
 
-watchEffect( () => {
+const card = defineModel<CardReadable>('card', { required: true })
+
+watchEffect(() => {
   if (props.isEdit && props.memberId) {
-    props.card.member_id = props.memberId;
+    card.value.member_id = props.memberId
   }
-});
-
+})
 </script>
 
 <template>
   <div class="onyx-grid">
-    <MemberSelect class="onyx-grid-span-12" label="Assigned to" :is-edit="isEdit" v-model="card.member_id" />
-    <Input class="onyx-grid-span-6" type="date" v-model="card.valid_from" :is-edit="isEdit" label="Valid From" />
-    <Input class="onyx-grid-span-6" type="date" v-model="card.valid_to" :is-edit="isEdit" label="Valid To" />
+    <MemberSelect
+      class="onyx-grid-span-12"
+      label="Assigned to"
+      :is-edit="isEdit"
+      v-model="card.member_id"
+    />
+    <DynamicInput
+      class="onyx-grid-span-6"
+      type="date"
+      v-model="card.valid_from"
+      :is-edit="isEdit"
+      label="Valid From"
+    />
+    <DynamicInput
+      class="onyx-grid-span-6"
+      type="date"
+      v-model="card.valid_to"
+      :is-edit="isEdit"
+      label="Valid To"
+    />
     <div class="onyx-grid-span-12 card-input">
-      <Input type="text" label="RFID Value" v-model="card.rfid_value" :is-edit="isEdit" />
+      <DynamicInput type="text" label="RFID Value" v-model="card.rfid_value" :is-edit="isEdit" />
       <CardInput v-model="card.rfid_value" v-if="isEdit" />
     </div>
   </div>
