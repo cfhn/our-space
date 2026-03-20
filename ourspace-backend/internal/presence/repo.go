@@ -16,6 +16,10 @@ type Postgres struct {
 	db *sql.DB
 }
 
+func NewPostgresRepo(db *sql.DB) *Postgres {
+	return &Postgres{db: db}
+}
+
 func (p *Postgres) CreatePresence(ctx context.Context, memberId string) (*pb.Presence, error) {
 	var (
 		checkinTime sql.Null[time.Time]

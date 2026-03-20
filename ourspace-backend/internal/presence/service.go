@@ -36,7 +36,6 @@ func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.P
 	return presence, nil
 }
 
-// Checkout
 func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb.Presence, error) {
 	_, err := s.ValidateRequest(request.MemberId)
 	if err != nil {
@@ -167,7 +166,6 @@ func (s Service) UpdatePresence(ctx context.Context, request *pb.UpdatePresenceR
 	return nil, errors.ErrUnsupported
 }
 
-// DeletePresence
 func (s Service) DeletePresence(ctx context.Context, request *pb.DeletePresenceRequest) (*emptypb.Empty, error) {
 	err := s.repo.DeletePresence(ctx, request.Id)
 	if err != nil {
