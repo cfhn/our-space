@@ -205,7 +205,7 @@ watch(searchValue, () => {
         v-model="searchValue"
         density="compact"
         autofocus
-      ></OnyxInput>
+      />
     </div>
     <OnyxDataGrid :columns="columns" :data :features class="onyx-density-compact" />
     <div class="table-bottom-actions">

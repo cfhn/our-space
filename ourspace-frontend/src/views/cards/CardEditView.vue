@@ -182,8 +182,8 @@ const save = async () => {
     <div class="onyx-grid">
       <div class="onyx-grid-span-6">
         <OnyxForm>
-          <OnyxHeadline is="h1" v-if="!isCreate"
-            >Card
+          <OnyxHeadline is="h1" v-if="!isCreate">
+            Card
             <OnyxIconButton label="Edit" :icon="iconEdit" @click="isEdit = true" v-if="!isEdit" />
           </OnyxHeadline>
           <OnyxHeadline is="h1" v-else>Create new Card</OnyxHeadline>

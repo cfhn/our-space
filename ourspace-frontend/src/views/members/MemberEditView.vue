@@ -193,8 +193,8 @@ watchEffect(async () => {
     <div class="onyx-grid">
       <div class="onyx-grid-span-6">
         <OnyxForm v-if="member" ref="memberForm">
-          <OnyxHeadline is="h1" v-if="!isCreate"
-            >Member
+          <OnyxHeadline is="h1" v-if="!isCreate">
+            Member
             <OnyxIconButton label="Edit" :icon="iconEdit" @click="isEdit = true" v-if="!isEdit" />
           </OnyxHeadline>
           <OnyxHeadline is="h1" v-if="isCreate">Create new Member</OnyxHeadline>

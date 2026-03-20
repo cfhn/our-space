@@ -115,8 +115,9 @@ const clickable = {
           :active="selection === filteredOptions.length"
           @click="chooseOption(inputValue)"
           v-if="!model?.includes(inputValue)"
-          ><OnyxIcon label="New" :icon="plusSmall" />Add new tag "{{ inputValue }}"</OnyxListItem
         >
+          <OnyxIcon label="New" :icon="plusSmall" />Add new tag "{{ inputValue }}"
+        </OnyxListItem>
       </template>
     </OnyxBasicPopover>
     <div class="tag-list" v-else>
