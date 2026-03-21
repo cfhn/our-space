@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import {OnyxPageLayout} from "sit-onyx";
+import { OnyxPageLayout } from 'sit-onyx'
 </script>
 
 <template>
-  <OnyxPageLayout>
-
-  </OnyxPageLayout>
+  <OnyxPageLayout> </OnyxPageLayout>
 </template>
