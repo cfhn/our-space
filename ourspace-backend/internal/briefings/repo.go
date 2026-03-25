@@ -4,12 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
+	// "time"
 
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
-	"golang.org/x/text/cases"
+	//"golang.org/x/text/cases"
 	"google.golang.org/protobuf/types/known/durationpb"
-	"google.golang.org/protobuf/types/known/emptypb"
+	//"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
@@ -116,3 +116,5 @@ func scanBriefingType(in scanner) (*pb.BriefingType, error) {
 
 	return briefingType, nil
 }
+
+//func ListBriefingTypes(p* Postgres) (*pb.BriefingTyp)

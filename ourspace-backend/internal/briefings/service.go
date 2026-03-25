@@ -1,20 +1,24 @@
 package briefings
 
-import (
-	"context"
-	"encoding/base64"
-	"errors"
-	"time"
-
-	"github.com/google/uuid"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/emptypb"
-
-	pb "github.com/cfhn/our-space/ourspace-backend/proto"
+import(
+	 pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/status"
+	"github.com/google/uuid"
+	"context"
+	"time"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
+	// 
+
+// 
+// 
+// "google.golang.org/grpc/codes"
+// "google.golang.org/protobuf/proto"
+// 
+
+//pb "github.com/cfhn/our-space/ourspace-backend/proto"
+	
 
 
 type Service struct {
@@ -26,8 +30,9 @@ func NewService(repo *Postgres) * Service {
 	return &Service{repo: repo}
 }
 
+
 func (s *Service) UpdateBriefingType(ctx context.Context, request *pb.UpdateBriefingTypeRequest) (*pb.BriefingType, error) {
-	fieldViolations, err := s.ValidateUpdateBriefingType(ctx, request)
+	fieldViolations, err := s.validateUpdateBriefingType(ctx, request)
 	if err != nil {
 		return nil, status.Internal(err)
 	}
@@ -35,11 +40,16 @@ func (s *Service) UpdateBriefingType(ctx context.Context, request *pb.UpdateBrie
 		return nil, status.FieldViolations(fieldViolations)
 	}
 
-	updated, err := s.repo.UpdateBriefingType(ctx, request.BriefingType)
+	updated, err := s.repo.UpdateBriefingType(ctx, request.BriefingType, request.FieldMask)
+	if err != nil{
+		return nil, err
+	}
+	return updated, nil
+
 }
 
 
-func (s Service) CreateBriefingType(ctx context.Context, request *pb.CreateBriefingTypeRequest) (*pb.BriefingType) {
+func (s Service) CreateBriefingType(ctx context.Context, request *pb.CreateBriefingTypeRequest) (*pb.BriefingType, error) {
 	fieldViolations, err := s.validateCreateBriefingType(ctx, request)
 	if err != nil {
 		return nil, err
@@ -50,12 +60,12 @@ func (s Service) CreateBriefingType(ctx context.Context, request *pb.CreateBrief
 	}
 
 	if request.BriefingTypeId != "" {
-		request.BriefingType.Id = request.Id
+		request.BriefingType.Id = request.BriefingTypeId
 	} else {
-		request.Card.Id = uuid.New().String()
+		request.BriefingType.Id = uuid.New().String()
 	}
 
-	card, err := s.repo.CreateBriefingType(ctx, request.BriefingType, request.FieldMask)
+	card, err := s.repo.CreateBriefingType(ctx, request.BriefingType)
 	if err != nil{
 		return nil, status.Internal(err)
 	}
@@ -105,7 +115,7 @@ func (s *Service) validateCreateBriefingType (
 		})
 	}
 	
-	if request.BriefingType.ExpiresAfter.AsDuration() < 1 * time.Hour || request.BriefingType.ExpiresAfter.AsDuration() > 4 * time.year{
+	if request.BriefingType.ExpiresAfter.AsDuration() < 1 * time.Hour || request.BriefingType.ExpiresAfter.AsDuration() > 4 * 365 * 24 * time.Hour{
 		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field: "briefingType.expires_after",
 			Description: "expires_after must be between 1 hour - 4 years",
@@ -115,7 +125,60 @@ func (s *Service) validateCreateBriefingType (
 	return fieldViolations, nil
 }
 
-func (s *Service) ValidateUpdateBriefingType()
+func (s *Service) validateUpdateBriefingType(
+	ctx context.Context, request *pb.UpdateBriefingTypeRequest,
+	) ([]*errdetails.BadRequest_FieldViolation, error) {
+	if !request.FieldMask.IsValid(&pb.BriefingType{}) {
+		return [] *errdetails.BadRequest_FieldViolation{{
+			Field:       "field_mask",
+			Description: "invalid_field_mask",
+			Reason:      "FIELD_INVALID",
+		}}, nil
+	}
+
+	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0)
+
+	for _, path := range request.FieldMask.Paths {
+		switch path {
+		case "display_name":
+			if len(request.BriefingType.DisplayName) == 0 {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+					Field:  "briefing_type.display_name",
+					Description: "display_name must have length > 0",
+					Reason: "FIELD_INVALID",
+					LocalizedMessage: nil,
+				})
+			}
+
+			if len(request.BriefingType.DisplayName) > 1024 {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+					Field:  "briefing_type.display_name",
+					Description: "display_name must not be over 1KB",
+					Reason: "FIELD_TOO_BIG",
+				})
+			}
+		case "description":
+			if len(request.BriefingType.Description) == 0 {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+					Field:  "briefing_type.description",
+					Description: "description must have length > 0",
+					Reason: "FIELD_INVALID",
+					LocalizedMessage: nil,
+				})
+			}
+			if len(request.BriefingType.Description) > 10240 {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+					Field:  "briefing_type.description",
+					Description: "description must have length < 10 KB",
+					Reason: "FIELD_INVALID",
+					LocalizedMessage: nil,
+				})
+			}
+		}
+	// todo add more validations	
+	}
+	return fieldViolations, nil
+}
 
 
 func (s *Service) DeleteBriefingType(ctx context.Context, request *pb.DeleteBriefingTypeRequest) (*emptypb.Empty, error){
@@ -127,5 +190,7 @@ func (s *Service) DeleteBriefingType(ctx context.Context, request *pb.DeleteBrie
 	return &emptypb.Empty{}, nil
 }
 
+// func (s* Service) ListBriefingTypes(ctx context.Context, request *pb.UpdateBriefingTypeRequest)(*pb.ListBriefingTypesResponse, error){
 
+// }
 
