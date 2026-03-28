@@ -117,4 +117,4 @@ func scanBriefingType(in scanner) (*pb.BriefingType, error) {
 	return briefingType, nil
 }
 
-//func ListBriefingTypes(p* Postgres) (*pb.BriefingTyp)
+func (p* Postgres) ListBriefingTypes (*pb.BriefingType)

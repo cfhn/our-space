@@ -1,21 +1,25 @@
 package briefings
 
-import(
-	 pb "github.com/cfhn/our-space/ourspace-backend/proto"
+import (
+	"context"
+	"encoding/base64"
+	"time"
+
+	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/status"
 	"github.com/google/uuid"
-	"context"
-	"time"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
-	// 
 
-// 
-// 
+//
+
+//
+//
 // "google.golang.org/grpc/codes"
 // "google.golang.org/protobuf/proto"
-// 
+//
 
 //pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	
@@ -174,8 +178,15 @@ func (s *Service) validateUpdateBriefingType(
 					LocalizedMessage: nil,
 				})
 			}
+		case "expires_after":
+			if request.BriefingType.ExpiresAfter.AsDuration() < 1 * time.Hour || request.BriefingType.ExpiresAfter.AsDuration() > 4 * 365 * 24 * time.Hour{
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field: "briefingType.expires_after",
+				Description: "expires_after must be between 1 hour - 4 years",
+				Reason: "FIELD_INVALID",
+				})
+			}
 		}
-	// todo add more validations	
 	}
 	return fieldViolations, nil
 }
@@ -190,7 +201,48 @@ func (s *Service) DeleteBriefingType(ctx context.Context, request *pb.DeleteBrie
 	return &emptypb.Empty{}, nil
 }
 
-// func (s* Service) ListBriefingTypes(ctx context.Context, request *pb.UpdateBriefingTypeRequest)(*pb.ListBriefingTypesResponse, error){
+func (s* Service) ListBriefingTypes(ctx context.Context, request *pb.ListBriefingTypesRequest) (*pb.ListBriefingTypesResponse, error){
+	pageTokenBytes, err := base64.RawStdEncoding.DecodeString(request.PageToken)
+	if err != nil {
+		return nil, err
+	}
 
-// }
+	pageToken := &pb.CardPageToken{}
+
+	err = proto.Unmarshal(pageTokenBytes, pageToken)
+	if err != nil {
+		return nil, err
+	}
+
+	filters := &Filters{}
+	if request.BriefingTypeId != "" {
+		filters.BriefingTypeId = request.BriefingTypeId
+	}
+
+	pageSize := request.PageSize
+	if pageSize == 0 {
+		pageSize = 50
+	}
+
+	briefing_types, err := s.repo.ListBriefingTypes(ctx, pageSize+1, pageToken, request.SortBy, request.SortDirection, filters)
+	if err != nil {
+		return nil, err
+	}
+
+	
+
+	var nextPageToken string
+	
+
+	if len(briefing_types) > int(pageSize) {
+		briefing_types = briefing_types[:pageSize]
+		
+		// todo: briefingtype fields are not defined yet? 
+
+		direction := pb.SortDirection_SORT_DIRECTION_ASCENDING
+
+		
+
+	}
+}
 
