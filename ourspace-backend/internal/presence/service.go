@@ -162,8 +162,11 @@ func getFieldValue(presence *pb.Presence, field pb.MemberField) (string, error) 
 
 func (s Service) UpdatePresence(ctx context.Context, request *pb.UpdatePresenceRequest) (*pb.Presence, error) {
 	s.ValidateRequest(request.Presence.MemberId)
-	s.repo.UpdatePresence(ctx, request.GetPresence(), request.GetFieldMask())
-	return nil, errors.ErrUnsupported
+	presence, err := s.repo.UpdatePresence(ctx, request.GetPresence())
+	if err != nil {
+		return nil, err
+	}
+	return presence, nil
 }
 
 func (s Service) DeletePresence(ctx context.Context, request *pb.DeletePresenceRequest) (*emptypb.Empty, error) {
