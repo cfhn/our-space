@@ -144,7 +144,6 @@ func run(logger *slog.Logger) error {
 }
 
 func loadKeys(privateKeyPath, publicKeysPath string) (*ecdsa.PrivateKey, map[string]*ecdsa.PublicKey, error) {
-	fmt.Println(os.Getwd())
 
 	pemContent, err := os.ReadFile(privateKeyPath)
 	if err != nil {
