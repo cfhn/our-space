@@ -21,6 +21,7 @@ import (
 	"github.com/cfhn/our-space/ourspace-backend/internal/cards"
 	"github.com/cfhn/our-space/ourspace-backend/internal/config"
 	"github.com/cfhn/our-space/ourspace-backend/internal/members"
+	"github.com/cfhn/our-space/ourspace-backend/internal/presence"
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/database"
 	"github.com/cfhn/our-space/pkg/log"
@@ -77,6 +78,8 @@ func run(logger *slog.Logger) error {
 	memberService := members.NewService(membersRepo)
 	cardsRepo := cards.NewPostgresRepo(db)
 	cardsService := cards.NewService(cardsRepo, memberService)
+	presenceRepo := presence.NewPostgresRepo(db)
+	presenceService := presence.NewService(presenceRepo)
 
 	server := setup.Server{
 		HTTPPort: cfg.HTTPPort,
@@ -86,6 +89,7 @@ func run(logger *slog.Logger) error {
 			pb.RegisterMemberServiceServer(server, memberService)
 			pb.RegisterCardServiceServer(server, cardsService)
 			pb.RegisterAuthServiceServer(server, authService)
+			pb.RegisterPresenceServiceServer(server, presenceService)
 
 			err := pb.RegisterMemberServiceHandlerClient(context.Background(), mux, pb.NewMemberServiceClient(client))
 			if err != nil {
@@ -98,6 +102,10 @@ func run(logger *slog.Logger) error {
 			}
 
 			err = pb.RegisterAuthServiceHandlerClient(context.Background(), mux, pb.NewAuthServiceClient(client))
+			if err != nil {
+				return err
+			}
+			err = pb.RegisterPresenceServiceHandlerClient(context.Background(), mux, pb.NewPresenceServiceClient(client))
 			if err != nil {
 				return err
 			}
@@ -136,6 +144,8 @@ func run(logger *slog.Logger) error {
 }
 
 func loadKeys(privateKeyPath, publicKeysPath string) (*ecdsa.PrivateKey, map[string]*ecdsa.PublicKey, error) {
+	fmt.Println(os.Getwd())
+
 	pemContent, err := os.ReadFile(privateKeyPath)
 	if err != nil {
 		return nil, nil, err
