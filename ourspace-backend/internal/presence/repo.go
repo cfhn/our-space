@@ -158,30 +158,33 @@ func (p *Postgres) ListPresences(
 		CheckinTimeAfter   = sql.Null[time.Time]{V: filters.CheckinTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
 		CheckoutTimeBefore = sql.Null[time.Time]{V: filters.CheckoutTimeBefore, Valid: !filters.CheckoutTimeBefore.IsZero()}
 		CheckoutTimeAfter  = sql.Null[time.Time]{V: filters.CheckoutTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
-		MemberId           string
+		MemberId           = sql.Null[string]{V: filters.MemberId, Valid: filters.MemberId != ""}
 	)
 	values := []any{
+		MemberId,
 		CheckinTimeBefore,
 		CheckinTimeAfter,
 		CheckoutTimeBefore,
 		CheckoutTimeAfter,
-		MemberId,
 		pageSize,
 	}
 	rows, err := p.db.QueryContext(ctx, `
-		select member_id, checkin_time_before,checkin_time_after,checkout_time_before,checkout_time_after from presences
-		where
-		    ($1::text is null OR name ilike $1)
-		and ($2::timestamptz is null OR checkin_time_before < $2)
-		and ($3::timestamptz is null OR checkin_time_after > $3)
-		and ($4::timestamptz is null OR checkout_time_before < $4)
-		and ($5::timestamptz is null OR checkout_time_after > $5)
+		select id, member_id, checkin_time, checkout_time from presences
+		where			    
+		($1::uuid is null OR member_id = $1) 
+		and	($2::timestamptz is null OR checkin_time < $2)
+		and ($3::timestamptz is null OR checkin_time > $3)
+		and ($4::timestamptz is null OR checkout_time < $4)
+		and ($5::timestamptz is null OR checkout_time > $5)
 		limit $6
 	`, values...)
+
 	if err != nil {
 		return nil, err
 	}
-
+	//eyJhbGciOiJFUzI1NiIsImtpZCI6InJmRGx6YjdZenZQazRPUFZtUWlrR1ZMdlBpVHNjUnR2REdxcmZDR00wVjQiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc3NTE1MTA0NCwibmJmIjoxNzc1MTUwMTI5LCJpYXQiOjE3NzUxNTAxNDQsImp0aSI6ImU0YWJlMjY1LWI5MmYtNDI5MS04Y2E3LTk3NGFjNDEyMmQzOCIsInR5cGUiOiJhY2Nlc3MiLCJmdWxsX25hbWUiOiJJbml0aWFsIFVzZXIifQ.ACrSamPJmAf2NUoDEwWtGCSJh79vdD2eGxFXavNjBFmde2Q3YHQs0UteizjaKLRaepN2t2SOBQ9zIqhsb9dDdA
+	// error(*pgconn.PgError) *{Severity: "ERROR", SeverityUnlocalized: "ERROR", Code: "22P02", Message: "invalid input syntax for type uuid: \"\"", Detail: "", Hint: "", Position: 0, InternalPosition: 0, InternalQuery: "", Where: "unnamed portal parameter $1 = '...
+	//error(*pgconn.PgError) *{Severity: "ERROR", SeverityUnlocalized: "ERROR", Code: "22P02", Message: "invalid input syntax for type uuid: \"\"", Detail: "", Hint: "", Position: 0, InternalPosition: 0, InternalQuery: "", Where: "unnamed portal parameter $1 = '...
 	presences := make([]*pb.Presence, 0, pageSize)
 
 	for rows.Next() {
