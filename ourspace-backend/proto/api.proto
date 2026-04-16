@@ -189,6 +189,14 @@ enum MemberField {
   MEMBER_FIELD_MEMBERSHIP_END = 4;
 }
 
+enum PresenceField {
+  PRESENCE_FIELD_UNKNOWN = 0;
+  PRESENCE_FIELD_ID = 1;
+  PRESENCE_FIELD_MEMBER_ID = 2;
+  PRESENCE_FIELD_CHECKIN_TIME = 3;
+  PRESENCE_FIELD_CHECKOUT_TIME = 4;
+}
+
 enum SortDirection {
   SORT_DIRECTION_DEFAULT = 0;
   SORT_DIRECTION_ASCENDING = 1;
@@ -686,7 +694,9 @@ message ListPresencesRequest {
   int32 page_size = 1 [json_name="page_size"];
   string page_token = 2 [json_name="page_token"];
 
-  // Filters
+  PresenceField sort_by = 8 [json_name="sort_by"];
+  SortDirection sort_direction = 9 [json_name="sort_direction"];
+
   optional string member_id = 3 [json_name="member_id"];
   optional google.protobuf.Timestamp checkin_time_after = 4 [json_name="checkin_time_after"];
   optional google.protobuf.Timestamp checkin_time_before = 5 [json_name="checkin_time_before"];
@@ -701,6 +711,13 @@ message ListPresencesResponse {
   };
   repeated Presence presence = 1;
   string next_page_token = 2 [json_name="next_page_token"];
+}
+
+message PresencePageToken {
+  PresenceField field = 1;
+  string last_value = 2 [json_name="last_value"];
+  SortDirection direction = 3;
+  string last_id = 4 [json_name="last_id"];
 }
 
 message CheckinRequest {

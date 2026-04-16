@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"time"
 
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/status"
@@ -24,7 +25,7 @@ func NewService(repo *Postgres) *Service {
 }
 
 func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.Presence, error) {
-	_, err := s.ValidateRequest(request.MemberId)
+	_, err := ValidateRequest(request.MemberId)
 	if err != nil {
 		return nil, status.Internal(err)
 	}
@@ -37,7 +38,7 @@ func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.P
 }
 
 func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb.Presence, error) {
-	_, err := s.ValidateRequest(request.MemberId)
+	_, err := ValidateRequest(request.MemberId)
 	if err != nil {
 		return nil, status.Internal(err)
 	}
@@ -49,8 +50,8 @@ func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb
 
 	return presence, nil
 }
-func (s Service) ValidateRequest(member_id string) (bool, error) {
-	if member_id == "" {
+func ValidateRequest(memberId string) (bool, error) {
+	if memberId == "" {
 		validationError := []*errdetails.BadRequest_FieldViolation{{
 			Field:       "member_id",
 			Description: "member field must not be empty",
@@ -62,12 +63,12 @@ func (s Service) ValidateRequest(member_id string) (bool, error) {
 }
 
 func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesRequest) (*pb.ListPresencesResponse, error) {
-	pageTokenBytes, err := base64.RawStdEncoding.DecodeString(request.PageToken)
+	pageTokenBytes, err := base64.RawURLEncoding.DecodeString(request.PageToken)
 	if err != nil {
 		return nil, err
 	}
 
-	pageToken := &pb.MemberPageToken{}
+	pageToken := &pb.PresencePageToken{}
 
 	err = proto.Unmarshal(pageTokenBytes, pageToken)
 	if err != nil {
@@ -96,7 +97,7 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 		pageSize = 50
 	}
 
-	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, pageToken.Direction, filters)
+	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, pageToken.Direction, filters, pageToken.Field)
 	if err != nil {
 		return nil, err
 	}
@@ -106,12 +107,10 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 	if len(presences) > int(pageSize) {
 		presences = presences[:pageSize]
 
-		field := pb.MemberField_MEMBER_FIELD_ID
-		if pageToken.Field != pb.MemberField_MEMBER_FIELD_UNKNOWN {
+		field := request.SortBy
+		if pageToken.Field != pb.PresenceField(pb.PresenceField_PRESENCE_FIELD_UNKNOWN) {
 			field = pageToken.Field
-		} // else if request.SortBy != pb.MemberField_MEMBER_FIELD_UNKNOWN {
-		// 	field = request.SortBy
-		// }
+		}
 
 		direction := pb.SortDirection_SORT_DIRECTION_ASCENDING
 		if pageToken.Direction != pb.SortDirection_SORT_DIRECTION_DEFAULT {
@@ -122,7 +121,7 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 				return nil, err
 			}
 
-			pbNextPageToken := &pb.MemberPageToken{
+			pbNextPageToken := &pb.PresencePageToken{
 				Field:     field,
 				LastValue: lastValue,
 				Direction: direction,
@@ -144,25 +143,24 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 	}, nil
 
 }
-func getFieldValue(presence *pb.Presence, field pb.MemberField) (string, error) {
+func getFieldValue(presence *pb.Presence, field pb.PresenceField) (string, error) {
 	switch field {
-	case pb.MemberField_MEMBER_FIELD_ID:
+	case pb.PresenceField_PRESENCE_FIELD_ID:
 		return presence.Id, nil
-	// case pb.MemberField_MEMBER_FIELD_NAME:
-	// 	return member.Name, nil
-	// case pb.MemberField_MEMBER_FIELD_MEMBERSHIP_START:
-	// 	return member.MembershipStart.AsTime().Format(time.RFC3339), nil
-	// case pb.MemberField_MEMBER_FIELD_MEMBERSHIP_END:
-	// 	return member.MembershipEnd.AsTime().Format(time.RFC3339), nil
-	// case pb.MEMBER_FIELD
+	case pb.PresenceField_PRESENCE_FIELD_CHECKIN_TIME:
+		return presence.CheckinTime.AsTime().Format(time.RFC3339), nil
+	case pb.PresenceField_PRESENCE_FIELD_CHECKOUT_TIME:
+		return presence.CheckoutTime.AsTime().Format(time.RFC3339), nil
+	case pb.PresenceField_PRESENCE_FIELD_MEMBER_ID:
+		return presence.MemberId, nil
 	default:
 		return "", ErrFieldUnknown
 	}
 }
 
 func (s Service) UpdatePresence(ctx context.Context, request *pb.UpdatePresenceRequest) (*pb.Presence, error) {
-	s.ValidateRequest(request.Presence.MemberId)
-	presence, err := s.repo.UpdatePresence(ctx, request.GetPresence())
+	ValidateRequest(request.Presence.MemberId)
+	presence, err := s.repo.UpdatePresence(ctx, request.GetPresence(), request.FieldMask)
 	if err != nil {
 		return nil, err
 	}
