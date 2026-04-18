@@ -28,10 +28,7 @@ func NewPostgresRepo(db *sql.DB) *Postgres {
 }
 
 func (p *Postgres) CreatePresence(ctx context.Context, memberId string) (*pb.Presence, error) {
-	var (
-		checkinTime time.Time
-	)
-	checkinTime = time.Now()
+	checkinTime := time.Now()
 	presenceId := uuid.New().String()
 
 	_, err := p.db.ExecContext(ctx, `
@@ -103,8 +100,7 @@ func scanPresence(in scanner) (*pb.Presence, error) {
 
 func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fieldMask *fieldmaskpb.FieldMask) (*pb.Presence, error) {
 	var (
-		memberId sql.Null[string]
-		//memberId       string
+		memberId       sql.Null[string]
 		checkinTime    sql.Null[time.Time]
 		checkoutTime   sql.Null[time.Time]
 		changeCheckout bool
@@ -115,7 +111,6 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 			switch path {
 			case "member_id":
 				memberId = sql.Null[string]{V: presence.MemberId, Valid: true}
-				//memberId = presence.MemberId
 			case "checkin_time":
 				checkinTime = sql.Null[time.Time]{V: presence.CheckinTime.AsTime(), Valid: true}
 			case "checkout_time":
@@ -128,7 +123,7 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 	_, err := p.db.ExecContext(ctx, `
 		update presences
 		set 
-			checkout_time = case when $5 is true then cast($3 as timestamp) end,
+			checkout_time = case when $5 is true then $3::timestamptz end,
 			checkin_time = coalesce($2, checkin_time),
 			member_id = coalesce($4, member_id)
 		where id = $1
@@ -141,9 +136,7 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 }
 
 func (p *Postgres) CheckoutPresence(ctx context.Context, memberId string) (*pb.Presence, error) {
-
 	checkoutTime := time.Now()
-
 	row := p.db.QueryRowContext(ctx, `
 		update presences
 		set
@@ -169,21 +162,22 @@ type Filters struct {
 }
 
 func (p *Postgres) ListPresences(
-	ctx context.Context, pageSize int32, token *pb.PresencePageToken,
-	sortDirection pb.SortDirection, filters *Filters, sortField pb.PresenceField) ([]*pb.Presence, error) {
+	ctx context.Context, pageSize int32, token *pb.PresencePageToken, filters *Filters, sortField pb.PresenceField) ([]*pb.Presence, error) {
 	var (
-		CheckinTimeBefore  = sql.Null[time.Time]{V: filters.CheckinTimeBefore, Valid: !filters.CheckinTimeBefore.IsZero()}
-		CheckinTimeAfter   = sql.Null[time.Time]{V: filters.CheckinTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
-		CheckoutTimeBefore = sql.Null[time.Time]{V: filters.CheckoutTimeBefore, Valid: !filters.CheckoutTimeBefore.IsZero()}
-		CheckoutTimeAfter  = sql.Null[time.Time]{V: filters.CheckoutTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
-		MemberId           = sql.Null[string]{V: filters.MemberId, Valid: filters.MemberId != ""}
+		checkinTimeBefore  = sql.Null[time.Time]{V: filters.CheckinTimeBefore, Valid: !filters.CheckinTimeBefore.IsZero()}
+		checkinTimeAfter   = sql.Null[time.Time]{V: filters.CheckinTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
+		checkoutTimeBefore = sql.Null[time.Time]{V: filters.CheckoutTimeBefore, Valid: !filters.CheckoutTimeBefore.IsZero()}
+		checkoutTimeAfter  = sql.Null[time.Time]{V: filters.CheckoutTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
+		memberId           = sql.Null[string]{V: filters.MemberId, Valid: filters.MemberId != ""}
+		sortDirection      = token.Direction
 	)
+
 	values := []any{
-		MemberId,
-		CheckinTimeBefore,
-		CheckinTimeAfter,
-		CheckoutTimeBefore,
-		CheckoutTimeAfter,
+		memberId,
+		checkinTimeBefore,
+		checkinTimeAfter,
+		checkoutTimeBefore,
+		checkoutTimeAfter,
 		pageSize,
 	}
 	rows, err := p.db.QueryContext(ctx, `

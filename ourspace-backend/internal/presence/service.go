@@ -25,9 +25,9 @@ func NewService(repo *Postgres) *Service {
 }
 
 func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.Presence, error) {
-	_, err := ValidateRequest(request.MemberId)
-	if err != nil {
-		return nil, status.Internal(err)
+	_, fieldViolations := validateCheckinRequest(request)
+	if fieldViolations != nil {
+		return nil, status.FieldViolations(fieldViolations)
 	}
 
 	presence, err := s.repo.CreatePresence(ctx, request.MemberId)
@@ -36,11 +36,26 @@ func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.P
 	}
 	return presence, nil
 }
+func validateCheckinRequest(request *pb.CheckinRequest) (bool, []*errdetails.BadRequest_FieldViolation) {
+	return validateMemberId(request.MemberId)
+}
+
+func validateMemberId(memberId string) (bool, []*errdetails.BadRequest_FieldViolation) {
+	if memberId == "" {
+		validationError := []*errdetails.BadRequest_FieldViolation{{
+			Field:       "member_id",
+			Description: "member_id field must not be empty",
+			Reason:      "FIELD_EMPTY",
+		}}
+		return false, validationError
+	}
+	return true, nil
+}
 
 func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb.Presence, error) {
-	_, err := ValidateRequest(request.MemberId)
-	if err != nil {
-		return nil, status.Internal(err)
+	_, fieldViolations := validateCheckoutRequest(request)
+	if fieldViolations != nil {
+		return nil, status.FieldViolations(fieldViolations)
 	}
 
 	presence, err := s.repo.CheckoutPresence(ctx, request.MemberId)
@@ -50,16 +65,8 @@ func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb
 
 	return presence, nil
 }
-func ValidateRequest(memberId string) (bool, error) {
-	if memberId == "" {
-		validationError := []*errdetails.BadRequest_FieldViolation{{
-			Field:       "member_id",
-			Description: "member field must not be empty",
-			Reason:      "FIELD_EMPTY",
-		}}
-		return false, status.FieldViolations(validationError)
-	}
-	return true, nil
+func validateCheckoutRequest(request *pb.CheckoutRequest) (bool, []*errdetails.BadRequest_FieldViolation) {
+	return validateMemberId(request.MemberId)
 }
 
 func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesRequest) (*pb.ListPresencesResponse, error) {
@@ -97,7 +104,7 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 		pageSize = 50
 	}
 
-	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, pageToken.Direction, filters, pageToken.Field)
+	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, filters, pageToken.Field)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +140,7 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 				return nil, err
 			}
 
-			nextPageToken = base64.RawStdEncoding.EncodeToString(nextPageTokenBytes)
+			nextPageToken = base64.RawURLEncoding.EncodeToString(nextPageTokenBytes)
 		}
 	}
 
@@ -159,12 +166,50 @@ func getFieldValue(presence *pb.Presence, field pb.PresenceField) (string, error
 }
 
 func (s Service) UpdatePresence(ctx context.Context, request *pb.UpdatePresenceRequest) (*pb.Presence, error) {
-	ValidateRequest(request.Presence.MemberId)
+	_, fieldViolations := validateUpdatePresence(request)
+	if fieldViolations != nil {
+		return nil, status.FieldViolations(fieldViolations)
+	}
 	presence, err := s.repo.UpdatePresence(ctx, request.GetPresence(), request.FieldMask)
 	if err != nil {
-		return nil, err
+		return nil, status.Internal(err)
 	}
 	return presence, nil
+}
+
+func validateUpdatePresence(request *pb.UpdatePresenceRequest) (bool, []*errdetails.BadRequest_FieldViolation) {
+	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0)
+	for _, path := range request.FieldMask.Paths {
+		switch path {
+		case "member_id":
+			if request.Presence.MemberId == "" {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence.member_id",
+			Description: "member_id field must not be empty",
+			Reason:      "FIELD_EMPTY",
+		})
+	}
+		case "checkin_time":
+	if request.Presence.CheckinTime == nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence.checkin_time",
+			Description: "checkin_time must be set",
+			Reason:      "FIELD_EMPTY",
+		})
+	}
+		case "checkout_time":
+			if request.Presence.CheckinTime == nil {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+					Field:       "presence.checkout_time",
+					Description: "checkout_time must be set",
+					Reason:      "FIELD_EMPTY",
+		})
+	}
+
+		}
+	}
+	return true, fieldViolations
+
 }
 
 func (s Service) DeletePresence(ctx context.Context, request *pb.DeletePresenceRequest) (*emptypb.Empty, error) {
