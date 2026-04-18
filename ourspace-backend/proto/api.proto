@@ -189,14 +189,6 @@ enum MemberField {
   MEMBER_FIELD_MEMBERSHIP_END = 4;
 }
 
-enum PresenceField {
-  PRESENCE_FIELD_UNKNOWN = 0;
-  PRESENCE_FIELD_ID = 1;
-  PRESENCE_FIELD_MEMBER_ID = 2;
-  PRESENCE_FIELD_CHECKIN_TIME = 3;
-  PRESENCE_FIELD_CHECKOUT_TIME = 4;
-}
-
 enum SortDirection {
   SORT_DIRECTION_DEFAULT = 0;
   SORT_DIRECTION_ASCENDING = 1;
@@ -688,6 +680,14 @@ message Presence {
   string member_id = 2 [json_name="member_id"];
   google.protobuf.Timestamp checkin_time = 3 [json_name="checkin_time"];
   google.protobuf.Timestamp checkout_time = 4 [json_name="checkout_time"];
+}
+
+enum PresenceField {
+  PRESENCE_FIELD_UNKNOWN = 0;
+  PRESENCE_FIELD_ID = 1;
+  PRESENCE_FIELD_MEMBER_ID = 2;
+  PRESENCE_FIELD_CHECKIN_TIME = 3;
+  PRESENCE_FIELD_CHECKOUT_TIME = 4;
 }
 
 message ListPresencesRequest {
