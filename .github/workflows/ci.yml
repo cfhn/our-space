@@ -57,6 +57,11 @@ jobs:
         with:
           version: '10.2.1'
 
+      - name: Install rauc
+        run: |
+          sudo apt-get update
+          sudo apt-get install rauc
+
       - uses: actions/cache@v3
         with:
           path: |
