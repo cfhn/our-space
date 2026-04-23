@@ -127,4 +127,4 @@ out/ourspace.raucb: updatebundle/rootfs.ext4 updatebundle/manifest.raucm updateb
 	rauc bundle --cert ./updatebundle/cert.pem --key ./updatebundle/key.pem ./updatebundle ./out/ourspace.raucb
 
 updatebundle/cert.pem updatebundle/key.pem:
-	openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes -subj "/C=DE/ST=BW/L=Heilbronn/O=Example/CN=ourspace-example"
+	openssl req -x509 -newkey rsa:4096 -keyout updatebundle/key.pem -out updatebundle/cert.pem -sha256 -days 3650 -nodes -subj "/C=DE/ST=BW/L=Heilbronn/O=Example/CN=ourspace-example"
