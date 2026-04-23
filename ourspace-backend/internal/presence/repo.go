@@ -136,21 +136,10 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 }
 
 func (p *Postgres) CheckoutPresence(ctx context.Context, memberId string) (*pb.Presence, error) {
-	checkoutTime := time.Now()
-	row := p.db.QueryRowContext(ctx, `
-		update presences
-		set
-			checkout_time = $2
-		where member_id = $1 and checkout_time is null
-		returning id, member_id, checkin_time, checkout_time
-	`, memberId, checkoutTime)
-
-	presence, err := scanPresence(row)
-	if err != nil {
-		return nil, err
-	}
-	return presence, nil
-
+	checkoutTime := timestamppb.New(time.Now())
+	presence := &pb.Presence{CheckoutTime: checkoutTime, MemberId: memberId}
+	mask := &fieldmaskpb.FieldMask{Paths: []string{"checkout_time"}}
+	return p.UpdatePresence(ctx, presence, mask)
 }
 
 type Filters struct {
