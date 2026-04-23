@@ -21,7 +21,7 @@ jobs:
         run: |
           {
             echo -n "matrix="
-            find ./ -name service.yaml -exec yq -o=json '.path = "{}"' {} ';' | jq -c --slurp '.'
+            find ./ -name service.yaml -exec yq -o=json '.path = "{}" | .build_artifacts = [.build_artifacts?.[]? | ("{}" | rtrimstr("service.yaml")) + .]' | jq -c --slurp '.'
           } >> "$GITHUB_OUTPUT"
   ci:
     needs:
