@@ -5,3 +5,6 @@ create table presences
     checkin_time    timestamptz NOT NULL,
     checkout_time   timestamptz
     );
+create unique index single_active_presence
+    ON presences (member_id) 
+    WHERE (checkout_time is null);
