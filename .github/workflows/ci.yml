@@ -1,0 +1,82 @@
+name: ci.yml
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: generate matrix
+        id: matrix
+        run: |
+          {
+            echo -n "matrix="
+            find ./ -name service.yaml -exec yq -o=json '.path = "{}"' {} ';' | jq -c --slurp '.'
+          } >> "$GITHUB_OUTPUT"
+  ci:
+    needs:
+      - generate-matrix
+    strategy:
+      matrix:
+        service: "${{ fromJSON(needs.generate-matrix.outputs.matrix) }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: define service path
+        id: service
+        run: |
+          { echo -n "path="; dirname '${{ matrix.service.path }}'; } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+
+      - uses: pnpm/action-setup@v5
+        with:
+          version: '10.2.1'
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            bin
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Test
+        run: |
+          make test
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Build
+        run: |
+          make build
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Docker
+        run: |
+          make docker docker-push DOCKER_TAG=${{ github.run_id }}
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Artifacts
+        if: matrix.service.build_artifacts
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: matrix.service.name
+          path: |
+            ${{ join(matrix.service.build_artifacts, '\n') }}

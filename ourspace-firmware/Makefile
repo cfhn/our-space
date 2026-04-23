@@ -1,12 +1,24 @@
-GOK := gok -i ourspace-firmware --parent_dir ./deployment
 OVMF_VARS_LOCATION := /usr/share/ovmf/x64/OVMF_VARS.4m.fd
 
 .PHONY: clean
 clean:
-	rm ./out/virtual.img
+	rm ./out/*
+	rm ./updatebundle/rootfs.ext4
 
-.PHONY: build-qemu
-build-qemu: ./out/virtual.img
+.PHONY: test
+test:
+	@echo "no tests - all good :)"
+
+.PHONY: docker
+docker:
+	@echo "not docker-based"
+
+.PHONY: docker-push
+docker-push:
+	@echo "not docker-based"
+
+.PHONY: build
+build: out/firmware out/ourspace.raucb
 
 ./out/virtual.img: ./deployment/ourspace-firmware/config.json
 	mkdir -p "out"
@@ -63,26 +75,28 @@ generate: bin/protoc-gen-grpc-gateway bin/protoc-gen-openapi ../buf.lock bin/pro
 
 out/base.tar.gz: deployment/base.yaml $(shell find ./deployment/overlay -type f)
 	docker run \
-		-v $(PWD):/work \
+		-v $(shell pwd):/work \
 		-v /dev/kvm:/dev/kvm \
 		--privileged \
 		--cgroupns host \
 		--security-opt label=disable \
 		--cap-add=SYS_ADMIN \
 		--workdir /work \
+		--user $${UID}:$${GID} \
 		godebos/debos \
 		--scratchsize=16G \
 		/work/deployment/base.yaml
 
 out/app.tar.gz: deployment/app.yaml out/firmware out/base.tar.gz
 	docker run \
-		-v $(PWD):/work \
+		-v $(shell pwd):/work \
 		-v /dev/kvm:/dev/kvm \
 		--privileged \
 		--cgroupns host \
 		--security-opt label=disable \
 		--cap-add=SYS_ADMIN \
 		--workdir /work \
+		--user $${UID}:$${GID} \
 		godebos/debos \
 		--scratchsize=16G \
 		/work/deployment/app.yaml \
@@ -91,19 +105,18 @@ out/app.tar.gz: deployment/app.yaml out/firmware out/base.tar.gz
 
 out/image.img: deployment/image.yaml out/app.tar.gz
 	docker run \
-		-v $(PWD):/work \
+		-v $(shell pwd):/work \
 		-v /dev/kvm:/dev/kvm \
 		--privileged \
 		--cgroupns host \
 		--security-opt label=disable \
 		--cap-add=SYS_ADMIN \
 		--workdir /work \
+		--user $${UID}:$${GID} \
 		godebos/debos \
 		/work/deployment/image.yaml
-	sudo chown $(USER):$(GID) out/image.img
 
-
-out/firmware:
+out/firmware: generate
 	go build -ldflags="-w -s" -o "$(@)" ./cmd/ourspace-firmware
 
 updatebundle/rootfs.ext4: out/image.img
@@ -112,3 +125,6 @@ updatebundle/rootfs.ext4: out/image.img
 out/ourspace.raucb: updatebundle/rootfs.ext4 updatebundle/manifest.raucm
 	rm -f out/ourspace.raucb
 	rauc bundle --cert ./updatebundle/cert.pem --key ./updatebundle/key.pem ./updatebundle ./out/ourspace.raucb
+
+updatebundle/cert.pem updatebundle/key.pem:
+	openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes -subj "/C=DE/ST=BW/L=Heilbronn/O=Example/CN=ourspace-example"

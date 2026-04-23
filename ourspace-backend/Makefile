@@ -3,7 +3,7 @@ PWD = $(shell pwd)
 
 # constants
 DOCKER_REPO = ghcr.io/cfhn/our-space/backend
-DOCKER_TAG = v0.0.1-pre0
+DOCKER_TAG := local
 
 all: git-hooks generate tidy ## Initializes all tools
 
@@ -70,6 +70,10 @@ clean: ## Cleans up everything
 
 docker: ## Builds docker image
 	docker buildx build --cache-to type=inline -t $(DOCKER_REPO):$(DOCKER_TAG) -f Dockerfile ../
+
+docker-push:
+	docker push $(DOCKER_REPO):$(DOCKER_TAG)
+
 # additional dependencies for grpc
 GO_DEPENDENCIES = google.golang.org/protobuf/cmd/protoc-gen-go \
 				google.golang.org/grpc/cmd/protoc-gen-go-grpc \

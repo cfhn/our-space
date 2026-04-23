@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "pnpm run '/type-check|build-only/'",
     "preview": "vite preview",
-    "test:unit": "vitest",
+    "test:unit": "vitest run --passWithNoTests",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
