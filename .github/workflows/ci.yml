@@ -86,7 +86,7 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" != "refs/heads/main" ]] then
             echo "Not pushing non-main builds"
-            exit 1
+            exit 0
           fi
           
           make docker-push DOCKER_TAG=${{ github.run_id }}
