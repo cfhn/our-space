@@ -103,4 +103,5 @@ jobs:
         with:
           name: matrix.service.name
           path: |
+            dummy_artifact
             ${{ join(matrix.service.build_artifacts, '\n') }}
