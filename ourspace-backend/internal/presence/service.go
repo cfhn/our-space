@@ -30,7 +30,6 @@ func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.P
 	if fieldViolations != nil {
 		return nil, status.FieldViolations(fieldViolations)
 	}
-
 	presence, err := s.repo.CreatePresence(ctx, request.MemberId)
 	if err != nil {
 		return nil, status.Internal(err)
@@ -57,9 +56,7 @@ func validateMemberId(memberId string) (bool, []*errdetails.BadRequest_FieldViol
 	})}
 	if fieldViolations != nil{
 		return false, fieldViolations
-
 	}
-			
 	return true, nil
 }
 
@@ -73,9 +70,9 @@ func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb
 	if err != nil {
 		return nil, status.Internal(err)
 	}
-
 	return presence, nil
 }
+
 func validateCheckoutRequest(request *pb.CheckoutRequest) (bool, []*errdetails.BadRequest_FieldViolation) {
 	return validateMemberId(request.MemberId)
 }
@@ -85,14 +82,11 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 	if err != nil {
 		return nil, err
 	}
-
 	pageToken := &pb.PresencePageToken{}
-
 	err = proto.Unmarshal(pageTokenBytes, pageToken)
 	if err != nil {
 		return nil, err
 	}
-
 	filters := &Filters{}
 	if request.CheckinTimeBefore != nil {
 		filters.CheckinTimeBefore = request.CheckinTimeBefore.AsTime()
@@ -109,58 +103,47 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 	if request.MemberId != nil {
 		filters.MemberId = *request.MemberId
 	}
-
 	pageSize := request.PageSize
 	if pageSize == 0 {
 		pageSize = 50
 	}
-
 	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, filters, pageToken.Field)
 	if err != nil {
 		return nil, err
 	}
-
 	var nextPageToken string
-
 	if len(presences) > int(pageSize) {
 		presences = presences[:pageSize]
-
 		field := request.SortBy
 		if pageToken.Field != pb.PresenceField(pb.PresenceField_PRESENCE_FIELD_UNKNOWN) {
 			field = pageToken.Field
 		}
-
 		direction := pb.SortDirection_SORT_DIRECTION_ASCENDING
 		if pageToken.Direction != pb.SortDirection_SORT_DIRECTION_DEFAULT {
 			direction = pageToken.Direction
-
 			lastValue, err := getFieldValue(presences[pageSize-1], field)
 			if err != nil {
 				return nil, err
 			}
-
 			pbNextPageToken := &pb.PresencePageToken{
 				Field:     field,
 				LastValue: lastValue,
 				Direction: direction,
 				LastId:    presences[pageSize-1].Id,
 			}
-
 			nextPageTokenBytes, err := proto.Marshal(pbNextPageToken)
 			if err != nil {
 				return nil, err
 			}
-
 			nextPageToken = base64.RawURLEncoding.EncodeToString(nextPageTokenBytes)
 		}
 	}
-
 	return &pb.ListPresencesResponse{
 		Presence:      presences,
 		NextPageToken: nextPageToken,
 	}, nil
-
 }
+
 func getFieldValue(presence *pb.Presence, field pb.PresenceField) (string, error) {
 	switch field {
 	case pb.PresenceField_PRESENCE_FIELD_ID:
@@ -239,13 +222,10 @@ func validateUpdatePresence(request *pb.UpdatePresenceRequest) (bool, []*errdeta
 				Field:       "member.membership_start",
 				Description: "membership_start must not be in the future",
 				Reason:      "FIELD_INVALID",
-			})
-	}
-
+			})}
 		}
 	}
 	return true, fieldViolations
-
 }
 
 func (s Service) DeletePresence(ctx context.Context, request *pb.DeletePresenceRequest) (*emptypb.Empty, error) {
@@ -253,6 +233,5 @@ func (s Service) DeletePresence(ctx context.Context, request *pb.DeletePresenceR
 	if err != nil {
 		return nil, err
 	}
-
 	return &emptypb.Empty{}, nil
 }
