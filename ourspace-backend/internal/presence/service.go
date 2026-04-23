@@ -8,6 +8,7 @@ import (
 
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/status"
+	"github.com/google/uuid"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -41,14 +42,24 @@ func validateCheckinRequest(request *pb.CheckinRequest) (bool, []*errdetails.Bad
 }
 
 func validateMemberId(memberId string) (bool, []*errdetails.BadRequest_FieldViolation) {
-	if memberId == "" {
-		validationError := []*errdetails.BadRequest_FieldViolation{{
+	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0)
+	_, err := uuid.Parse(memberId)
+		if memberId == "" {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field:       "member_id",
 			Description: "member_id field must not be empty",
 			Reason:      "FIELD_EMPTY",
-		}}
-		return false, validationError
+		})}else if err != nil {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "member_id",
+			Description: "member_id must be a valid UUID",
+			Reason:      "INVALID_FORMAT",
+	})}
+	if fieldViolations != nil{
+		return false, fieldViolations
+
 	}
+			
 	return true, nil
 }
 
@@ -182,11 +193,12 @@ func validateUpdatePresence(request *pb.UpdatePresenceRequest) (bool, []*errdeta
 	for _, path := range request.FieldMask.Paths {
 		switch path {
 		case "member_id":
-			if request.Presence.MemberId == "" {
-				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			_, err := uuid.Parse(request.Presence.MemberId)
+			if err != nil {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field:       "presence.member_id",
 			Description: "member_id field must not be empty",
-			Reason:      "FIELD_EMPTY",
+			Reason:      "INVALID_MEMBERID",
 		})
 	}
 		case "checkin_time":
@@ -196,6 +208,18 @@ func validateUpdatePresence(request *pb.UpdatePresenceRequest) (bool, []*errdeta
 			Description: "checkin_time must be set",
 			Reason:      "FIELD_EMPTY",
 		})
+		} else if request.Presence.CheckinTime.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)) {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+					Field:       "member.membership_start",
+					Description: "membership_start must after the year 1900",
+					Reason:      "FIELD_INVALID",
+		})
+		} else if request.Presence.CheckinTime.AsTime().After(time.Now().Add(15 * time.Minute)) {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:       "member.membership_start",
+				Description: "membership_start must not be in the future",
+				Reason:      "FIELD_INVALID",
+			})
 	}
 		case "checkout_time":
 			if request.Presence.CheckinTime == nil {
@@ -204,6 +228,18 @@ func validateUpdatePresence(request *pb.UpdatePresenceRequest) (bool, []*errdeta
 					Description: "checkout_time must be set",
 					Reason:      "FIELD_EMPTY",
 		})
+		} else if request.Presence.CheckoutTime.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)) {
+				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+					Field:       "member.membership_start",
+					Description: "membership_start must after the year 1900",
+					Reason:      "FIELD_INVALID",
+		})
+		} else if request.Presence.CheckoutTime.AsTime().After(time.Now().Add(15 * time.Minute)) {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:       "member.membership_start",
+				Description: "membership_start must not be in the future",
+				Reason:      "FIELD_INVALID",
+			})
 	}
 
 		}
