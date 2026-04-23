@@ -101,7 +101,7 @@ jobs:
         if: matrix.service.build_artifacts
         uses: actions/upload-artifact@v6.0.0
         with:
-          name: matrix.service.name
+          name: "${{ matrix.service.name }}"
           path: |
             dummy_artifact
             ${{ join(matrix.service.build_artifacts, '\n') }}
