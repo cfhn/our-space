@@ -23,6 +23,8 @@ docker-push:
 lint:
 	@pnpm lint
 
-.PHONY: generate
-generate:
+src/client/index.ts: ../ourspace-backend/proto/api.openapi.yaml
 	@pnpm run openapi-ts
+
+.PHONY: generate
+generate: src/client/index.ts
