@@ -3,7 +3,6 @@ package firmware
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 	"log/slog"
 
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -39,8 +38,6 @@ func NewService(logger *slog.Logger, repo Repository) *Service {
 }
 
 func (svc *Service) ScanCard(ctx context.Context, req *pb.ScanCardRequest) (*pb.ScanCardResponse, error) {
-	fmt.Println(req.CardSerial)
-
 	rfidBytes, err := hex.DecodeString(req.CardSerial)
 	if err != nil {
 		return nil, status.FieldViolations([]*errdetails.BadRequest_FieldViolation{
@@ -103,7 +100,6 @@ func (svc *Service) ListenForCardEvents(
 		}
 
 		err := resp.Send(cardEvent)
-
 		if err != nil {
 			return err
 		}

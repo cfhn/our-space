@@ -5,9 +5,18 @@ clean:
 	rm ./out/*
 	rm ./updatebundle/rootfs.ext4
 
+download: ## Downloads the dependencies
+	@go mod download
+
+tidy: ## Cleans up go.mod and go.sum
+	@go mod tidy
+
+fmt: ## Formats all code with go fmt
+	@go fmt ./...
+
 .PHONY: test
 test:
-	@echo "no tests - all good :)"
+	@go test $(ARGS) ./...
 
 .PHONY: docker
 docker:
@@ -19,6 +28,15 @@ docker-push:
 
 .PHONY: build
 build: out/firmware out/ourspace.raucb
+
+../bin/golangci-lint:
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b ../bin v2.11.4
+
+lint: fmt download ../bin/golangci-lint ## Lints all code with golangci-lint
+	../bin/golangci-lint --config ../.golangci.yml run
+
+lint-fix: fmt download ../bin/golangci-lint ## Lints all code with golangci-lint
+	../bin/golangci-lint --config ../.golangci.yml run --fix
 
 ./out/virtual.img: ./deployment/ourspace-firmware/config.json
 	mkdir -p "out"

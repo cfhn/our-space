@@ -35,17 +35,20 @@ GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)" ./...
 out/bin:
 	$(GO_BUILD)
 
-lint: fmt download ## Lints all code with golangci-lint
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run
+../bin/golangci-lint:
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b ../bin v2.11.4
 
-lint-fix: fmt download ## Lints all code with golangci-lint
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run --fix
+lint: fmt download ../bin/golangci-lint ## Lints all code with golangci-lint
+	../bin/golangci-lint --config ../.golangci.yml run
+
+lint-fix: fmt download ../bin/golangci-lint ## Lints all code with golangci-lint
+	../bin/golangci-lint --config ../.golangci.yml run --fix
 
 lint-reports: out/lint.xml
 
 .PHONY: out/lint.xml
 out/lint.xml: out download
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run ./... --out-format checkstyle | tee "$(@)"
+	./bin/golangci-lint --config ../.golangci.yml run ./... --out-format checkstyle | tee "$(@)"
 
 govulncheck: ## Vulnerability detection using govulncheck
 	@go run golang.org/x/vuln/cmd/govulncheck ./...

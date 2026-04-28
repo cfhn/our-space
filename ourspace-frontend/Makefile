@@ -18,3 +18,7 @@ docker:
 .PHONY: docker-push
 docker-push:
 	docker push $(DOCKER_REPO):$(DOCKER_TAG)
+
+.PHONY: lint
+lint:
+	@pnpm lint

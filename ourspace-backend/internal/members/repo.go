@@ -18,19 +18,21 @@ import (
 
 var ErrNotFound = errors.New("member not found")
 
-var membershipFields = map[pb.MemberField]string{
-	pb.MemberField_MEMBER_FIELD_ID:               "members.id",
-	pb.MemberField_MEMBER_FIELD_NAME:             "members.name",
-	pb.MemberField_MEMBER_FIELD_MEMBERSHIP_START: "members.membership_start",
-	pb.MemberField_MEMBER_FIELD_MEMBERSHIP_END:   "members.membership_end",
-}
-
-var membershipAttributeFields = map[pb.MemberAttributeField]string{
-	pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_ID:             "member_attributes.id",
-	pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME: "member_attributes.technical_name",
-	pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_DISPLAY_NAME:   "member_attributes.display_name",
-	pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_TYPE:           "member_attributes.type",
-}
+//nolint:gochecknoglobals // constant lookup maps
+var (
+	membershipFields = map[pb.MemberField]string{
+		pb.MemberField_MEMBER_FIELD_ID:               "members.id",
+		pb.MemberField_MEMBER_FIELD_NAME:             "members.name",
+		pb.MemberField_MEMBER_FIELD_MEMBERSHIP_START: "members.membership_start",
+		pb.MemberField_MEMBER_FIELD_MEMBERSHIP_END:   "members.membership_end",
+	}
+	membershipAttributeFields = map[pb.MemberAttributeField]string{
+		pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_ID:             "member_attributes.id",
+		pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME: "member_attributes.technical_name",
+		pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_DISPLAY_NAME:   "member_attributes.display_name",
+		pb.MemberAttributeField_MEMBER_ATTRIBUTE_FIELD_TYPE:           "member_attributes.type",
+	}
+)
 
 type Filters struct {
 	NameContains          string
@@ -117,8 +119,6 @@ func (p *Postgres) ListMembers(
 	ctx context.Context, pageSize int32, token *pb.MemberPageToken, sortField pb.MemberField,
 	sortDirection pb.SortDirection, filters *Filters,
 ) ([]*pb.Member, error) {
-	paginationCondition, paginationValues := generatePaginationQuery(token, 9)
-
 	var (
 		nameContains          = wrapIlike(filters.NameContains)
 		membershipStartBefore = sql.Null[time.Time]{V: filters.MembershipStartBefore, Valid: !filters.MembershipStartBefore.IsZero()}
@@ -128,7 +128,8 @@ func (p *Postgres) ListMembers(
 		ageCategoryEquals     = sql.Null[string]{V: filters.AgeCategoryEquals.String(), Valid: filters.AgeCategoryEquals != pb.AgeCategory_AGE_CATEGORY_UNKNOWN}
 	)
 
-	values := []any{
+	values := append(
+		make([]any, 0, 10),
 		nameContains,
 		membershipStartBefore,
 		membershipStartAfter,
@@ -137,10 +138,13 @@ func (p *Postgres) ListMembers(
 		ageCategoryEquals,
 		pgtype.FlatArray[string](filters.TagsContain),
 		pageSize,
-	}
+	)
+
+	paginationCondition, paginationValues := generatePaginationQuery(token, len(values)+1)
 
 	values = append(values, paginationValues...)
 
+	//nolint:gosec // manual concatenation is fine here, uses bound placeholders
 	rows, err := p.db.QueryContext(ctx, `
 		select members.id, name, membership_start, membership_end, age_category, tags, additional_attributes, members_auth.username
 		from members
@@ -160,6 +164,7 @@ func (p *Postgres) ListMembers(
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	members := make([]*pb.Member, 0, pageSize)
 
@@ -289,20 +294,30 @@ func (p *Postgres) UpdateMember(
 		}
 	}
 
+	values := append(
+		make([]any, 0, 10),
+		member.Id,
+		name,
+		membershipStart,
+		updateMembershipEnd,
+		membershipEnd,
+		ageCategory,
+		updateTags,
+		tags,
+	)
+
 	var (
 		addPropSQL    string
 		addPropValues []any
 	)
 
 	if len(additionalPropertyUpdates) != 0 {
-		addPropSQL, addPropValues = generateAdditionalAttributesUpdate(additionalPropertyUpdates, 9)
+		addPropSQL, addPropValues = generateAdditionalAttributesUpdate(additionalPropertyUpdates, len(values)+1)
 	}
 
-	values := []any{
-		member.Id, name, membershipStart, updateMembershipEnd, membershipEnd, ageCategory, updateTags, tags,
-	}
 	values = append(values, addPropValues...)
 
+	//nolint:gosec // manual concatenation is fine here, uses bound placeholders
 	_, err := p.db.ExecContext(ctx, `
 		update members
 		set
@@ -359,7 +374,7 @@ func generateAdditionalAttributesUpdate(updates map[string]*string, offset int) 
 		} else {
 			statements = append(statements, fmt.Sprintf(removeFieldTemplate, fieldIndex))
 			values = append(values, field)
-			fieldIndex += 1
+			fieldIndex++
 		}
 	}
 
@@ -502,14 +517,16 @@ func (p *Postgres) ListMemberAttributes(
 	ctx context.Context, pageSize int32, token *pb.MemberAttributePageToken, sortField pb.MemberAttributeField,
 	sortDirection pb.SortDirection,
 ) ([]*pb.MemberAttribute, error) {
-	paginationCondition, paginationValues := generateMemberAttributePaginationQuery(token, 2)
-
-	values := []any{
+	values := append(
+		make([]any, 0, 3),
 		pageSize,
-	}
+	)
+
+	paginationCondition, paginationValues := generateMemberAttributePaginationQuery(token, len(values)+1)
 
 	values = append(values, paginationValues...)
 
+	//nolint:gosec // manual concatenation is fine here, uses bound placeholders
 	rows, err := p.db.QueryContext(ctx, `
 		select id, technical_name, display_name, type, description
 		from member_attributes
@@ -520,6 +537,7 @@ func (p *Postgres) ListMemberAttributes(
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	memberAttributes := make([]*pb.MemberAttribute, 0, pageSize)
 
@@ -530,6 +548,10 @@ func (p *Postgres) ListMemberAttributes(
 		}
 
 		memberAttributes = append(memberAttributes, attribute)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return memberAttributes, nil

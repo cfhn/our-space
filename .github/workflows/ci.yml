@@ -72,14 +72,28 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Test
+      - name: Generate Global
         run: |
-          make test
+          make generate
+
+      - name: Generate Service
+        run: |
+          make generate
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Lint
+        run: |
+          make lint
         working-directory: ${{ steps.service.outputs.path }}
 
       - name: Build
         run: |
           make build
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Test
+        run: |
+          make test
         working-directory: ${{ steps.service.outputs.path }}
 
       - name: Docker
