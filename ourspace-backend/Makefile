@@ -3,7 +3,7 @@ PWD = $(shell pwd)
 
 # constants
 DOCKER_REPO = ghcr.io/cfhn/our-space/backend
-DOCKER_TAG = v0.0.1-pre0
+DOCKER_TAG := local
 
 all: git-hooks generate tidy ## Initializes all tools
 
@@ -35,17 +35,20 @@ GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)" ./...
 out/bin:
 	$(GO_BUILD)
 
-lint: fmt download ## Lints all code with golangci-lint
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run
+../bin/golangci-lint:
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b ../bin v2.11.4
 
-lint-fix: fmt download ## Lints all code with golangci-lint
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run --fix
+lint: fmt download ../bin/golangci-lint ## Lints all code with golangci-lint
+	../bin/golangci-lint --config ../.golangci.yml run
+
+lint-fix: fmt download ../bin/golangci-lint ## Lints all code with golangci-lint
+	../bin/golangci-lint --config ../.golangci.yml run --fix
 
 lint-reports: out/lint.xml
 
 .PHONY: out/lint.xml
 out/lint.xml: out download
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run ./... --out-format checkstyle | tee "$(@)"
+	./bin/golangci-lint --config ../.golangci.yml run ./... --out-format checkstyle | tee "$(@)"
 
 govulncheck: ## Vulnerability detection using govulncheck
 	@go run golang.org/x/vuln/cmd/govulncheck ./...
@@ -70,6 +73,10 @@ clean: ## Cleans up everything
 
 docker: ## Builds docker image
 	docker buildx build --cache-to type=inline -t $(DOCKER_REPO):$(DOCKER_TAG) -f Dockerfile ../
+
+docker-push:
+	docker push $(DOCKER_REPO):$(DOCKER_TAG)
+
 # additional dependencies for grpc
 GO_DEPENDENCIES = google.golang.org/protobuf/cmd/protoc-gen-go \
 				google.golang.org/grpc/cmd/protoc-gen-go-grpc \
@@ -99,9 +106,9 @@ protolint: proto/buf.lock bin/protoc-gen-buf-lint ## Lints your protobuf files
 protobreaking: proto/buf.lock bin/protoc-gen-buf-breaking ## Compares your current protobuf with the version on main to find breaking changes
 	bin/buf breaking --against '.git#branch=main'
 
-generate: ## Generates code from protobuf files
-generate: bin/protoc-gen-grpc-gateway bin/protoc-gen-openapi proto/buf.lock bin/protoc-gen-go bin/protoc-gen-go-grpc bin/protoc-gen-validate
-	PATH=$(PWD)/bin:$$PATH buf generate
+generate:
+	PATH=$(PWD)/bin:$$PATH go generate ./...
+
 ci: lint-reports test-reports govulncheck ## Executes vulnerability scan, lint, test and generates reports
 
 help: ## Shows the help

@@ -16,6 +16,7 @@ import (
 
 var ErrNotFound = errors.New("card not found")
 
+//nolint:gochecknoglobals // constant field lookup
 var cardFields = map[pb.CardField]string{
 	pb.CardField_CARD_FIELD_ID:         "id",
 	pb.CardField_CARD_FIELD_VALID_FROM: "lower(validity)",
@@ -71,23 +72,25 @@ func (p *Postgres) ListCards(
 	ctx context.Context, pageSize int32, token *pb.CardPageToken, sortField pb.CardField,
 	sortDirection pb.SortDirection, filters *Filters,
 ) ([]*pb.Card, error) {
-	paginationCondition, paginationValues := generatePaginationQuery(token, 5)
-
 	var (
 		memberID  = sql.Null[string]{V: filters.MemberID, Valid: filters.MemberID != ""}
 		validOn   = sql.Null[time.Time]{V: filters.ValidOn, Valid: !filters.ValidOn.IsZero()}
 		rfidValue = sql.Null[[]byte]{V: filters.RfidValue, Valid: len(filters.RfidValue) != 0}
 	)
 
-	values := []any{
+	values := append(
+		make([]any, 0, 6),
 		pageSize,
 		memberID,
 		validOn,
 		rfidValue,
-	}
+	)
+
+	paginationCondition, paginationValues := generatePaginationQuery(token, len(values)+1)
 
 	values = append(values, paginationValues...)
 
+	//nolint:gosec // manual concatenation is fine here, uses bound placeholders
 	rows, err := p.db.QueryContext(ctx, `
 		select id, member_id, rfid_value, lower(validity), upper(validity)
 		from cards
@@ -102,6 +105,7 @@ func (p *Postgres) ListCards(
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	cards := make([]*pb.Card, 0, pageSize)
 

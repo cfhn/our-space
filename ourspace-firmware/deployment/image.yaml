@@ -1,4 +1,4 @@
-{{- $image := or .suite "out/image.img" -}}
+{{- $image := or .image "out/image.img" -}}
 {{- $suite := or .suite "trixie" -}}
 
 architecture: amd64

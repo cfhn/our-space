@@ -54,6 +54,7 @@ func run() error {
 	}
 
 	backendAddress := os.Getenv("BACKEND_ADDRESS")
+
 	backendClient, err := grpc.NewClient(backendAddress, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		return err
@@ -69,7 +70,7 @@ func run() error {
 		Repository:   repo,
 		Logger:       logger.With("module", "sync"),
 
-		ApiKey: os.Getenv("API_KEY"),
+		APIKey: os.Getenv("API_KEY"),
 	}
 
 	frontendServer := http.Server{
@@ -85,15 +86,10 @@ func run() error {
 		Register: func(server *grpc.Server, conn *grpc.ClientConn, mux *runtime.ServeMux) error {
 			pb.RegisterFirmwareServiceServer(server, firmwareService)
 
-			err := pb.RegisterFirmwareServiceHandler(context.Background(), mux, conn)
-			if err != nil {
-				return err
-			}
-			err = mux.HandlePath(http.MethodGet, "/card-events", sse.GrpcProxy[*pb.ListenForCardEventsRequest, *pb.ListenForCardEventsResponse](conn, pb.FirmwareService_ServiceDesc.Streams[0], pb.FirmwareService_ListenForCardEvents_FullMethodName))
-			if err != nil {
-				return err
-			}
-			return nil
+			return errors.Join(
+				pb.RegisterFirmwareServiceHandler(context.Background(), mux, conn),
+				mux.HandlePath(http.MethodGet, "/card-events", sse.GrpcProxy[*pb.ListenForCardEventsRequest, *pb.ListenForCardEventsResponse](conn, pb.FirmwareService_ServiceDesc.Streams[0], pb.FirmwareService_ListenForCardEvents_FullMethodName)),
+			)
 		},
 		Jobs: []setup.JobSpec{
 			{
@@ -109,6 +105,7 @@ func run() error {
 					if errors.Is(err, http.ErrServerClosed) {
 						return nil
 					}
+
 					return err
 				}),
 				Interval:  math.MaxInt,

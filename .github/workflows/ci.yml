@@ -1,0 +1,121 @@
+name: ci.yml
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: generate matrix
+        id: matrix
+        run: |
+          {
+            echo -n "matrix="
+            find ./ -name service.yaml -exec yq -o=json '.path = "{}" | .build_artifacts = [.build_artifacts?.[]? | ("{}" | sub("service\.yaml", "")) + .]' '{}' ';' | jq -c --slurp '.'
+          } >> "$GITHUB_OUTPUT"
+  ci:
+    needs:
+      - generate-matrix
+    strategy:
+      matrix:
+        service: "${{ fromJSON(needs.generate-matrix.outputs.matrix) }}"
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: define service path
+        id: service
+        run: |
+          { echo -n "path="; dirname '${{ matrix.service.path }}'; } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+
+      - uses: pnpm/action-setup@v5
+        with:
+          version: '10.2.1'
+
+      - name: Install rauc
+        run: |
+          sudo apt-get update
+          sudo apt-get install rauc
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            bin
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Generate Global
+        run: |
+          make generate
+
+      - name: Generate Service
+        run: |
+          make generate
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Lint
+        run: |
+          make lint
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Build
+        run: |
+          make build
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Test
+        run: |
+          make test
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Docker
+        run: |
+          make docker DOCKER_TAG=${{ github.run_id }}
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Docker Push
+        run: |
+          if [[ "${{ github.ref }}" != "refs/heads/main" ]] then
+            echo "Not pushing non-main builds"
+            exit 0
+          fi
+          
+          make docker-push DOCKER_TAG=${{ github.run_id }}
+        working-directory: ${{ steps.service.outputs.path }}
+
+      - name: Artifacts
+        if: matrix.service.build_artifacts
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: "${{ matrix.service.name }}"
+          path: |
+            dummy_artifact
+            ${{ join(matrix.service.build_artifacts, '\n') }}
