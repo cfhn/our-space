@@ -106,9 +106,9 @@ protolint: proto/buf.lock bin/protoc-gen-buf-lint ## Lints your protobuf files
 protobreaking: proto/buf.lock bin/protoc-gen-buf-breaking ## Compares your current protobuf with the version on main to find breaking changes
 	bin/buf breaking --against '.git#branch=main'
 
-generate: ## Generates code from protobuf files
-generate: bin/protoc-gen-grpc-gateway bin/protoc-gen-openapi proto/buf.lock bin/protoc-gen-go bin/protoc-gen-go-grpc bin/protoc-gen-validate
-	PATH=$(PWD)/bin:$$PATH buf generate
+generate:
+	PATH=$(PWD)/bin:$$PATH go generate ./...
+
 ci: lint-reports test-reports govulncheck ## Executes vulnerability scan, lint, test and generates reports
 
 help: ## Shows the help
