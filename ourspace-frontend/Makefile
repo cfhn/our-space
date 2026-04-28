@@ -22,3 +22,7 @@ docker-push:
 .PHONY: lint
 lint:
 	@pnpm lint
+
+.PHONY: generate
+generate:
+	@pnpm run openapi-ts
