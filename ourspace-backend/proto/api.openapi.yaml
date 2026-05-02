@@ -1378,6 +1378,12 @@ components:
                     additionalProperties:
                         type: string
         MemberAttribute:
+            required:
+                - id
+                - technical_name
+                - display_name
+                - type
+                - description
             type: object
             properties:
                 id:

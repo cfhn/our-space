@@ -650,7 +650,7 @@ func (p *Postgres) UpdateMemberAttribute(
 	}
 
 	_, err := p.db.ExecContext(ctx, `
-		update members_attributes
+		update member_attributes
 		set
 			display_name = coalesce($1, display_name),
 			description = coalesce($2, description)

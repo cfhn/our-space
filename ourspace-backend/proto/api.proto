@@ -286,6 +286,14 @@ message DeleteMemberAttributeRequest {
   string id = 1;
 }
 message MemberAttribute {
+  option (gnostic.openapi.v3.schema) = {
+    required: "id",
+    required: "technical_name",
+    required: "display_name",
+    required: "type",
+    required: "description",
+  };
+
   string id = 1;
   string technical_name = 2 [json_name="technical_name", (google.api.field_behavior)=IMMUTABLE];
   string display_name = 3 [json_name="display_name"];
