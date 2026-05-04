@@ -1009,9 +1009,8 @@ export type PresenceServiceListPresencesData = {
     query?: {
         page_size?: number;
         page_token?: string;
-        /**
-         * Filters
-         */
+        sort_by?: 'PRESENCE_FIELD_UNKNOWN' | 'PRESENCE_FIELD_ID' | 'PRESENCE_FIELD_MEMBER_ID' | 'PRESENCE_FIELD_CHECKIN_TIME' | 'PRESENCE_FIELD_CHECKOUT_TIME';
+        sort_direction?: 'SORT_DIRECTION_DEFAULT' | 'SORT_DIRECTION_ASCENDING' | 'SORT_DIRECTION_DESCENDING';
         member_id?: string;
         checkin_time_after?: string;
         checkin_time_before?: string;
