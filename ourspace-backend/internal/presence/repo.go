@@ -151,14 +151,13 @@ type Filters struct {
 }
 
 func (p *Postgres) ListPresences(
-	ctx context.Context, pageSize int32, token *pb.PresencePageToken, filters *Filters, sortField pb.PresenceField) ([]*pb.Presence, error) {
+	ctx context.Context, pageSize int32, token *pb.PresencePageToken, filters *Filters, sortDirection pb.SortDirection, sortField pb.PresenceField) ([]*pb.Presence, error) {
 	var (
 		checkinTimeBefore  = sql.Null[time.Time]{V: filters.CheckinTimeBefore, Valid: !filters.CheckinTimeBefore.IsZero()}
 		checkinTimeAfter   = sql.Null[time.Time]{V: filters.CheckinTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
 		checkoutTimeBefore = sql.Null[time.Time]{V: filters.CheckoutTimeBefore, Valid: !filters.CheckoutTimeBefore.IsZero()}
 		checkoutTimeAfter  = sql.Null[time.Time]{V: filters.CheckoutTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
 		memberId           = sql.Null[string]{V: filters.MemberId, Valid: filters.MemberId != ""}
-		sortDirection      = token.Direction
 	)
 
 	values := []any{

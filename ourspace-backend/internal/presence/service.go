@@ -108,7 +108,7 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 	if pageSize == 0 {
 		pageSize = 50
 	}
-	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, filters, pageToken.Field)
+	presences, err := s.repo.ListPresences(ctx, pageSize+1, pageToken, filters, request.SortDirection, request.SortBy)
 	if err != nil {
 		return nil, err
 	}
