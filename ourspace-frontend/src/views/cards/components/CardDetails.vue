@@ -3,7 +3,8 @@ import type { CardReadable } from '@/client'
 import DynamicInput from '@/components/DynamicInput.vue'
 import CardInput from '@/views/cards/components/CardInput.vue'
 import MemberSelect from '@/views/members/components/MemberSelect.vue'
-import { watchEffect } from 'vue'
+import { computed, watchEffect } from 'vue'
+import { base64ToHex } from '@/views/cards/card-utilities.ts'
 
 const props = defineProps<{
   isEdit: boolean
@@ -11,6 +12,15 @@ const props = defineProps<{
 }>()
 
 const card = defineModel<CardReadable>('card', { required: true })
+
+const cardRfidValue = computed(() => {
+  console.log(card.value)
+  return base64ToHex(card.value.rfid_value)
+})
+
+watchEffect(() => {
+  console.log(cardRfidValue.value)
+})
 
 watchEffect(() => {
   if (props.isEdit && props.memberId) {
@@ -42,7 +52,13 @@ watchEffect(() => {
       label="Valid To"
     />
     <div class="onyx-grid-span-12 card-input">
-      <DynamicInput type="text" label="RFID Value" v-model="card.rfid_value" :is-edit="isEdit" />
+      <DynamicInput
+        type="text"
+        label="RFID Value"
+        :modelValue="cardRfidValue"
+        :is-edit="isEdit"
+        readonly
+      />
       <CardInput v-model="card.rfid_value" v-if="isEdit" />
     </div>
   </div>

@@ -2,6 +2,7 @@
 import { OnyxButton, OnyxModal, OnyxBottomBar, OnyxLoadingIndicator, OnyxIcon } from 'sit-onyx'
 import { ref } from 'vue'
 import check from '@sit-onyx/icons/check.svg?raw'
+import { hexToBase64 } from '@/views/cards/card-utilities.ts'
 
 const modelValue = defineModel<string>()
 
@@ -11,7 +12,7 @@ const inputValue = ref('')
 
 const onSubmit = () => {
   waiting.value = false
-  modelValue.value = inputValue.value
+  modelValue.value = hexToBase64(inputValue.value)
   inputValue.value = ''
 
   setTimeout(() => {
@@ -54,7 +55,7 @@ const onSubmit = () => {
 
 <style scoped>
 .modal {
-  padding: var(--onyx-density-xl) var(--onyx-modal-dialog-padding-inline);
+  padding: var(--onyx-density-xl) var(--onyx-density-xl);
   color: var(--onyx-color-text-icons-neutral-medium);
 }
 
