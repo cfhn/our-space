@@ -39,7 +39,6 @@ type MemberAttributeEntry = {
   description: string,
 };
 
-const reload = ref(0);
 const response = ref<MemberServiceListMemberAttributesResponse>();
 const currentPageToken = ref<string>('');
 
@@ -122,7 +121,7 @@ const withCustomActions = createFeature(() => ({
       label: "Reload",
       icon: iconSync,
       color: "neutral",
-      onClick: () => reload.value++,
+      onClick: () => loadPage(currentPageToken.value),
     },
     {
       label: "Add attribute",
@@ -171,13 +170,13 @@ const data = computed(() => {
     ) ?? [])
 });
 
-watch([currentPageToken, reload], async () => {
+const loadPage = async (pageToken: string): Promise<void> => {
   const resp = await memberServiceListMemberAttributes({
     query: {
       page_size: 5,
       sort_by: "MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME",
       sort_direction: "SORT_DIRECTION_ASCENDING",
-      page_token: currentPageToken.value,
+      page_token: pageToken,
     }
   });
 
@@ -186,6 +185,11 @@ watch([currentPageToken, reload], async () => {
   } else {
     response.value = resp.data;
   }
+}
+
+watch([currentPageToken], async () => {
+  await loadPage(currentPageToken.value)
+
 }, {immediate: true});
 
 const createEditModal = ref<{
@@ -220,7 +224,7 @@ const handleSubmit = async () => {
   }
 
   createEditModal.value.open = false
-  reload.value++;
+  await loadPage(currentPageToken.value);
 };
 
 const createAttribute = async (value: MemberAttribute) => {
@@ -301,7 +305,7 @@ const handleDelete = async () => {
   }
 
   deleteModal.value.open = false;
-  reload.value++;
+  await loadPage(currentPageToken.value);
 }
 </script>
 
@@ -333,8 +337,7 @@ const handleDelete = async () => {
   </div>
   <OnyxModal :label="createEditModal.mode === 'create' ? 'Create Attribute' : 'Edit Attribute'"
              :open="createEditModal.open"
-             @update:open="createEditModal.open = false"
-             :nonDismissible="true"
+             nonDismissible
   >
     <template #default>
       <div class="edit-modal">
@@ -360,7 +363,7 @@ const handleDelete = async () => {
           <OnyxTextarea label="Description"
                         v-model="createEditModal.value.description"
                         required
-                        :maxlenght="4096"
+                        :maxlength="4096"
                         withCounter
           />
         </OnyxForm>
