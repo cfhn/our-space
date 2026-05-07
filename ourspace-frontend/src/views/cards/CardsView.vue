@@ -18,6 +18,7 @@ import {
 import { computed, h, ref, watch, watchEffect } from 'vue'
 import CardActions from '@/views/cards/components/CardActions.vue'
 import CardInput from '@/views/cards/components/CardInput.vue'
+import { base64ToHex } from '@/views/cards/card-utilities.ts'
 
 type CardEntry = {
   id: string
@@ -39,7 +40,7 @@ const columns: ColumnConfig<
   ColumnTypesFromFeatures<typeof features>
 >[] = [
   { key: 'member', label: 'Member' },
-  { key: 'rfidValue', label: 'RFID Value' },
+  { key: 'rfidValue', label: 'RFID Value', type: 'base64ToHex' },
   { key: 'validFrom', label: 'Valid From', type: 'date' },
   { key: 'validTo', label: 'Valid To', type: 'date' },
   { key: 'id', label: 'Actions', type: 'actions', width: 'min-content' },
@@ -72,6 +73,13 @@ const withCustomType = createFeature(() => ({
         },
         component: ({ modelValue }) => {
           return h(CardActions, { id: modelValue?.toString() ?? '' })
+        },
+      },
+    }),
+    base64ToHex: DataGridFeatures.createTypeRenderer<object, CardEntry>({
+      cell: {
+        component: ({ modelValue }) => {
+          return base64ToHex((modelValue ?? '').toString())
         },
       },
     }),

@@ -13,49 +13,50 @@ import {
   OnyxModal,
   OnyxSelect,
   OnyxTextarea,
-} from "sit-onyx";
-import {computed, h, ref, watch} from "vue";
-import MemberAttributeActions from "@/views/settings/components/MemberAttributeActions.vue";
+} from 'sit-onyx'
+import { computed, h, ref, watch } from 'vue'
+import MemberAttributeActions from '@/views/settings/components/MemberAttributeActions.vue'
 import {
   type MemberAttribute,
   memberServiceCreateMemberAttribute,
   memberServiceDeleteMemberAttribute,
   memberServiceListMemberAttributes,
   type MemberServiceListMemberAttributesResponse,
-  memberServiceUpdateMemberAttribute
-} from "@/client";
+  memberServiceUpdateMemberAttribute,
+} from '@/client'
 import {
   iconChevronFirstPage,
   iconChevronRightSmall,
   iconPlusSmall,
-  iconSync
-} from "@sit-onyx/icons";
+  iconSync,
+} from '@sit-onyx/icons'
 
 type MemberAttributeEntry = {
-  id: string,
-  technicalName: string,
-  displayName: string,
-  type: string,
-  description: string,
-};
+  id: string
+  technicalName: string
+  displayName: string
+  type: string
+  description: string
+}
 
-const response = ref<MemberServiceListMemberAttributesResponse>();
-const currentPageToken = ref<string>('');
+const response = ref<MemberServiceListMemberAttributesResponse>()
+const currentPageToken = ref<string>('')
 
 const nextPage = () => {
   if (response.value?.next_page_token) {
-    currentPageToken.value = response.value.next_page_token;
+    currentPageToken.value = response.value.next_page_token
   }
-};
+}
 
 const shouldShowNextPage = computed(
-  (): boolean => response.value?.next_page_token !== undefined && response.value.next_page_token !== ''
-);
+  (): boolean =>
+    response.value?.next_page_token !== undefined && response.value.next_page_token !== '',
+)
 
 const firstPage = () => {
-  currentPageToken.value = '';
+  currentPageToken.value = ''
 }
-const isFirstPage = computed(() => currentPageToken.value === '');
+const isFirstPage = computed(() => currentPageToken.value === '')
 
 const withCustomType = createFeature(() => ({
   name: Symbol('member attribute row actions'),
@@ -63,31 +64,31 @@ const withCustomType = createFeature(() => ({
     actions: DataGridFeatures.createTypeRenderer<object, MemberAttributeEntry>({
       cell: {
         tdAttributes: {
-          style: {width: 'calc(4rem + 2*var(--onyx-density-md))'},
+          style: { width: 'calc(4rem + 2*var(--onyx-density-md))' },
         },
-        component: ({modelValue, row}) => {
+        component: ({ modelValue, row }) => {
           const id = modelValue?.toString() ?? ''
           return h(MemberAttributeActions, {
             id: id,
             onEdit: () => {
-              createEditModal.value.mode = 'edit';
+              createEditModal.value.mode = 'edit'
               createEditModal.value.value = {
                 id: row.id,
                 display_name: row.displayName,
                 technical_name: row.technicalName,
                 description: row.description,
-                type: row.type as (MemberAttribute['type']),
-              };
+                type: row.type as MemberAttribute['type'],
+              }
               createEditModal.value.original = {
                 ...createEditModal.value.value,
               }
-              createEditModal.value.id = row.id;
-              createEditModal.value.open = true;
+              createEditModal.value.id = row.id
+              createEditModal.value.open = true
             },
             onDelete: () => {
-              deleteModal.value.id = row.id;
-              deleteModal.value.entry = row;
-              deleteModal.value.open = true;
+              deleteModal.value.id = row.id
+              deleteModal.value.entry = row
+              deleteModal.value.open = true
             },
           })
         },
@@ -95,42 +96,42 @@ const withCustomType = createFeature(() => ({
     }),
     attributeType: DataGridFeatures.createTypeRenderer<object, MemberAttributeEntry>({
       cell: {
-        component: ({modelValue}) => {
+        component: ({ modelValue }) => {
           switch (modelValue) {
             case 'TYPE_TEXT_SINGLE_LINE':
-              return 'Single line text';
+              return 'Single line text'
             case 'TYPE_TEXT_MULI_LINE':
               return 'Multi line text'
             case 'TYPE_NUMBER':
-              return 'Numerical text';
+              return 'Numerical text'
             case 'TYPE_DATE':
-              return 'Date';
+              return 'Date'
             case 'TYPE_DATETIME':
-              return 'Date and time';
+              return 'Date and time'
           }
         },
       },
     }),
   },
-}));
+}))
 
 const withCustomActions = createFeature(() => ({
   name: Symbol('member attribute actions'),
   actions: () => [
     {
-      label: "Reload",
+      label: 'Reload',
       icon: iconSync,
-      color: "neutral",
+      color: 'neutral',
       onClick: () => loadPage(currentPageToken.value),
     },
     {
-      label: "Add attribute",
+      label: 'Add attribute',
       icon: iconPlusSmall,
-      displayAs: "button",
-      mode: "plain",
-      group: "group-1",
+      displayAs: 'button',
+      mode: 'plain',
+      group: 'group-1',
       onClick: () => {
-        createEditModal.value.mode = 'create';
+        createEditModal.value.mode = 'create'
         createEditModal.value.value = {
           id: '',
           technical_name: '',
@@ -138,66 +139,71 @@ const withCustomActions = createFeature(() => ({
           description: '',
           type: 'TYPE_UNKNOWN',
         }
-        createEditModal.value.open = true;
+        createEditModal.value.open = true
       },
-    }
+    },
   ],
 }))
 
-const features = [withCustomType, withCustomActions];
+const features = [withCustomType, withCustomActions]
 
 const columns: ColumnConfig<
   MemberAttributeEntry,
   Record<string, never>,
   ColumnTypesFromFeatures<typeof features>
 >[] = [
-  {key: 'technicalName', label: 'Technical Name'},
-  {key: 'displayName', label: 'Display Name'},
-  {key: 'type', label: 'Data Type', type: 'attributeType'},
-  {key: 'description', label: 'Description'},
-  {key: 'id', label: 'Actions', type: 'actions', width: 'min-content'},
-];
+  { key: 'technicalName', label: 'Technical Name' },
+  { key: 'displayName', label: 'Display Name' },
+  { key: 'type', label: 'Data Type', type: 'attributeType' },
+  { key: 'description', label: 'Description' },
+  { key: 'id', label: 'Actions', type: 'actions', width: 'min-content' },
+]
 
 const data = computed(() => {
   return (
-    response.value?.attributes?.map((attribute): MemberAttributeEntry => ({
+    response.value?.attributes?.map(
+      (attribute): MemberAttributeEntry => ({
         id: attribute.id,
         technicalName: attribute.technical_name,
         displayName: attribute.display_name,
         type: attribute.type,
         description: attribute.description,
       }),
-    ) ?? [])
-});
+    ) ?? []
+  )
+})
 
 const loadPage = async (pageToken: string): Promise<void> => {
   const resp = await memberServiceListMemberAttributes({
     query: {
       page_size: 5,
-      sort_by: "MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME",
-      sort_direction: "SORT_DIRECTION_ASCENDING",
+      sort_by: 'MEMBER_ATTRIBUTE_FIELD_TECHNICAL_NAME',
+      sort_direction: 'SORT_DIRECTION_ASCENDING',
       page_token: pageToken,
-    }
-  });
+    },
+  })
 
   if (resp.error) {
-    console.error(resp.error);
+    console.error(resp.error)
   } else {
-    response.value = resp.data;
+    response.value = resp.data
   }
 }
 
-watch([currentPageToken], async () => {
-  await loadPage(currentPageToken.value)
-
-}, {immediate: true});
+watch(
+  [currentPageToken],
+  async () => {
+    await loadPage(currentPageToken.value)
+  },
+  { immediate: true },
+)
 
 const createEditModal = ref<{
-  open: boolean;
-  mode?: 'create' | 'edit';
-  id?: string;
-  value: MemberAttribute;
-  original?: MemberAttribute;
+  open: boolean
+  mode?: 'create' | 'edit'
+  id?: string
+  value: MemberAttribute
+  original?: MemberAttribute
 }>({
   open: false,
   value: {
@@ -206,106 +212,110 @@ const createEditModal = ref<{
     display_name: '',
     description: '',
     type: 'TYPE_UNKNOWN',
-  }
-});
+  },
+})
 
 const handleSubmit = async () => {
   switch (createEditModal.value.mode) {
     case 'create':
-      await createAttribute(createEditModal.value.value);
-      break;
+      await createAttribute(createEditModal.value.value)
+      break
     case 'edit':
       if (createEditModal.value.id === undefined || createEditModal.value.original === undefined) {
-        return;
+        return
       }
 
-      await patchAttribute(createEditModal.value.id, createEditModal.value.value, createEditModal.value.original ?? {});
-      break;
+      await patchAttribute(
+        createEditModal.value.id,
+        createEditModal.value.value,
+        createEditModal.value.original ?? {},
+      )
+      break
   }
 
   createEditModal.value.open = false
-  await loadPage(currentPageToken.value);
-};
+  await loadPage(currentPageToken.value)
+}
 
 const createAttribute = async (value: MemberAttribute) => {
   return memberServiceCreateMemberAttribute({
     body: value,
-  });
-};
+  })
+}
 
 const patchAttribute = async (id: string, value: MemberAttribute, original: MemberAttribute) => {
-  const fieldMask: string[] = [];
+  const fieldMask: string[] = []
 
   if (value.display_name !== original.display_name) {
-    fieldMask.push('display_name');
+    fieldMask.push('display_name')
   }
 
   if (value.description !== original.description) {
-    fieldMask.push('description');
+    fieldMask.push('description')
   }
 
   return memberServiceUpdateMemberAttribute({
     body: value,
     path: {
-      "attribute.id": id,
+      'attribute.id': id,
     },
     query: {
       field_mask: fieldMask.join(','),
     },
   })
-};
+}
 
 const attributeTypeOptions: {
-  value: MemberAttribute['type'],
-  label: string,
+  value: MemberAttribute['type']
+  label: string
 }[] = [
   {
     value: 'TYPE_TEXT_SINGLE_LINE',
-    label: 'Single line text'
+    label: 'Single line text',
   },
   {
     value: 'TYPE_TEXT_MULI_LINE',
-    label: 'Multi line text'
+    label: 'Multi line text',
   },
   {
     value: 'TYPE_NUMBER',
-    label: 'Numerical text'
+    label: 'Numerical text',
   },
   {
     value: 'TYPE_DATE',
-    label: 'Date value'
+    label: 'Date value',
   },
   {
     value: 'TYPE_DATETIME',
-    label: 'Date and time'
-  }
-];
+    label: 'Date and time',
+  },
+]
 
 const deleteModal = ref<{
-  open: boolean;
-  id?: string;
-  entry?: MemberAttributeEntry;
+  open: boolean
+  id?: string
+  entry?: MemberAttributeEntry
 }>({
   open: false,
-});
+})
 
 const handleDelete = async () => {
   if (deleteModal.value.id === undefined) {
-    return;
+    return
   }
 
   const resp = await memberServiceDeleteMemberAttribute({
     path: {
       id: deleteModal.value.id,
-    }
-  });
+    },
+  })
 
   if (resp.error) {
-    console.error(resp.error);
+    console.error(resp.error)
   }
 
-  deleteModal.value.open = false;
-  await loadPage(currentPageToken.value);
+  deleteModal.value.open = false
+  await loadPage(currentPageToken.value)
 }
 </script>
 
@@ -315,8 +325,13 @@ const handleDelete = async () => {
     Custom attributes allow you to extend the member data model with attributes that suit your
     needs.
   </p>
-  <OnyxDataGrid headline="Attributes" :columns="columns" :data :features
-                class="onyx-density-compact"/>
+  <OnyxDataGrid
+    headline="Attributes"
+    :columns="columns"
+    :data
+    :features
+    class="onyx-density-compact"
+  />
   <div class="table-bottom-actions">
     <OnyxIconButton
       :icon="iconChevronFirstPage"
@@ -335,46 +350,54 @@ const handleDelete = async () => {
       color="neutral"
     />
   </div>
-  <OnyxModal :label="createEditModal.mode === 'create' ? 'Create Attribute' : 'Edit Attribute'"
-             :open="createEditModal.open"
-             nonDismissible
+  <OnyxModal
+    :label="createEditModal.mode === 'create' ? 'Create Attribute' : 'Edit Attribute'"
+    :open="createEditModal.open"
+    nonDismissible
   >
     <template #default>
       <div class="edit-modal">
         <OnyxForm @submit.prevent="handleSubmit">
-          <OnyxInput label="Technical Name"
-                     v-model="createEditModal.value.technical_name"
-                     required
-                     :readonly="createEditModal.mode === 'edit'"
+          <OnyxInput
+            label="Technical Name"
+            v-model="createEditModal.value.technical_name"
+            required
+            :readonly="createEditModal.mode === 'edit'"
           />
-          <OnyxInput label="Display Name"
-                     v-model="createEditModal.value.display_name"
-                     required
-                     :maxlength="256"
-                     withCounter
+          <OnyxInput
+            label="Display Name"
+            v-model="createEditModal.value.display_name"
+            required
+            :maxlength="256"
+            withCounter
           />
-          <OnyxSelect label="Type"
-                      listLabel="Attribute data types"
-                      :options="attributeTypeOptions"
-                      v-model="createEditModal.value.type"
-                      required
-                      :readonly="createEditModal.mode === 'edit'"
+          <OnyxSelect
+            label="Type"
+            listLabel="Attribute data types"
+            :options="attributeTypeOptions"
+            v-model="createEditModal.value.type"
+            required
+            :readonly="createEditModal.mode === 'edit'"
           />
-          <OnyxTextarea label="Description"
-                        v-model="createEditModal.value.description"
-                        required
-                        :maxlength="4096"
-                        withCounter
+          <OnyxTextarea
+            label="Description"
+            v-model="createEditModal.value.description"
+            required
+            :maxlength="4096"
+            withCounter
           />
         </OnyxForm>
       </div>
     </template>
     <template #footer>
       <OnyxBottomBar>
-        <OnyxButton label="Cancel" color="neutral" mode="plain"
-                    @click="createEditModal.open = false"/>
-        <OnyxButton label="Save" color="primary" mode="plain"
-                    @click="handleSubmit"/>
+        <OnyxButton
+          label="Cancel"
+          color="neutral"
+          mode="plain"
+          @click="createEditModal.open = false"
+        />
+        <OnyxButton label="Save" color="primary" mode="plain" @click="handleSubmit" />
       </OnyxBottomBar>
     </template>
   </OnyxModal>
@@ -383,8 +406,8 @@ const handleDelete = async () => {
       <div class="delete-modal">
         <p>Do you really want to delete the attribute "{{ deleteModal.entry?.technicalName }}"?</p>
         <p>
-          This will not delete the attribute values on all members. Instead they will be listed
-          as an unknown attribute value and the attribute can't be added to any new members.
+          This will not delete the attribute values on all members. Instead they will be listed as
+          an unknown attribute value and the attribute can't be added to any new members.
         </p>
       </div>
     </template>
