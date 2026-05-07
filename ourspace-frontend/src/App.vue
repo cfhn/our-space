@@ -32,6 +32,7 @@ const user = userStore()
       <OnyxNavBar app-name="OurSpace" v-if="route.meta.navbar ?? true">
         <OnyxNavItem label="Members" link="/members"></OnyxNavItem>
         <OnyxNavItem label="Cards" link="/cards"></OnyxNavItem>
+        <OnyxNavItem label="Settings" link="/settings"></OnyxNavItem>
         <template #contextArea>
           <OnyxUserMenu v-if="loggedIn" :full-name="user.fullName">
             <OnyxColorSchemeMenuItem v-model="colorScheme" />

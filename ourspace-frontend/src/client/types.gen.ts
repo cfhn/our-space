@@ -157,11 +157,11 @@ export type MemberWritable = {
 };
 
 export type MemberAttribute = {
-    id?: string;
-    technical_name?: string;
-    display_name?: string;
-    type?: 'TYPE_UNKNOWN' | 'TYPE_TEXT_SINGLE_LINE' | 'TYPE_TEXT_MULI_LINE' | 'TYPE_NUMBER' | 'TYPE_DATE' | 'TYPE_DATETIME';
-    description?: string;
+    id: string;
+    technical_name: string;
+    display_name: string;
+    type: 'TYPE_UNKNOWN' | 'TYPE_TEXT_SINGLE_LINE' | 'TYPE_TEXT_MULI_LINE' | 'TYPE_NUMBER' | 'TYPE_DATE' | 'TYPE_DATETIME';
+    description: string;
 };
 
 export type MemberLoginReadable = {
