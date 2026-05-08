@@ -111,6 +111,7 @@ func run(logger *slog.Logger) error {
 			if err != nil {
 				return err
 			}
+
 			err = pb.RegisterPresenceServiceHandlerClient(context.Background(), mux, pb.NewPresenceServiceClient(client))
 			if err != nil {
 				return err

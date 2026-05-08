@@ -28,26 +28,25 @@ func NewPostgresRepo(db *sql.DB) *Postgres {
 	return &Postgres{db: db}
 }
 
-func (p *Postgres) CreatePresence(ctx context.Context, memberId string) (*pb.Presence, error) {
+func (p *Postgres) CreatePresence(ctx context.Context, memberID string) (*pb.Presence, error) {
 	checkinTime := time.Now()
-	presenceId := uuid.New().String()
+	presenceID := uuid.New().String()
 
 	_, err := p.db.ExecContext(ctx, `
 		insert into presences (id, member_id, checkin_time)
 		values ($1, $2, $3);
-	`, presenceId, memberId, checkinTime)
-
+	`, presenceID, memberID, checkinTime)
 	if err != nil {
 		return nil, err
 	}
 
-	return p.GetActivePresence(ctx, memberId)
+	return p.GetActivePresence(ctx, memberID)
 }
 
-func (p *Postgres) GetActivePresence(ctx context.Context, memberId string) (*pb.Presence, error) {
+func (p *Postgres) GetActivePresence(ctx context.Context, memberID string) (*pb.Presence, error) {
 	row := p.db.QueryRowContext(ctx, `
 		select id, member_id, checkin_time, checkout_time from presences where member_id = $1 and checkout_time is null
-	`, memberId)
+	`, memberID)
 
 	presence, err := scanPresence(row)
 	if err != nil {
@@ -57,9 +56,9 @@ func (p *Postgres) GetActivePresence(ctx context.Context, memberId string) (*pb.
 	return presence, nil
 }
 
-func (p *Postgres) GetPresenceByID(ctx context.Context, presenceId string) (*pb.Presence, error) {
+func (p *Postgres) GetPresenceByID(ctx context.Context, presenceID string) (*pb.Presence, error) {
 	row := p.db.QueryRowContext(ctx, `select id, member_id, checkin_time, checkout_time from presences where id = $1
-	`, presenceId)
+	`, presenceID)
 
 	presence, err := scanPresence(row)
 	if err != nil {
@@ -86,7 +85,6 @@ func scanPresence(in scanner) (*pb.Presence, error) {
 		&checkinTime,
 		&checkoutTime,
 	)
-
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +99,7 @@ func scanPresence(in scanner) (*pb.Presence, error) {
 
 func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fieldMask *fieldmaskpb.FieldMask) (*pb.Presence, error) {
 	var (
-		memberId       sql.Null[string]
+		memberID       sql.Null[string]
 		checkinTime    sql.Null[time.Time]
 		checkoutTime   sql.Null[time.Time]
 		changeCheckout bool
@@ -111,7 +109,7 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 		for _, path := range fieldMask.Paths {
 			switch path {
 			case "member_id":
-				memberId = sql.Null[string]{V: presence.MemberId, Valid: true}
+				memberID = sql.Null[string]{V: presence.MemberId, Valid: true}
 			case "checkin_time":
 				checkinTime = sql.Null[time.Time]{V: presence.CheckinTime.AsTime(), Valid: true}
 			case "checkout_time":
@@ -128,7 +126,7 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 			checkin_time = coalesce($2, checkin_time),
 			member_id = coalesce($4, member_id)
 		where id = $1
-	`, presence.Id, checkinTime, checkoutTime, memberId, changeCheckout)
+	`, presence.Id, checkinTime, checkoutTime, memberID, changeCheckout)
 	if err != nil {
 		return nil, err
 	}
@@ -136,10 +134,11 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 	return p.GetPresenceByID(ctx, presence.Id)
 }
 
-func (p *Postgres) CheckoutPresence(ctx context.Context, memberId string) (*pb.Presence, error) {
+func (p *Postgres) CheckoutPresence(ctx context.Context, memberID string) (*pb.Presence, error) {
 	checkoutTime := timestamppb.New(time.Now())
-	presence := &pb.Presence{CheckoutTime: checkoutTime, MemberId: memberId}
+	presence := &pb.Presence{CheckoutTime: checkoutTime, MemberId: memberID}
 	mask := &fieldmaskpb.FieldMask{Paths: []string{"checkout_time"}}
+
 	return p.UpdatePresence(ctx, presence, mask)
 }
 
@@ -148,21 +147,22 @@ type Filters struct {
 	CheckinTimeAfter   time.Time
 	CheckoutTimeBefore time.Time
 	CheckoutTimeAfter  time.Time
-	MemberId           string
+	MemberID           string
 }
 
 func (p *Postgres) ListPresences(
-	ctx context.Context, pageSize int32, token *pb.PresencePageToken, filters *Filters, sortDirection pb.SortDirection, sortField pb.PresenceField) ([]*pb.Presence, error) {
+	ctx context.Context, pageSize int32, token *pb.PresencePageToken, filters *Filters, sortDirection pb.SortDirection, sortField pb.PresenceField,
+) ([]*pb.Presence, error) {
 	var (
 		checkinTimeBefore  = sql.Null[time.Time]{V: filters.CheckinTimeBefore, Valid: !filters.CheckinTimeBefore.IsZero()}
 		checkinTimeAfter   = sql.Null[time.Time]{V: filters.CheckinTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
 		checkoutTimeBefore = sql.Null[time.Time]{V: filters.CheckoutTimeBefore, Valid: !filters.CheckoutTimeBefore.IsZero()}
 		checkoutTimeAfter  = sql.Null[time.Time]{V: filters.CheckoutTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
-		memberId           = sql.Null[string]{V: filters.MemberId, Valid: filters.MemberId != ""}
+		memberID           = sql.Null[string]{V: filters.MemberID, Valid: filters.MemberID != ""}
 	)
 
 	values := []any{
-		memberId,
+		memberID,
 		checkinTimeBefore,
 		checkinTimeAfter,
 		checkoutTimeBefore,
@@ -181,10 +181,11 @@ func (p *Postgres) ListPresences(
 		order by `+getSort(sortField, sortDirection, token)+`
 		limit $6
 	`, values...)
-
 	if err != nil {
 		return nil, err
 	}
+
+	defer rows.Close()
 
 	presences := make([]*pb.Presence, 0, pageSize)
 
@@ -203,6 +204,7 @@ func (p *Postgres) ListPresences(
 
 	return presences, nil
 }
+
 func getSort(sortField pb.PresenceField, direction pb.SortDirection, token *pb.PresencePageToken) string {
 	if token.Field != pb.PresenceField_PRESENCE_FIELD_UNKNOWN {
 		sortField = token.Field
