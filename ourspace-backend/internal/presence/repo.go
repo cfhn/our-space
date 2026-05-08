@@ -12,6 +12,7 @@ import (
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 )
 
+//nolint:gochecknoglobals // static lookup map
 var presenceFields = map[pb.PresenceField]string{
 	pb.PresenceField_PRESENCE_FIELD_ID:            "presence.id",
 	pb.PresenceField_PRESENCE_FIELD_MEMBER_ID:     "presence.memberId",
@@ -168,6 +169,7 @@ func (p *Postgres) ListPresences(
 		checkoutTimeAfter,
 		pageSize,
 	}
+	//nolint:gosec // safe SQL building, all dynamic data is passed through a lookup map of safe values
 	rows, err := p.db.QueryContext(ctx, `
 		select id, member_id, checkin_time, checkout_time from presences
 		where			    

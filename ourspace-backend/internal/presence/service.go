@@ -122,23 +122,24 @@ func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesReq
 		direction := pb.SortDirection_SORT_DIRECTION_ASCENDING
 		if pageToken.Direction != pb.SortDirection_SORT_DIRECTION_DEFAULT {
 			direction = pageToken.Direction
-			lastValue, err := getFieldValue(presences[pageSize-1], field)
-			if err != nil {
-				return nil, err
-			}
-			pbNextPageToken := &pb.PresencePageToken{
-				Field:     field,
-				LastValue: lastValue,
-				Direction: direction,
-				LastId:    presences[pageSize-1].Id,
-			}
-			nextPageTokenBytes, err := proto.Marshal(pbNextPageToken)
-			if err != nil {
-				return nil, err
-			}
-			nextPageToken = base64.RawURLEncoding.EncodeToString(nextPageTokenBytes)
 		}
+		lastValue, err := getFieldValue(presences[pageSize-1], field)
+		if err != nil {
+			return nil, err
+		}
+		pbNextPageToken := &pb.PresencePageToken{
+			Field:     field,
+			LastValue: lastValue,
+			Direction: direction,
+			LastId:    presences[pageSize-1].Id,
+		}
+		nextPageTokenBytes, err := proto.Marshal(pbNextPageToken)
+		if err != nil {
+			return nil, err
+		}
+		nextPageToken = base64.RawURLEncoding.EncodeToString(nextPageTokenBytes)
 	}
+
 	return &pb.ListPresencesResponse{
 		Presence:      presences,
 		NextPageToken: nextPageToken,
