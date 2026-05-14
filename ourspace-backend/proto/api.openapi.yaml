@@ -987,9 +987,28 @@ paths:
                   in: query
                   schema:
                     type: string
+                - name: sort_by
+                  in: query
+                  schema:
+                    enum:
+                        - PRESENCE_FIELD_UNKNOWN
+                        - PRESENCE_FIELD_ID
+                        - PRESENCE_FIELD_MEMBER_ID
+                        - PRESENCE_FIELD_CHECKIN_TIME
+                        - PRESENCE_FIELD_CHECKOUT_TIME
+                    type: string
+                    format: enum
+                - name: sort_direction
+                  in: query
+                  schema:
+                    enum:
+                        - SORT_DIRECTION_DEFAULT
+                        - SORT_DIRECTION_ASCENDING
+                        - SORT_DIRECTION_DESCENDING
+                    type: string
+                    format: enum
                 - name: member_id
                   in: query
-                  description: Filters
                   schema:
                     type: string
                 - name: checkin_time_after

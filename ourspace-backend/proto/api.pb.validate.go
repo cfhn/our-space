@@ -5578,6 +5578,10 @@ func (m *ListPresencesRequest) validate(all bool) error {
 
 	// no validation rules for PageToken
 
+	// no validation rules for SortBy
+
+	// no validation rules for SortDirection
+
 	if m.MemberId != nil {
 		// no validation rules for MemberId
 	}
@@ -5931,6 +5935,116 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListPresencesResponseValidationError{}
+
+// Validate checks the field values on PresencePageToken with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *PresencePageToken) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PresencePageToken with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PresencePageTokenMultiError, or nil if none found.
+func (m *PresencePageToken) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PresencePageToken) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Field
+
+	// no validation rules for LastValue
+
+	// no validation rules for Direction
+
+	// no validation rules for LastId
+
+	if len(errors) > 0 {
+		return PresencePageTokenMultiError(errors)
+	}
+
+	return nil
+}
+
+// PresencePageTokenMultiError is an error wrapping multiple validation errors
+// returned by PresencePageToken.ValidateAll() if the designated constraints
+// aren't met.
+type PresencePageTokenMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PresencePageTokenMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PresencePageTokenMultiError) AllErrors() []error { return m }
+
+// PresencePageTokenValidationError is the validation error returned by
+// PresencePageToken.Validate if the designated constraints aren't met.
+type PresencePageTokenValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PresencePageTokenValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PresencePageTokenValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PresencePageTokenValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PresencePageTokenValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PresencePageTokenValidationError) ErrorName() string {
+	return "PresencePageTokenValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PresencePageTokenValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPresencePageToken.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PresencePageTokenValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PresencePageTokenValidationError{}
 
 // Validate checks the field values on CheckinRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
