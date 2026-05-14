@@ -3757,7 +3757,7 @@ const file_ourspace_backend_proto_api_proto_rawDesc = "" +
 	"\n" +
 	"field_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\tfieldMask\".\n" +
 	"\x1cDeleteMemberAttributeRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xdc\x02\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x9b\x03\n" +
 	"\x0fMemberAttribute\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12+\n" +
 	"\x0etechnical_name\x18\x02 \x01(\tB\x03\xe0A\x05R\x0etechnical_name\x12\"\n" +
@@ -3770,7 +3770,7 @@ const file_ourspace_backend_proto_api_proto_rawDesc = "" +
 	"\x13TYPE_TEXT_MULI_LINE\x10\x02\x12\x0f\n" +
 	"\vTYPE_NUMBER\x10\x03\x12\r\n" +
 	"\tTYPE_DATE\x10\x04\x12\x11\n" +
-	"\rTYPE_DATETIME\x10\x05\"\xdd\x01\n" +
+	"\rTYPE_DATETIME\x10\x05:=\xbaG:\xba\x01\x02id\xba\x01\x0etechnical_name\xba\x01\fdisplay_name\xba\x01\x04type\xba\x01\vdescription\"\xdd\x01\n" +
 	"\x18MemberAttributePageToken\x12B\n" +
 	"\x05field\x18\x01 \x01(\x0e2,.ourspace_backend.proto.MemberAttributeFieldR\x05field\x12\x1e\n" +
 	"\n" +

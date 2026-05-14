@@ -22,6 +22,7 @@ import (
 
 var ErrFieldUnknown = errors.New("unknown field")
 
+//nolint:gochecknoglobals // constant lookup maps/slices
 var (
 	validAgeCategories  = []pb.AgeCategory{pb.AgeCategory_AGE_CATEGORY_UNDERAGE, pb.AgeCategory_AGE_CATEGORY_ADULT}
 	validAttributeTypes = []pb.MemberAttribute_Type{
@@ -106,19 +107,22 @@ func validateCreateMember(
 		})
 	}
 
-	if request.Member.MembershipStart == nil {
+	const membershipStartLeeway = 15 * time.Minute
+
+	switch {
+	case request.Member.MembershipStart == nil:
 		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field:       "member.membership_start",
 			Description: "membership_start must be set",
 			Reason:      "FIELD_EMPTY",
 		})
-	} else if request.Member.MembershipStart.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)) {
+	case request.Member.MembershipStart.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)):
 		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field:       "member.membership_start",
 			Description: "membership_start must after the year 1900",
 			Reason:      "FIELD_INVALID",
 		})
-	} else if request.Member.MembershipStart.AsTime().After(time.Now().Add(15 * time.Minute)) {
+	case request.Member.MembershipStart.AsTime().After(time.Now().Add(membershipStartLeeway)):
 		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field:       "member.membership_start",
 			Description: "membership_start must not be in the future",
@@ -155,7 +159,7 @@ func validateCreateMember(
 	}
 
 	if request.Member.MemberLogin != nil {
-		if len(request.Member.MemberLogin.Username) == 0 {
+		if request.Member.MemberLogin.Username == "" {
 			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 				Field:       "member.member_login.username",
 				Description: "username must not be empty",
@@ -424,19 +428,22 @@ func validateUpdateMember(
 		case "membership_start":
 			validPath = true
 
-			if request.Member.MembershipStart == nil {
+			const membershipStartLeeway = 15 * time.Minute
+
+			switch {
+			case request.Member.MembershipStart == nil:
 				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 					Field:       "member.membership_start",
 					Description: "membership_start must be set",
 					Reason:      "FIELD_EMPTY",
 				})
-			} else if request.Member.MembershipStart.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)) {
+			case request.Member.MembershipStart.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)):
 				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 					Field:       "member.membership_start",
 					Description: "membership_start must after the year 1900",
 					Reason:      "FIELD_INVALID",
 				})
-			} else if request.Member.MembershipStart.AsTime().After(time.Now().Add(15 * time.Minute)) {
+			case request.Member.MembershipStart.AsTime().After(time.Now().Add(membershipStartLeeway)):
 				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 					Field:       "member.membership_start",
 					Description: "membership_start must not be in the future",
@@ -481,7 +488,7 @@ func validateUpdateMember(
 			validPath = true
 
 			if request.Member.MemberLogin != nil {
-				if len(request.Member.MemberLogin.Username) == 0 {
+				if request.Member.MemberLogin.Username == "" {
 					fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 						Field:       "member.member_login.username",
 						Description: "username must not be empty",
@@ -702,7 +709,7 @@ func validateCreateMemberAttribute(req *pb.CreateMemberAttributeRequest) []*errd
 		}
 	}
 
-	if len(req.Attribute.DisplayName) == 0 {
+	if req.Attribute.DisplayName == "" {
 		violations = append(violations, &errdetails.BadRequest_FieldViolation{
 			Field:       "attribute.display_name",
 			Description: "must be set",
@@ -716,7 +723,7 @@ func validateCreateMemberAttribute(req *pb.CreateMemberAttributeRequest) []*errd
 		})
 	}
 
-	if len(req.Attribute.TechnicalName) == 0 {
+	if req.Attribute.TechnicalName == "" {
 		violations = append(violations, &errdetails.BadRequest_FieldViolation{
 			Field:       "attribute.technical_name",
 			Description: "must be set",
@@ -905,7 +912,7 @@ func validateUpdateMemberAttribute(req *pb.UpdateMemberAttributeRequest) []*errd
 	for _, path := range req.FieldMask.Paths {
 		switch path {
 		case "display_name":
-			if len(req.Attribute.DisplayName) == 0 {
+			if req.Attribute.DisplayName == "" {
 				violations = append(violations, &errdetails.BadRequest_FieldViolation{
 					Field:       "attribute.display_name",
 					Description: "must be set",

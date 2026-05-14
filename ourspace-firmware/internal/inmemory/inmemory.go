@@ -1,6 +1,7 @@
 package inmemory
 
 import (
+	"bytes"
 	"sync/atomic"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
@@ -42,7 +43,7 @@ func (r *Repository) FindCardByRFID(rfidValue []byte) *pbBackend.Card {
 	}
 
 	for _, card := range *cards {
-		if string(card.RfidValue) == string(rfidValue) {
+		if bytes.Equal(card.RfidValue, rfidValue) {
 			return card
 		}
 	}

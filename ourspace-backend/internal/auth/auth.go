@@ -130,10 +130,6 @@ func (s *Service) passwordLogin(ctx context.Context, credentials *pb.LoginPasswo
 
 func (s *Service) apiKeyLogin(ctx context.Context, credentials *pb.LoginApiKey) (*pb.LoginResponse, error) {
 	apiKeyDetails, err := s.repo.FindAPIKey(ctx, credentials.ApiKey)
-	if err != nil {
-		return nil, err
-	}
-
 	if errors.Is(err, ErrAPIKeyNotFound) {
 		return nil, status.Unauthenticated()
 	}
@@ -148,6 +144,9 @@ func (s *Service) apiKeyLogin(ctx context.Context, credentials *pb.LoginApiKey) 
 		time.Now(),
 		apiKeyAccessTokenValidity,
 	)
+	if err != nil {
+		return nil, status.Internal(err)
+	}
 
 	return &pb.LoginResponse{
 		Outcome: &pb.LoginResponse_Success{

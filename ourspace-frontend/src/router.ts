@@ -1,11 +1,12 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from './views/home/HomeView.vue'
-import MembersView from "@/views/members/MembersView.vue";
-import MembersEditView from "@/views/members/MemberEditView.vue";
-import CardsView from "@/views/cards/CardsView.vue";
-import CardEditView from "@/views/cards/CardEditView.vue";
-import TerminalView from "@/views/terminal/TerminalView.vue";
-import LoginView from "@/views/login/LoginView.vue";
+import MembersView from '@/views/members/MembersView.vue'
+import MembersEditView from '@/views/members/MemberEditView.vue'
+import CardsView from '@/views/cards/CardsView.vue'
+import CardEditView from '@/views/cards/CardEditView.vue'
+import TerminalView from '@/views/terminal/TerminalView.vue'
+import LoginView from '@/views/login/LoginView.vue'
+import SettingsView from '@/views/settings/SettingsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,7 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: "login",
+      name: 'login',
       component: LoginView,
       meta: {
         authenticated: false,
@@ -62,8 +63,13 @@ const router = createRouter({
       meta: {
         navbar: false,
         authenticated: false,
-      }
-    }
+      },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsView,
+    },
   ],
 })
 

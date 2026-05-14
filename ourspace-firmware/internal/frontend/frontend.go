@@ -27,6 +27,6 @@ func (s spaFs) Open(name string) (fs.File, error) {
 }
 
 func ServeFrontend() http.Handler {
-	dist, _ := fs.Sub(frontend, "dist")
+	dist, _ := fs.Sub(frontend, "dist") //nolint:errcheck // we have a test covering that dist/index.html exists
 	return http.FileServer(http.FS(&spaFs{fs: dist}))
 }

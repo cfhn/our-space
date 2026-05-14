@@ -7,6 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -25,6 +26,11 @@ import (
 	"github.com/cfhn/our-space/pkg/database"
 	"github.com/cfhn/our-space/pkg/log"
 	"github.com/cfhn/our-space/pkg/setup"
+)
+
+var (
+	ErrInvalidKeyType    = errors.New("invalid key type")
+	ErrPublicKeyNotFound = errors.New("public key not found")
 )
 
 func main() {
@@ -143,7 +149,7 @@ func loadKeys(privateKeyPath, publicKeysPath string) (*ecdsa.PrivateKey, map[str
 
 	block, _ := pem.Decode(pemContent)
 	if block == nil {
-		return nil, nil, fmt.Errorf("public key not found")
+		return nil, nil, ErrPublicKeyNotFound
 	}
 
 	privateKey, err := x509.ParseECPrivateKey(block.Bytes)
@@ -190,7 +196,10 @@ func loadKeys(privateKeyPath, publicKeysPath string) (*ecdsa.PrivateKey, map[str
 	}
 
 	// Always add the current signing key to the verification keys
-	signingPublicKey := privateKey.Public().(*ecdsa.PublicKey)
+	signingPublicKey, ok := privateKey.Public().(*ecdsa.PublicKey)
+	if !ok {
+		return nil, nil, ErrInvalidKeyType
+	}
 
 	b, err := signingPublicKey.Bytes()
 	if err != nil {

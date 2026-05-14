@@ -28,7 +28,7 @@ type BackendSynchronizer struct {
 	Repository Repository
 	Logger     *slog.Logger
 
-	ApiKey string
+	APIKey string
 }
 
 func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
@@ -38,7 +38,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 		loginResp, err := b.AuthClient.Login(ctx, &pbBackend.LoginRequest{
 			Credentials: &pbBackend.LoginRequest_ApiKey{
 				ApiKey: &pbBackend.LoginApiKey{
-					ApiKey: b.ApiKey,
+					ApiKey: b.APIKey,
 				},
 			},
 		})
@@ -100,6 +100,7 @@ func pageIterator[T proto.Message, Resp PageResponse](
 			if err != nil {
 				var t T
 				yield(t, err)
+
 				return
 			}
 
@@ -120,6 +121,7 @@ func pageIterator[T proto.Message, Resp PageResponse](
 
 func collect[T proto.Message](iterator iter.Seq2[T, error]) ([]T, error) {
 	var items []T
+
 	for item, err := range iterator {
 		if err != nil {
 			return nil, err
