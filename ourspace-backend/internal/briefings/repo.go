@@ -38,8 +38,9 @@ func(p *Postgres) CreateBriefingType(ctx context.Context, briefingType *pb.Brief
 
 func (p *Postgres) GetBriefingType(ctx context.Context, id string) (*pb.BriefingType, error) {
 	row := p.db.QueryRowContext(ctx,`
-		select id, displayname, description, expiresafter)
-		`, id,
+		select id, displayname, description, expiresafter
+		from briefing_types
+		where id = $1`, id,
 	)
 
 	briefingType, err := scanBriefingType(row)
@@ -117,4 +118,19 @@ func scanBriefingType(in scanner) (*pb.BriefingType, error) {
 	return briefingType, nil
 }
 
-func (p* Postgres) ListBriefingTypes (*pb.BriefingType)
+func (p* Postgres) ListBriefingTypes (ctx context.Context) (*[]pb.BriefingType, error) {
+	rows, err := p.db.quQueryRowContext(ctx,`
+		select id, displayname, description, expiresafter
+		from briefing_types`
+	)
+
+	briefingType, err := scanBriefingType(row)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrNotFound
+	}
+
+	if err != nil{
+		return nil, err
+	}
+	return briefingType, nil
+}

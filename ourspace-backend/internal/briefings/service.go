@@ -202,47 +202,6 @@ func (s *Service) DeleteBriefingType(ctx context.Context, request *pb.DeleteBrie
 }
 
 func (s* Service) ListBriefingTypes(ctx context.Context, request *pb.ListBriefingTypesRequest) (*pb.ListBriefingTypesResponse, error){
-	pageTokenBytes, err := base64.RawStdEncoding.DecodeString(request.PageToken)
-	if err != nil {
-		return nil, err
-	}
-
-	pageToken := &pb.CardPageToken{}
-
-	err = proto.Unmarshal(pageTokenBytes, pageToken)
-	if err != nil {
-		return nil, err
-	}
-
-	filters := &Filters{}
-	if request.BriefingTypeId != "" {
-		filters.BriefingTypeId = request.BriefingTypeId
-	}
-
-	pageSize := request.PageSize
-	if pageSize == 0 {
-		pageSize = 50
-	}
-
-	briefing_types, err := s.repo.ListBriefingTypes(ctx, pageSize+1, pageToken, request.SortBy, request.SortDirection, filters)
-	if err != nil {
-		return nil, err
-	}
-
-	
-
-	var nextPageToken string
-	
-
-	if len(briefing_types) > int(pageSize) {
-		briefing_types = briefing_types[:pageSize]
-		
-		// todo: briefingtype fields are not defined yet? 
-
-		direction := pb.SortDirection_SORT_DIRECTION_ASCENDING
-
-		
-
-	}
+	briefing_types, err := s.repo.ListBriefingTypes(ctx, )
 }
 
