@@ -7,6 +7,8 @@ import CardEditView from '@/views/cards/CardEditView.vue'
 import TerminalView from '@/views/terminal/TerminalView.vue'
 import LoginView from '@/views/login/LoginView.vue'
 import SettingsView from '@/views/settings/SettingsView.vue'
+import PresenceView from './views/presence/PresenceView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,6 +71,11 @@ const router = createRouter({
       path: '/settings',
       name: 'settings',
       component: SettingsView,
+    },
+    {
+      path: '/presences',
+      name: 'presences',
+      component: PresenceView,
     },
   ],
 })
