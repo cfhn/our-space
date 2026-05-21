@@ -4,13 +4,7 @@ import { OnyxPageLayout } from 'sit-onyx'
 
 <template>
   <OnyxPageLayout>
-    <h1 class="headline">Presence</h1>
+    <h1>Presence</h1>
   </OnyxPageLayout>
 </template>
 
-<style scoped>
-.settings-section {
-  margin-top: var(--onyx-density-lg);
-  margin-bottom: var(--onyx-density-lg);
-}
-</style>
