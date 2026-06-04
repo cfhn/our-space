@@ -48,11 +48,11 @@ const processToken = (token: string) => {
   userStoreRef.fullName = claims['full_name']
 }
 
-export const startRefreshTokenTask = () => {
+export const startRefreshTokenTask = async () => {
   loadToken()
 
   if (isExpired(getToken() ?? '')) {
-    refresh()
+    await refresh()
   }
 
   const refreshWrapper = async () => {

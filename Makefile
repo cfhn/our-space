@@ -10,7 +10,7 @@ GO_DEPENDENCIES += github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gat
 
 define make-go-dependency
   # target template for go tools, can be referenced e.g. via /bin/<tool>
-  bin/$(notdir $1):
+  bin/$(notdir $1): go.mod go.sum
 	GOBIN=$(PWD)/bin go install $1
 endef
 

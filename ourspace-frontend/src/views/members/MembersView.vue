@@ -5,7 +5,6 @@ import {
   OnyxButton,
   OnyxDataGrid,
   OnyxModal,
-  OnyxInput,
   OnyxPageLayout,
   OnyxIconButton,
   createFeature,
@@ -23,6 +22,8 @@ import MemberTags from '@/views/members/components/MemberTags.vue'
 import MemberActions from '@/views/members/components/MemberActions.vue'
 
 import sync from '@sit-onyx/icons/sync.svg?raw'
+import { iconChevronFirstPage, iconChevronRightSmall, iconPlusSmall } from '@sit-onyx/icons'
+import SearchInput from '@/components/SearchInput.vue'
 
 type MemberEntry = {
   id: string
@@ -39,8 +40,6 @@ const currentPageToken = ref<string>('')
 const searchValue = ref<string>('')
 
 const nextPage = () => {
-  console.log(currentPageToken.value, response.value?.next_page_token)
-
   if (response.value?.next_page_token) {
     currentPageToken.value = response.value?.next_page_token
   }
@@ -67,7 +66,7 @@ const deleteMember = async (id: string) => {
   })
 
   if (resp.error) {
-    console.log(resp.error)
+    console.error(resp.error)
     return
   }
 
@@ -92,7 +91,7 @@ const endMembership = async (id: string) => {
     },
   })
   if (resp.error) {
-    console.log(resp.error)
+    console.error(resp.error)
     return
   }
 
@@ -172,14 +171,14 @@ watch(
       query: {
         sort_by: 'MEMBER_FIELD_NAME',
         sort_direction: 'SORT_DIRECTION_ASCENDING',
-        page_size: 10,
+        page_size: 15,
         page_token: currentPageToken.value,
         name_contains: searchValue.value != '' ? searchValue.value : undefined,
       },
     })
 
     if (resp.error) {
-      console.log(resp.error)
+      console.error(resp.error)
     } else {
       response.value = resp.data
     }
@@ -197,30 +196,40 @@ watch(searchValue, () => {
   <OnyxPageLayout>
     <div class="table-top-actions">
       <h1>Members</h1>
-      <OnyxIconButton label="Refresh" :icon="sync" @click="reload++" density="compact" />
-      <OnyxInput
-        label="Search"
-        :hide-label="true"
-        placeholder="Search"
-        v-model="searchValue"
+      <OnyxIconButton
+        label="Refresh"
+        :icon="sync"
+        @click="reload++"
         density="compact"
-        autofocus
+        color="neutral"
+      />
+      <SearchInput v-model="searchValue" placeholder="Member name" />
+      <div class="separator" />
+      <OnyxButton
+        label="New member"
+        :icon="iconPlusSmall"
+        density="compact"
+        mode="plain"
+        link="/members/new"
       />
     </div>
     <OnyxDataGrid :columns="columns" :data :features class="onyx-density-compact" />
     <div class="table-bottom-actions">
-      <OnyxButton
+      <OnyxIconButton
+        :icon="iconChevronFirstPage"
         label="Back to start"
         density="compact"
         :disabled="isFirstPage"
         @click="firstPage"
         color="neutral"
       />
-      <OnyxButton
+      <OnyxIconButton
+        :icon="iconChevronRightSmall"
         label="Next Page"
         density="compact"
         :disabled="!shouldShowNextPage"
         @click="nextPage"
+        color="neutral"
       />
     </div>
     <OnyxModal label="Delete member" :open="deleteMemberDialogOpenFor !== undefined">
@@ -293,5 +302,12 @@ watch(searchValue, () => {
 .modal {
   padding: var(--onyx-density-xl) var(--onyx-modal-dialog-padding-inline);
   color: var(--onyx-color-text-icons-neutral-intense);
+}
+
+.separator {
+  border-left: 1px solid var(--onyx-color-text-icons-neutral-soft);
+  height: 24px;
+  line-height: 24px;
+  margin: 4px -10px 4px 4px;
 }
 </style>

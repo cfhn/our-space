@@ -18,14 +18,14 @@ importers:
         specifier: ^0.10.2
         version: 0.10.2(@hey-api/openapi-ts@0.68.1(typescript@5.8.3))
       '@sit-onyx/icons':
-        specifier: 1.7.0
-        version: 1.7.0
+        specifier: 1.9.0
+        version: 1.9.0
       '@vueuse/core':
         specifier: ^13.9.0
         version: 13.9.0(vue@3.5.30(typescript@5.8.3))
       sit-onyx:
-        specifier: 1.10.0
-        version: 1.10.0(@sit-onyx/icons@1.7.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3))
+        specifier: 1.13.0
+        version: 1.13.0(@sit-onyx/icons@1.9.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3))
       vue:
         specifier: ^3.5.30
         version: 3.5.30(typescript@5.8.3)
@@ -693,8 +693,8 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@sit-onyx/icons@1.7.0':
-    resolution: {integrity: sha512-D8qWf3Xa1czRv6P9E7wSl05E+qC6vbDGFBOoVjxW4YhMq2yh8RaNqcHN+lIVhVAiGDcQpRsRc3/ePln5UFinIw==}
+  '@sit-onyx/icons@1.9.0':
+    resolution: {integrity: sha512-ZJ8nwenh2dBdWhNnEQX+cKATBHYEt8rqKDlhXZxBadKY9Dv27AX4G3aJmBEnBWM+o2n3gdHYY8YyKOJXv5L0aw==}
     engines: {node: '>=20'}
 
   '@tsconfig/node22@22.0.5':
@@ -2018,11 +2018,11 @@ packages:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
 
-  sit-onyx@1.10.0:
-    resolution: {integrity: sha512-FIx+4Xj1eI6Mqg/Au6tNdC+yaTsBhH9Zs7cLE7ZRfQSDMAxhm+ZTZ0j5QrNLNx+FD0q3yNp8qkb4OwLYocVVAA==}
+  sit-onyx@1.13.0:
+    resolution: {integrity: sha512-vyjFAELzUwTM0fxdmBZg9xqlY5kygi5ZD+yAYKZeRwV8QboTzSae8jrwE1pDnDjlJIkR7+Mn5iJiMJVJXy/1Hw==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@sit-onyx/icons': ^1.7.0
+      '@sit-onyx/icons': ^1.9.0
       typescript: '>= 5.2.2'
       vue: '>= 3.5.0'
 
@@ -2948,7 +2948,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@sit-onyx/icons@1.7.0': {}
+  '@sit-onyx/icons@1.9.0': {}
 
   '@tsconfig/node22@22.0.5': {}
 
@@ -4336,9 +4336,9 @@ snapshots:
       mrmime: 2.0.1
       totalist: 3.0.1
 
-  sit-onyx@1.10.0(@sit-onyx/icons@1.7.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3)):
+  sit-onyx@1.13.0(@sit-onyx/icons@1.9.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3)):
     dependencies:
-      '@sit-onyx/icons': 1.7.0
+      '@sit-onyx/icons': 1.9.0
       typescript: 5.8.3
       vue: 3.5.30(typescript@5.8.3)
 

@@ -12,20 +12,22 @@ import { client } from './client/client.gen'
 import { getToken, startRefreshTokenTask } from '@/auth/token.ts'
 import { authGuard } from '@/auth/guard.ts'
 
-client.setConfig({
-  baseUrl: location.origin + '/api',
-  auth: getToken,
-})
+;(async () => {
+  client.setConfig({
+    baseUrl: location.origin + '/api',
+    auth: getToken,
+  })
 
-startRefreshTokenTask()
-router.beforeEach(authGuard)
+  await startRefreshTokenTask()
+  router.beforeEach(authGuard)
 
-const onyx = createOnyx({
-  router: router,
-})
-const app = createApp(App)
+  const onyx = createOnyx({
+    router: router,
+  })
+  const app = createApp(App)
 
-app.use(onyx)
-app.use(router)
+  app.use(onyx)
+  app.use(router)
 
-app.mount('#app')
+  app.mount('#app')
+})()
