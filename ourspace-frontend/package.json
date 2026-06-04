@@ -22,9 +22,9 @@
     "@fontsource-variable/source-code-pro": "^5.2.7",
     "@fontsource-variable/source-sans-3": "^5.2.9",
     "@hey-api/client-fetch": "^0.10.2",
-    "@sit-onyx/icons": "1.7.0",
+    "@sit-onyx/icons": "1.9.0",
     "@vueuse/core": "^13.9.0",
-    "sit-onyx": "1.10.0",
+    "sit-onyx": "1.13.0",
     "vue": "^3.5.30",
     "vue-router": "^4.6.4"
   },

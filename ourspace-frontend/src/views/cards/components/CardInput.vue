@@ -20,37 +20,45 @@ const onSubmit = () => {
     waiting.value = true
   }, 500)
 }
+
+const open = () => {
+  isOpen.value = true
+}
 </script>
 
 <template>
-  <OnyxButton label="Scan Card" @click="isOpen = true" v-bind="$attrs" />
-  <OnyxModal label="Scan Card" :open="isOpen" @close="isOpen = false">
-    <template #default>
-      <div class="loading-indicator">
-        <OnyxLoadingIndicator type="circle" v-if="waiting" />
-        <OnyxIcon v-else :icon="check" color="success" />
-      </div>
-      <div class="modal">
-        Ensure a NFC Scanner is connected. Then hold the card onto the scanner.
-      </div>
-      <form @submit.prevent="onSubmit">
-        <input
-          type="text"
-          class="nfc-input"
-          aria-label="NFC Scan value"
-          v-model="inputValue"
-          autofocus
-          @focusout="isOpen = false"
-        />
-      </form>
-    </template>
+  <slot :open="open">
+    <OnyxButton label="Scan Card" @click="isOpen = true" v-bind="$attrs" />
+  </slot>
+  <Teleport to="body">
+    <OnyxModal label="Scan Card" :open="isOpen" @close="isOpen = false">
+      <template #default>
+        <div class="loading-indicator">
+          <OnyxLoadingIndicator type="circle" v-if="waiting" />
+          <OnyxIcon v-else :icon="check" color="success" />
+        </div>
+        <div class="modal">
+          Ensure a NFC Scanner is connected. Then hold the card onto the scanner.
+        </div>
+        <form @submit.prevent="onSubmit">
+          <input
+            type="text"
+            class="nfc-input"
+            aria-label="NFC Scan value"
+            v-model="inputValue"
+            autofocus
+          />
+          <!-- @focusout="isOpen = false" -->
+        </form>
+      </template>
 
-    <template #footer>
-      <OnyxBottomBar>
-        <OnyxButton label="Close" color="neutral" mode="plain" @click="isOpen = false" />
-      </OnyxBottomBar>
-    </template>
-  </OnyxModal>
+      <template #footer>
+        <OnyxBottomBar>
+          <OnyxButton label="Close" color="neutral" mode="plain" @click="isOpen = false" />
+        </OnyxBottomBar>
+      </template>
+    </OnyxModal>
+  </Teleport>
 </template>
 
 <style scoped>
