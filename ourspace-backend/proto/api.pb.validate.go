@@ -3798,6 +3798,116 @@ var _ interface {
 	ErrorName() string
 } = BriefingTypeValidationError{}
 
+// Validate checks the field values on BriefingTypePageToken with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BriefingTypePageToken) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BriefingTypePageToken with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BriefingTypePageTokenMultiError, or nil if none found.
+func (m *BriefingTypePageToken) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BriefingTypePageToken) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Field
+
+	// no validation rules for LastValue
+
+	// no validation rules for Direction
+
+	// no validation rules for LastId
+
+	if len(errors) > 0 {
+		return BriefingTypePageTokenMultiError(errors)
+	}
+
+	return nil
+}
+
+// BriefingTypePageTokenMultiError is an error wrapping multiple validation
+// errors returned by BriefingTypePageToken.ValidateAll() if the designated
+// constraints aren't met.
+type BriefingTypePageTokenMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BriefingTypePageTokenMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BriefingTypePageTokenMultiError) AllErrors() []error { return m }
+
+// BriefingTypePageTokenValidationError is the validation error returned by
+// BriefingTypePageToken.Validate if the designated constraints aren't met.
+type BriefingTypePageTokenValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BriefingTypePageTokenValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BriefingTypePageTokenValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BriefingTypePageTokenValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BriefingTypePageTokenValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BriefingTypePageTokenValidationError) ErrorName() string {
+	return "BriefingTypePageTokenValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BriefingTypePageTokenValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBriefingTypePageToken.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BriefingTypePageTokenValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BriefingTypePageTokenValidationError{}
+
 // Validate checks the field values on CreateBriefingTypeRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -4060,6 +4170,10 @@ func (m *ListBriefingTypesRequest) validate(all bool) error {
 	// no validation rules for PageSize
 
 	// no validation rules for PageToken
+
+	// no validation rules for SortBy
+
+	// no validation rules for SortDirection
 
 	if len(errors) > 0 {
 		return ListBriefingTypesRequestMultiError(errors)
