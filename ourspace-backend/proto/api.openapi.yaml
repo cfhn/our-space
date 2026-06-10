@@ -133,6 +133,14 @@ paths:
                         - SORT_DIRECTION_DESCENDING
                     type: string
                     format: enum
+                - name: display_name_contains
+                  in: query
+                  schema:
+                    type: string
+                - name: description_contains
+                  in: query
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK

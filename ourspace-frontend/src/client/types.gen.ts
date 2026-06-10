@@ -289,6 +289,8 @@ export type BriefingServiceListBriefingTypesData = {
         page_token?: string;
         sort_by?: 'BRIEFING_TYPE_FIELD_UNKNOWN' | 'BRIEFING_TYPE_FIELD_ID' | 'BRIEFING_TYPE_FIELD_DISPLAY_NAME' | 'BRIEFING_TYPE_FIELD_DESCRIPTION' | 'BRIEFING_TYPE_FIELD_EXPIRES_AFTER';
         sort_direction?: 'SORT_DIRECTION_DEFAULT' | 'SORT_DIRECTION_ASCENDING' | 'SORT_DIRECTION_DESCENDING';
+        display_name_contains?: string;
+        description_contains?: string;
     };
     url: '/v1/briefing-types';
 };

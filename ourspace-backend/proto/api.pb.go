@@ -2356,13 +2356,15 @@ func (x *GetBriefingTypeRequest) GetId() string {
 }
 
 type ListBriefingTypesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,proto3" json:"page_size,omitempty"`
-	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,proto3" json:"page_token,omitempty"`
-	SortBy        BriefingTypeField      `protobuf:"varint,3,opt,name=sort_by,proto3,enum=ourspace_backend.proto.BriefingTypeField" json:"sort_by,omitempty"`
-	SortDirection SortDirection          `protobuf:"varint,4,opt,name=sort_direction,proto3,enum=ourspace_backend.proto.SortDirection" json:"sort_direction,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	PageSize            int32                  `protobuf:"varint,1,opt,name=page_size,proto3" json:"page_size,omitempty"`
+	PageToken           string                 `protobuf:"bytes,2,opt,name=page_token,proto3" json:"page_token,omitempty"`
+	SortBy              BriefingTypeField      `protobuf:"varint,3,opt,name=sort_by,proto3,enum=ourspace_backend.proto.BriefingTypeField" json:"sort_by,omitempty"`
+	SortDirection       SortDirection          `protobuf:"varint,4,opt,name=sort_direction,proto3,enum=ourspace_backend.proto.SortDirection" json:"sort_direction,omitempty"`
+	DisplayNameContains *string                `protobuf:"bytes,5,opt,name=display_name_contains,proto3,oneof" json:"display_name_contains,omitempty"`
+	DescriptionContains *string                `protobuf:"bytes,6,opt,name=description_contains,proto3,oneof" json:"description_contains,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *ListBriefingTypesRequest) Reset() {
@@ -2421,6 +2423,20 @@ func (x *ListBriefingTypesRequest) GetSortDirection() SortDirection {
 		return x.SortDirection
 	}
 	return SortDirection_SORT_DIRECTION_DEFAULT
+}
+
+func (x *ListBriefingTypesRequest) GetDisplayNameContains() string {
+	if x != nil && x.DisplayNameContains != nil {
+		return *x.DisplayNameContains
+	}
+	return ""
+}
+
+func (x *ListBriefingTypesRequest) GetDescriptionContains() string {
+	if x != nil && x.DescriptionContains != nil {
+		return *x.DescriptionContains
+	}
+	return ""
 }
 
 type ListBriefingTypesResponse struct {
@@ -4117,14 +4133,18 @@ const file_ourspace_backend_proto_api_proto_rawDesc = "" +
 	"\x10briefing_type_id\x18\x01 \x01(\tR\x10briefing_type_id\x12J\n" +
 	"\rbriefing_type\x18\x02 \x01(\v2$.ourspace_backend.proto.BriefingTypeR\rbriefing_type\"(\n" +
 	"\x16GetBriefingTypeRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xec\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x93\x03\n" +
 	"\x18ListBriefingTypesRequest\x12\x1c\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\n" +
 	"page_token\x12C\n" +
 	"\asort_by\x18\x03 \x01(\x0e2).ourspace_backend.proto.BriefingTypeFieldR\asort_by\x12M\n" +
-	"\x0esort_direction\x18\x04 \x01(\x0e2%.ourspace_backend.proto.SortDirectionR\x0esort_direction\"\xbb\x01\n" +
+	"\x0esort_direction\x18\x04 \x01(\x0e2%.ourspace_backend.proto.SortDirectionR\x0esort_direction\x129\n" +
+	"\x15display_name_contains\x18\x05 \x01(\tH\x00R\x15display_name_contains\x88\x01\x01\x127\n" +
+	"\x14description_contains\x18\x06 \x01(\tH\x01R\x14description_contains\x88\x01\x01B\x18\n" +
+	"\x16_display_name_containsB\x17\n" +
+	"\x15_description_contains\"\xbb\x01\n" +
 	"\x19ListBriefingTypesResponse\x12L\n" +
 	"\x0ebriefing_types\x18\x01 \x03(\v2$.ourspace_backend.proto.BriefingTypeR\x0ebriefing_types\x12(\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token:&\xbaG#\xba\x01\x0ebriefing_types\xba\x01\x0fnext_page_token\"\xa3\x01\n" +
@@ -4591,6 +4611,7 @@ func file_ourspace_backend_proto_api_proto_init() {
 	}
 	file_ourspace_backend_proto_api_proto_msgTypes[1].OneofWrappers = []any{}
 	file_ourspace_backend_proto_api_proto_msgTypes[4].OneofWrappers = []any{}
+	file_ourspace_backend_proto_api_proto_msgTypes[32].OneofWrappers = []any{}
 	file_ourspace_backend_proto_api_proto_msgTypes[44].OneofWrappers = []any{}
 	file_ourspace_backend_proto_api_proto_msgTypes[51].OneofWrappers = []any{
 		(*LoginRequest_Password)(nil),

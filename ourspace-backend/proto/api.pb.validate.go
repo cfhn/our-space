@@ -4175,6 +4175,14 @@ func (m *ListBriefingTypesRequest) validate(all bool) error {
 
 	// no validation rules for SortDirection
 
+	if m.DisplayNameContains != nil {
+		// no validation rules for DisplayNameContains
+	}
+
+	if m.DescriptionContains != nil {
+		// no validation rules for DescriptionContains
+	}
+
 	if len(errors) > 0 {
 		return ListBriefingTypesRequestMultiError(errors)
 	}
