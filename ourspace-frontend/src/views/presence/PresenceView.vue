@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { createFeature, DataGridFeatures, OnyxPageLayout,
+import { DataGridFeatures,
+  OnyxDataGrid,
+  OnyxInput,
+  OnyxPageLayout,
+  OnyxIconButton,
+  createFeature,
   type ColumnConfig,
-  type ColumnTypesFromFeatures,
-  
+  type ColumnTypesFromFeatures,  
 } from 'sit-onyx'
 
 import sync from '@sit-onyx/icons/sync.svg?raw'
-import { h, ref } from 'vue' 
+import { computed, h, ref } from 'vue' 
+import type { PresenceServiceListPresencesResponse } from '@/client'
+import { iconChevronFirstPage } from '@sit-onyx/icons'
 
 
+
+const firstPage = () => {
+  currentPageToken.value = ''
+}
+const isFirstPage = computed(() => currentPageToken.value === '')
 
 const reload = ref(0)
+const response = ref<PresenceServiceListPresencesResponse>()
 const currentPageToken = ref<string>('')
 const searchValue = ref<string>('')
 
@@ -21,6 +33,18 @@ type PresenceEntry = {
   checkoutTime?: Date
 }
 
+const data = computed<PresenceEntry[]>(() => {
+  return (
+    response.value?.presence.map(
+      (presence): PresenceEntry => ({
+        id: presence.id,
+        memberId: presence.member_id,
+        checkinTime: new Date(presence.checkin_time),
+        checkoutTime: presence.checkout_time ? new Date(presence.checkout_time) : undefined,
+      }),
+    ) ?? []
+  )
+})
 
 const withCustomType = createFeature(() => ({
   name: Symbol('Presence table'),
@@ -32,9 +56,8 @@ const withCustomType = createFeature(() => ({
         },
         component: ({ modelValue }) => {
           const id = modelValue?.toString() ?? ''
-          return h(PresenceActions, {
+          return h( {
             id: id,
-            onDelete: () => (deleteMemberDialogOpenFor.value = id),
           })
         },
       },
@@ -69,6 +92,17 @@ const columns: ColumnConfig<
         v-model="searchValue"
         density="compact"
         autofocus
+      />
+      </div>
+      <OnyxDataGrid :columns="columns" :data :features class="onyx-density-compact" />
+    <div class="table-bottom-actions">
+      <OnyxIconButton
+        :icon="iconChevronFirstPage"
+        label="Back to start"
+        density="compact"
+        :disabled="isFirstPage"
+        @click="firstPage"
+        color="neutral"
       />
     </div>
   </OnyxPageLayout>
