@@ -325,7 +325,7 @@ func (p *Postgres) UpdateMember(
 			membership_start = coalesce($3, membership_start),
 			membership_end = case when $4 then $5 else membership_end end,
 			age_category = coalesce($6, age_category),
-			tags = case when $7 then $8 else tags end,
+			tags = case when $7 then $8 else tags end
 			`+addPropSQL+`
 		where id = $1
 	`, values...)
@@ -386,7 +386,7 @@ func generateAdditionalAttributesUpdate(updates map[string]*string, offset int) 
 
 	sqlStmt = fmt.Sprintf(sqlStmt, "additional_attributes")
 
-	return "additional_attributes = " + sqlStmt, values
+	return ", additional_attributes = " + sqlStmt, values
 }
 
 func (p *Postgres) DeleteMember(ctx context.Context, id string) error {

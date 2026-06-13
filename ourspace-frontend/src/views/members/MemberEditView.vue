@@ -9,14 +9,16 @@ import {
   OnyxIconButton,
   OnyxPageLayout,
 } from 'sit-onyx'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, toRaw, watchEffect } from 'vue'
 import {
   cardServiceListCards,
   type CardServiceListCardsResponse,
+  type MemberAttribute,
   type MemberReadable,
   memberServiceCreateMember,
   memberServiceGetMember,
   type MemberServiceGetMemberResponse,
+  memberServiceListMemberAttributes,
   memberServiceUpdateMember,
   type MemberWritable,
 } from '@/client'
@@ -36,8 +38,9 @@ const member = ref<MemberServiceGetMemberResponse>({
   membership_end: undefined,
   tags: [],
 })
-let memberOriginal: MemberServiceGetMemberResponse = { ...member.value }
+let memberOriginal: MemberServiceGetMemberResponse = structuredClone(toRaw(member.value))
 const cards = ref<CardServiceListCardsResponse>()
+const memberAttributes = ref<MemberAttribute[]>([])
 const isEdit = ref<boolean>(false)
 const isCreate = computed<boolean>(() => !props.id)
 const router = useRouter()
@@ -89,6 +92,29 @@ const changedFields = (member: MemberWritable, memberOriginal: MemberReadable): 
   ) {
     changedFields.push('member_login')
   }
+
+  ;[
+    ...new Set([
+      ...Object.keys(member.additional_attributes ?? {}),
+      ...Object.keys(memberOriginal.additional_attributes ?? {}),
+    ]),
+  ].forEach((key) => {
+    if (
+      (member.additional_attributes ?? {})[key] !== undefined &&
+      (memberOriginal.additional_attributes ?? {})[key] !== undefined
+    ) {
+      if (
+        (member.additional_attributes ?? {})[key] !==
+        (memberOriginal.additional_attributes ?? {})[key]
+      ) {
+        changedFields.push(`additional_attributes.${key}`)
+        return
+      }
+    } else {
+      changedFields.push(`additional_attributes.${key}`)
+    }
+  })
+
   return changedFields
 }
 
@@ -118,7 +144,7 @@ const save = async () => {
       },
     })
     if (resp.error) {
-      console.log(resp.error)
+      console.error(resp.error)
       return
     }
 
@@ -138,7 +164,7 @@ const save = async () => {
       },
     })
     if (resp.error) {
-      console.log(resp.error)
+      console.error(resp.error)
       return
     }
 
@@ -153,16 +179,28 @@ watchEffect(async () => {
     return
   }
 
-  const resp = await memberServiceGetMember({
-    path: { id: props.id },
-  })
+  const [respMember, respAttributes] = await Promise.all([
+    memberServiceGetMember({
+      path: { id: props.id },
+    }),
+    memberServiceListMemberAttributes({
+      query: {
+        page_size: 100,
+      },
+    }),
+  ])
 
-  if (resp.error) {
-    console.log(resp.error)
+  if (respMember.error) {
+    console.error(respMember.error)
   } else {
-    console.log(resp.data)
-    member.value = resp.data
-    memberOriginal = { ...resp.data }
+    member.value = structuredClone(respMember.data)
+    memberOriginal = structuredClone(respMember.data)
+  }
+
+  if (respAttributes.error) {
+    console.error(respAttributes.error)
+  } else {
+    memberAttributes.value = respAttributes.data.attributes ?? []
   }
 })
 
@@ -181,7 +219,7 @@ watchEffect(async () => {
   })
 
   if (resp.error) {
-    console.log(resp.error)
+    console.error(resp.error)
   } else {
     cards.value = resp.data
   }
@@ -198,7 +236,11 @@ watchEffect(async () => {
             <OnyxIconButton label="Edit" :icon="iconEdit" @click="isEdit = true" v-if="!isEdit" />
           </OnyxHeadline>
           <OnyxHeadline is="h1" v-if="isCreate">Create new Member</OnyxHeadline>
-          <MemberDetails :member="member" :is-edit="isEdit || isCreate" />
+          <MemberDetails
+            :member="member"
+            :is-edit="isEdit || isCreate"
+            :custom-attributes="memberAttributes"
+          />
         </OnyxForm>
       </div>
       <div class="onyx-grid-span-6" v-if="!isCreate">
