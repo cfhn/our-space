@@ -7,4 +7,3 @@ import { OnyxPageLayout } from 'sit-onyx'
     <h1>Presence</h1>
   </OnyxPageLayout>
 </template>
-

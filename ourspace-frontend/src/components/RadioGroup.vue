@@ -27,7 +27,15 @@ const height = computed(() => (props.isEdit ? '112px' : '78px'))
 
 <style scoped>
 .tag {
-  margin: var(--onyx-spacing-sm) 0;
+  margin-bottom: var(--onyx-spacing-sm);
+}
+
+.label,
+:deep(.onyx-radio-group__label .onyx-headline) {
+  color: var(--onyx-color-text-icons-neutral-medium);
+  font-size: var(--onyx-font-size-sm);
+  line-height: var(--onyx-font-line-height-sm);
+  font-weight: 400;
 }
 
 .animation-wrapper {

@@ -9,7 +9,6 @@ import LoginView from '@/views/login/LoginView.vue'
 import SettingsView from '@/views/settings/SettingsView.vue'
 import PresenceView from './views/presence/PresenceView.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
