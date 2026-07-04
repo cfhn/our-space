@@ -11,7 +11,6 @@ import router from './router.ts'
 import { client } from './client/client.gen'
 import { getToken, startRefreshTokenTask } from '@/auth/token.ts'
 import { authGuard } from '@/auth/guard.ts'
-
 ;(async () => {
   client.setConfig({
     baseUrl: location.origin + '/api',

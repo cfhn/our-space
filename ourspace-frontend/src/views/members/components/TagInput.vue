@@ -23,9 +23,7 @@ const filteredOptions = computed(() =>
 )
 
 const chooseOption = (option: string) => {
-  console.log('before', model.value)
   model.value = [...(model.value ?? []), option]
-  console.log('after', model.value)
   inputValue.value = ''
   selection.value = 0
 }
