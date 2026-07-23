@@ -113,6 +113,34 @@ paths:
                   in: query
                   schema:
                     type: string
+                - name: sort_by
+                  in: query
+                  schema:
+                    enum:
+                        - BRIEFING_TYPE_FIELD_UNKNOWN
+                        - BRIEFING_TYPE_FIELD_ID
+                        - BRIEFING_TYPE_FIELD_DISPLAY_NAME
+                        - BRIEFING_TYPE_FIELD_DESCRIPTION
+                        - BRIEFING_TYPE_FIELD_EXPIRES_AFTER
+                    type: string
+                    format: enum
+                - name: sort_direction
+                  in: query
+                  schema:
+                    enum:
+                        - SORT_DIRECTION_DEFAULT
+                        - SORT_DIRECTION_ASCENDING
+                        - SORT_DIRECTION_DESCENDING
+                    type: string
+                    format: enum
+                - name: display_name_contains
+                  in: query
+                  schema:
+                    type: string
+                - name: description_contains
+                  in: query
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK

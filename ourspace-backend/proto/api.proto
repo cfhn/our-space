@@ -552,6 +552,22 @@ message BriefingType {
   google.protobuf.Duration expires_after = 4 [json_name="expires_after"];
 }
 
+
+enum BriefingTypeField {
+  BRIEFING_TYPE_FIELD_UNKNOWN = 0;
+  BRIEFING_TYPE_FIELD_ID = 1;
+  BRIEFING_TYPE_FIELD_DISPLAY_NAME = 2;
+  BRIEFING_TYPE_FIELD_DESCRIPTION = 3;
+  BRIEFING_TYPE_FIELD_EXPIRES_AFTER = 4;
+}
+
+message BriefingTypePageToken {
+  BriefingTypeField field = 1;
+  string last_value = 2 [json_name="last_value"];
+  SortDirection direction = 3;
+  string last_id = 4 [json_name="last_id"];
+}
+
 message CreateBriefingTypeRequest {
   string briefing_type_id = 1 [json_name="briefing_type_id"];
   BriefingType briefing_type = 2 [json_name="briefing_type"];
@@ -564,6 +580,12 @@ message GetBriefingTypeRequest {
 message ListBriefingTypesRequest {
   int32 page_size = 1 [json_name="page_size"];
   string page_token = 2 [json_name="page_token"];
+
+  BriefingTypeField sort_by = 3 [json_name="sort_by"];
+  SortDirection sort_direction = 4 [json_name="sort_direction"];
+  
+  optional string display_name_contains = 5 [json_name="display_name_contains"];
+  optional string description_contains = 6 [json_name="description_contains"];
 }
 
 message ListBriefingTypesResponse {
