@@ -6,11 +6,17 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
+	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
+	pb "github.com/cfhn/our-space/ourspace-firmware/proto"
 	"github.com/cfhn/our-space/pkg/setup"
 )
 
@@ -18,12 +24,15 @@ var ErrUnknownLoginOutcome = errors.New("unknown login outcome")
 
 type Repository interface {
 	Replace(members []*pbBackend.Member, cards []*pbBackend.Card)
+	ListPresences() []*pb.LocalPresence
+	UpdatePresence(presence *pb.LocalPresence)
 }
 
 type BackendSynchronizer struct {
-	AuthClient   pbBackend.AuthServiceClient
-	MemberClient pbBackend.MemberServiceClient
-	CardClient   pbBackend.CardServiceClient
+	AuthClient     pbBackend.AuthServiceClient
+	MemberClient   pbBackend.MemberServiceClient
+	CardClient     pbBackend.CardServiceClient
+	PresenceClient pbBackend.PresenceServiceClient
 
 	Repository Repository
 	Logger     *slog.Logger
@@ -79,7 +88,57 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 
 	b.Repository.Replace(members, cards)
 
-	b.Logger.InfoContext(ctx, "sync done", slog.Int("members", len(members)), slog.Int("cards", len(cards)))
+	b.Logger.InfoContext(ctx, "backend->device sync done", slog.Int("members", len(members)), slog.Int("cards", len(cards)))
+
+	var (
+		presenceCreated int
+		presenceUpdated int
+	)
+	for _, p := range b.Repository.ListPresences() {
+		if p.SynchronizedAt == nil {
+			_, err := b.PresenceClient.CreatePresence(ctx, &pbBackend.CreatePresenceRequest{
+				PresenceId: p.Presence.Id,
+				Presence:   p.Presence,
+			}, grpc.PerRPCCredentials(backendAuth))
+			if gprcStatus, ok := status.FromError(err); ok && gprcStatus.Code() == codes.AlreadyExists {
+				// set SynchronizedAt to a non-nil value, so the presence record is updated next sync run
+				p.SynchronizedAt = timestamppb.New(time.Time{})
+				p.ModifiedAt = timestamppb.Now()
+			}
+			if err != nil {
+				b.Logger.ErrorContext(ctx, "presence creation error",
+					slog.String("presence_id", p.Presence.Id),
+					slog.String("error", err.Error()),
+				)
+				continue
+			}
+
+			presenceCreated++
+			p.SynchronizedAt = timestamppb.Now()
+		} else if p.SynchronizedAt.AsTime().Before(p.ModifiedAt.AsTime()) {
+			_, err := b.PresenceClient.UpdatePresence(ctx, &pbBackend.UpdatePresenceRequest{
+				Presence:  p.Presence,
+				FieldMask: &fieldmaskpb.FieldMask{Paths: []string{"checkin_time", "checkout_time"}},
+			}, grpc.PerRPCCredentials(backendAuth))
+			if err != nil {
+				b.Logger.ErrorContext(ctx, "presence update error",
+					slog.String("presence_id", p.Presence.Id),
+					slog.String("error", err.Error()),
+				)
+				continue
+			}
+
+			presenceUpdated++
+			p.SynchronizedAt = timestamppb.Now()
+		}
+
+		b.Repository.UpdatePresence(p)
+	}
+
+	b.Logger.InfoContext(ctx, "device->backend sync done",
+		slog.Int("presence.created", presenceCreated),
+		slog.Int("presence.updated", presenceUpdated),
+	)
 
 	return nil
 }

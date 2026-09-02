@@ -5,8 +5,10 @@ import (
 	"encoding/hex"
 	"log/slog"
 
+	"github.com/google/uuid"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
 	pb "github.com/cfhn/our-space/ourspace-firmware/proto"
@@ -16,6 +18,9 @@ import (
 type Repository interface {
 	FindCardByRFID(rfidValue []byte) *pbBackend.Card
 	FindMemberByID(id string) *pbBackend.Member
+	FindActivePresence(memberId string) *pb.LocalPresence
+	CreatePresence(presence *pb.LocalPresence)
+	UpdatePresence(presence *pb.LocalPresence)
 }
 
 type Service struct {
@@ -62,6 +67,27 @@ func (svc *Service) ScanCard(ctx context.Context, req *pb.ScanCardRequest) (*pb.
 		}, nil
 	}
 
+	activePresence := svc.repo.FindActivePresence(member.Id)
+	if activePresence == nil {
+		activePresence = &pb.LocalPresence{
+			Presence: &pbBackend.Presence{
+				Id:           uuid.NewString(),
+				MemberId:     member.Id,
+				CheckinTime:  timestamppb.Now(),
+				CheckoutTime: nil,
+			},
+			SynchronizedAt: nil,
+			ModifiedAt:     timestamppb.Now(),
+		}
+
+		svc.repo.CreatePresence(activePresence)
+	} else {
+		activePresence.Presence.CheckoutTime = timestamppb.Now()
+		activePresence.ModifiedAt = timestamppb.Now()
+
+		svc.repo.UpdatePresence(activePresence)
+	}
+
 	scanCardEvent := &pb.ListenForCardEventsResponse{
 		Member: &pb.Member{
 			Id:   member.Id,
@@ -72,6 +98,7 @@ func (svc *Service) ScanCard(ctx context.Context, req *pb.ScanCardRequest) (*pb.
 			ValidFrom: card.ValidFrom,
 			ValidTo:   card.ValidTo,
 		},
+		Presence: activePresence.Presence,
 	}
 
 	svc.notifier.Notify(scanCardEvent)

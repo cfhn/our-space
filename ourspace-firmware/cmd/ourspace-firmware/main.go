@@ -64,11 +64,12 @@ func run() error {
 	firmwareService := firmware.NewService(logger, repo)
 
 	synchronizer := &sync.BackendSynchronizer{
-		AuthClient:   pbBackend.NewAuthServiceClient(backendClient),
-		MemberClient: pbBackend.NewMemberServiceClient(backendClient),
-		CardClient:   pbBackend.NewCardServiceClient(backendClient),
-		Repository:   repo,
-		Logger:       logger.With("module", "sync"),
+		AuthClient:     pbBackend.NewAuthServiceClient(backendClient),
+		MemberClient:   pbBackend.NewMemberServiceClient(backendClient),
+		CardClient:     pbBackend.NewCardServiceClient(backendClient),
+		PresenceClient: pbBackend.NewPresenceServiceClient(backendClient),
+		Repository:     repo,
+		Logger:         logger.With("module", "sync"),
 
 		APIKey: os.Getenv("API_KEY"),
 	}

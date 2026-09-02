@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/pkg/status"
@@ -26,13 +28,119 @@ func NewService(repo *Postgres) *Service {
 	return &Service{repo: repo}
 }
 
-func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.Presence, error) {
-	_, fieldViolations := validateCheckinRequest(request)
-	if fieldViolations != nil {
+func (s Service) CreatePresence(ctx context.Context, request *pb.CreatePresenceRequest) (*pb.Presence, error) {
+	fieldViolations := validateCreatePresenceRequest(request)
+	if len(fieldViolations) > 0 {
 		return nil, status.FieldViolations(fieldViolations)
 	}
 
-	presence, err := s.repo.CreatePresence(ctx, request.MemberId)
+	if request.PresenceId != "" {
+		request.Presence.Id = request.PresenceId
+	} else {
+		request.Presence.Id = uuid.NewString()
+	}
+
+	created, err := s.repo.CreatePresence(ctx, request.Presence)
+	if errors.Is(err, ErrDuplicate) {
+		return nil, status.Conflict()
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return created, nil
+}
+
+func validateCreatePresenceRequest(request *pb.CreatePresenceRequest) []*errdetails.BadRequest_FieldViolation {
+	var fieldViolations []*errdetails.BadRequest_FieldViolation
+
+	if request.PresenceId != "" {
+		if _, err := uuid.Parse(request.PresenceId); err != nil {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:       "presence_id",
+				Description: "presence_id must be a valid UUID",
+				Reason:      "INVALID_FORMAT",
+			})
+		}
+	}
+
+	if request.Presence == nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence",
+			Description: "field must be set",
+			Reason:      "FIELD_EMPTY",
+		})
+
+		return fieldViolations
+	}
+
+	if _, err := uuid.Parse(request.Presence.MemberId); err != nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence.member_id",
+			Description: "field must be a valid UUID",
+			Reason:      "INVALID_FORMAT",
+		})
+	}
+
+	if request.Presence.CheckinTime == nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence.checkin_time",
+			Description: "field must be set",
+			Reason:      "FIELD_EMPTY",
+		})
+	} else if err := request.Presence.CheckinTime.CheckValid(); err != nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence.checkin_time",
+			Description: fmt.Sprintf("field must be a valid timestamp: %v", err),
+			Reason:      "INVALID_FORMAT",
+		})
+	} else if request.Presence.CheckinTime.AsTime().After(time.Now()) {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence.checkin_time",
+			Description: "timestamp must be in the past",
+			Reason:      "INVALID_VALUE",
+		})
+	}
+
+	if request.Presence.CheckoutTime != nil {
+		if err := request.Presence.CheckoutTime.CheckValid(); err != nil {
+			fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+				Field:            "presence.checkout_time",
+				Description:      fmt.Sprintf("field must be a valid timestamp: %v", err),
+				Reason:           "INVALID_FORMAT",
+				LocalizedMessage: nil,
+			})
+		}
+	}
+
+	if request.Presence.CheckinTime != nil &&
+		request.Presence.CheckinTime.IsValid() &&
+		request.Presence.CheckoutTime != nil &&
+		request.Presence.CheckoutTime.IsValid() &&
+		request.Presence.CheckoutTime.AsTime().Before(request.Presence.CheckinTime.AsTime()) {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "presence.checkout_time",
+			Description: "checkout_time must be before the checkin_time",
+			Reason:      "INVALID_VALUE",
+		})
+	}
+
+	return fieldViolations
+}
+
+func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.Presence, error) {
+	fieldViolations := validateCheckinRequest(request)
+	if len(fieldViolations) > 0 {
+		return nil, status.FieldViolations(fieldViolations)
+	}
+
+	presence, err := s.repo.CreatePresence(ctx, &pb.Presence{
+		Id:           uuid.NewString(),
+		MemberId:     request.MemberId,
+		CheckinTime:  timestamppb.New(time.Now()),
+		CheckoutTime: nil,
+	})
 	if err != nil {
 		return nil, status.Internal(err)
 	}
@@ -40,21 +148,18 @@ func (s Service) Checkin(ctx context.Context, request *pb.CheckinRequest) (*pb.P
 	return presence, nil
 }
 
-func validateCheckinRequest(request *pb.CheckinRequest) (bool, []*errdetails.BadRequest_FieldViolation) {
-	return validateMemberID(request.MemberId)
+func validateCheckinRequest(request *pb.CheckinRequest) []*errdetails.BadRequest_FieldViolation {
+	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0, 1)
+
+	fieldViolations = append(fieldViolations, validateMemberID(request.MemberId)...)
+
+	return fieldViolations
 }
 
-func validateMemberID(memberID string) (bool, []*errdetails.BadRequest_FieldViolation) {
+func validateMemberID(memberID string) []*errdetails.BadRequest_FieldViolation {
 	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0)
 
-	_, err := uuid.Parse(memberID)
-	if memberID == "" {
-		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
-			Field:       "member_id",
-			Description: "member_id field must not be empty",
-			Reason:      "FIELD_EMPTY",
-		})
-	} else if err != nil {
+	if _, err := uuid.Parse(memberID); err != nil {
 		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field:       "member_id",
 			Description: "member_id must be a valid UUID",
@@ -62,20 +167,16 @@ func validateMemberID(memberID string) (bool, []*errdetails.BadRequest_FieldViol
 		})
 	}
 
-	if fieldViolations != nil {
-		return false, fieldViolations
-	}
-
-	return true, nil
+	return fieldViolations
 }
 
 func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb.Presence, error) {
-	_, fieldViolations := validateCheckoutRequest(request)
+	fieldViolations := validateCheckoutRequest(request)
 	if fieldViolations != nil {
 		return nil, status.FieldViolations(fieldViolations)
 	}
 
-	presence, err := s.repo.CheckoutPresence(ctx, request.MemberId)
+	presence, err := s.repo.CheckoutPresence(ctx, request.MemberId, time.Now())
 	if err != nil {
 		return nil, status.Internal(err)
 	}
@@ -83,11 +184,17 @@ func (s Service) Checkout(ctx context.Context, request *pb.CheckoutRequest) (*pb
 	return presence, nil
 }
 
-func validateCheckoutRequest(request *pb.CheckoutRequest) (bool, []*errdetails.BadRequest_FieldViolation) {
-	return validateMemberID(request.MemberId)
+func validateCheckoutRequest(request *pb.CheckoutRequest) []*errdetails.BadRequest_FieldViolation {
+	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0, 1)
+
+	fieldViolations = append(fieldViolations, validateMemberID(request.MemberId)...)
+
+	return fieldViolations
 }
 
-func (s Service) ListPresences(ctx context.Context, request *pb.ListPresencesRequest) (*pb.ListPresencesResponse, error) {
+func (s Service) ListPresences(
+	ctx context.Context, request *pb.ListPresencesRequest,
+) (*pb.ListPresencesResponse, error) {
 	pageTokenBytes, err := base64.RawURLEncoding.DecodeString(request.PageToken)
 	if err != nil {
 		return nil, err
@@ -189,7 +296,7 @@ func getFieldValue(presence *pb.Presence, field pb.PresenceField) (string, error
 
 func (s Service) UpdatePresence(ctx context.Context, request *pb.UpdatePresenceRequest) (*pb.Presence, error) {
 	_, fieldViolations := validateUpdatePresence(request)
-	if fieldViolations != nil {
+	if len(fieldViolations) > 0 {
 		return nil, status.FieldViolations(fieldViolations)
 	}
 
@@ -225,14 +332,14 @@ func validateUpdatePresence(request *pb.UpdatePresenceRequest) (bool, []*errdeta
 				})
 			case request.Presence.CheckinTime.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)):
 				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
-					Field:       "member.membership_start",
-					Description: "membership_start must after the year 1900",
+					Field:       "presence.checkin_time",
+					Description: "checkin_time must after the year 1900",
 					Reason:      "FIELD_INVALID",
 				})
 			case request.Presence.CheckinTime.AsTime().After(time.Now().Add(15 * time.Minute)):
 				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
-					Field:       "member.membership_start",
-					Description: "membership_start must not be in the future",
+					Field:       "presence.checkin_time",
+					Description: "checkin_time must not be in the future",
 					Reason:      "FIELD_INVALID",
 				})
 			}
@@ -246,14 +353,14 @@ func validateUpdatePresence(request *pb.UpdatePresenceRequest) (bool, []*errdeta
 				})
 			case request.Presence.CheckoutTime.AsTime().Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)):
 				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
-					Field:       "member.membership_start",
+					Field:       "presence.checkout_time",
 					Description: "membership_start must after the year 1900",
 					Reason:      "FIELD_INVALID",
 				})
 			case request.Presence.CheckoutTime.AsTime().After(time.Now().Add(15 * time.Minute)):
 				fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
-					Field:       "member.membership_start",
-					Description: "membership_start must not be in the future",
+					Field:       "presence.checkout_time",
+					Description: "checkout_time must not be in the future",
 					Reason:      "FIELD_INVALID",
 				})
 			}

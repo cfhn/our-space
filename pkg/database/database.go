@@ -11,6 +11,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -76,4 +77,13 @@ func Migrate(ctx context.Context, db *sql.DB, logger *slog.Logger) error {
 	logger.InfoContext(ctx, "after migration", slog.Uint64("version", uint64(version)), slog.Bool("dirty", dirty))
 
 	return nil
+}
+
+func IsUniqueViolation(err error) bool {
+	pgErr, ok := errors.AsType[*pgconn.PgError](err)
+	if !ok {
+		return false
+	}
+
+	return pgErr.Code == "23505"
 }

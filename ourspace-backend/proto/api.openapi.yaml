@@ -1044,6 +1044,32 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - PresenceService
+                - Presences
+            summary: Create presence
+            description: Create a presence entry
+            operationId: PresenceService_CreatePresence
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreatePresenceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Presence'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /v1/presences/{id}:
         delete:
             tags:
@@ -1222,6 +1248,13 @@ components:
             properties:
                 member_id:
                     type: string
+        CreatePresenceRequest:
+            type: object
+            properties:
+                presence_id:
+                    type: string
+                presence:
+                    $ref: '#/components/schemas/Presence'
         GoogleProtobufAny:
             type: object
             properties:

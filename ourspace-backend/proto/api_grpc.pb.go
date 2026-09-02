@@ -1203,6 +1203,7 @@ var BriefingService_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	PresenceService_ListPresences_FullMethodName  = "/ourspace_backend.proto.PresenceService/ListPresences"
+	PresenceService_CreatePresence_FullMethodName = "/ourspace_backend.proto.PresenceService/CreatePresence"
 	PresenceService_Checkin_FullMethodName        = "/ourspace_backend.proto.PresenceService/Checkin"
 	PresenceService_Checkout_FullMethodName       = "/ourspace_backend.proto.PresenceService/Checkout"
 	PresenceService_UpdatePresence_FullMethodName = "/ourspace_backend.proto.PresenceService/UpdatePresence"
@@ -1214,6 +1215,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PresenceServiceClient interface {
 	ListPresences(ctx context.Context, in *ListPresencesRequest, opts ...grpc.CallOption) (*ListPresencesResponse, error)
+	CreatePresence(ctx context.Context, in *CreatePresenceRequest, opts ...grpc.CallOption) (*Presence, error)
 	Checkin(ctx context.Context, in *CheckinRequest, opts ...grpc.CallOption) (*Presence, error)
 	Checkout(ctx context.Context, in *CheckoutRequest, opts ...grpc.CallOption) (*Presence, error)
 	UpdatePresence(ctx context.Context, in *UpdatePresenceRequest, opts ...grpc.CallOption) (*Presence, error)
@@ -1232,6 +1234,16 @@ func (c *presenceServiceClient) ListPresences(ctx context.Context, in *ListPrese
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPresencesResponse)
 	err := c.cc.Invoke(ctx, PresenceService_ListPresences_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *presenceServiceClient) CreatePresence(ctx context.Context, in *CreatePresenceRequest, opts ...grpc.CallOption) (*Presence, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Presence)
+	err := c.cc.Invoke(ctx, PresenceService_CreatePresence_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1283,6 +1295,7 @@ func (c *presenceServiceClient) DeletePresence(ctx context.Context, in *DeletePr
 // for forward compatibility.
 type PresenceServiceServer interface {
 	ListPresences(context.Context, *ListPresencesRequest) (*ListPresencesResponse, error)
+	CreatePresence(context.Context, *CreatePresenceRequest) (*Presence, error)
 	Checkin(context.Context, *CheckinRequest) (*Presence, error)
 	Checkout(context.Context, *CheckoutRequest) (*Presence, error)
 	UpdatePresence(context.Context, *UpdatePresenceRequest) (*Presence, error)
@@ -1299,6 +1312,9 @@ type UnimplementedPresenceServiceServer struct{}
 
 func (UnimplementedPresenceServiceServer) ListPresences(context.Context, *ListPresencesRequest) (*ListPresencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPresences not implemented")
+}
+func (UnimplementedPresenceServiceServer) CreatePresence(context.Context, *CreatePresenceRequest) (*Presence, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePresence not implemented")
 }
 func (UnimplementedPresenceServiceServer) Checkin(context.Context, *CheckinRequest) (*Presence, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Checkin not implemented")
@@ -1347,6 +1363,24 @@ func _PresenceService_ListPresences_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PresenceServiceServer).ListPresences(ctx, req.(*ListPresencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PresenceService_CreatePresence_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePresenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PresenceServiceServer).CreatePresence(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PresenceService_CreatePresence_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PresenceServiceServer).CreatePresence(ctx, req.(*CreatePresenceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1433,6 +1467,10 @@ var PresenceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPresences",
 			Handler:    _PresenceService_ListPresences_Handler,
+		},
+		{
+			MethodName: "CreatePresence",
+			Handler:    _PresenceService_CreatePresence_Handler,
 		},
 		{
 			MethodName: "Checkin",

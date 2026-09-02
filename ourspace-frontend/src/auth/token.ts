@@ -64,10 +64,15 @@ export const startRefreshTokenTask = async () => {
 }
 
 const refresh = async () => {
+  console.log('refresh', router.currentRoute.value)
+
   const response = await authServiceRefresh({
     body: {},
     credentials: 'include',
   })
+
+  console.log(response)
+
   if (response.error || !response.data.success || !response.data.success.access_token) {
     if (router.currentRoute.value.meta['authenticated'] === false) {
       return

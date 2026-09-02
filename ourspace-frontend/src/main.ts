@@ -17,7 +17,6 @@ import { authGuard } from '@/auth/guard.ts'
     auth: getToken,
   })
 
-  await startRefreshTokenTask()
   router.beforeEach(authGuard)
 
   const onyx = createOnyx({
@@ -27,6 +26,8 @@ import { authGuard } from '@/auth/guard.ts'
 
   app.use(onyx)
   app.use(router)
+
+  await startRefreshTokenTask()
 
   app.mount('#app')
 })()

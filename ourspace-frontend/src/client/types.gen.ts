@@ -35,6 +35,11 @@ export type CheckoutRequest = {
     member_id?: string;
 };
 
+export type CreatePresenceRequest = {
+    presence_id?: string;
+    presence?: Presence;
+};
+
 /**
  * Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
  */
@@ -1037,6 +1042,31 @@ export type PresenceServiceListPresencesResponses = {
 };
 
 export type PresenceServiceListPresencesResponse = PresenceServiceListPresencesResponses[keyof PresenceServiceListPresencesResponses];
+
+export type PresenceServiceCreatePresenceData = {
+    body: CreatePresenceRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/presences';
+};
+
+export type PresenceServiceCreatePresenceErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type PresenceServiceCreatePresenceError = PresenceServiceCreatePresenceErrors[keyof PresenceServiceCreatePresenceErrors];
+
+export type PresenceServiceCreatePresenceResponses = {
+    /**
+     * OK
+     */
+    200: Presence;
+};
+
+export type PresenceServiceCreatePresenceResponse = PresenceServiceCreatePresenceResponses[keyof PresenceServiceCreatePresenceResponses];
 
 export type PresenceServiceDeletePresenceData = {
     body?: never;
