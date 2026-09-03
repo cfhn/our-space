@@ -94,6 +94,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 		presenceCreated int
 		presenceUpdated int
 	)
+
 	for _, p := range b.Repository.ListPresences() {
 		if p.SynchronizedAt == nil {
 			_, err := b.PresenceClient.CreatePresence(ctx, &pbBackend.CreatePresenceRequest{
@@ -105,11 +106,13 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 				p.SynchronizedAt = timestamppb.New(time.Time{})
 				p.ModifiedAt = timestamppb.Now()
 			}
+
 			if err != nil {
 				b.Logger.ErrorContext(ctx, "presence creation error",
 					slog.String("presence_id", p.Presence.Id),
 					slog.String("error", err.Error()),
 				)
+
 				continue
 			}
 
@@ -125,6 +128,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 					slog.String("presence_id", p.Presence.Id),
 					slog.String("error", err.Error()),
 				)
+
 				continue
 			}
 

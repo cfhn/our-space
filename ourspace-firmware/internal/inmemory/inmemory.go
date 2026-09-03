@@ -98,12 +98,12 @@ func (r *Repository) ListPresences() []*pb.LocalPresence {
 	return result
 }
 
-func (r *Repository) FindActivePresence(memberId string) *pb.LocalPresence {
+func (r *Repository) FindActivePresence(memberID string) *pb.LocalPresence {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
 	for _, p := range r.localPresences {
-		if p.Presence.MemberId == memberId && p.Presence.CheckoutTime == nil {
+		if p.Presence.MemberId == memberID && p.Presence.CheckoutTime == nil {
 			return proto.CloneOf(p)
 		}
 	}

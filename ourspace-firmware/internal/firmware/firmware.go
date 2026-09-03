@@ -18,7 +18,7 @@ import (
 type Repository interface {
 	FindCardByRFID(rfidValue []byte) *pbBackend.Card
 	FindMemberByID(id string) *pbBackend.Member
-	FindActivePresence(memberId string) *pb.LocalPresence
+	FindActivePresence(memberID string) *pb.LocalPresence
 	CreatePresence(presence *pb.LocalPresence)
 	UpdatePresence(presence *pb.LocalPresence)
 }
