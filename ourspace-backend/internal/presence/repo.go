@@ -3,13 +3,14 @@ package presence
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "github.com/cfhn/our-space/ourspace-backend/proto"
+	"github.com/cfhn/our-space/pkg/database"
 )
 
 //nolint:gochecknoglobals // static lookup map
@@ -20,6 +21,8 @@ var presenceFields = map[pb.PresenceField]string{
 	pb.PresenceField_PRESENCE_FIELD_CHECKOUT_TIME: "presence.checkoutTime",
 }
 
+var ErrDuplicate = fmt.Errorf("presence id already exists")
+
 type Postgres struct {
 	db *sql.DB
 }
@@ -28,19 +31,26 @@ func NewPostgresRepo(db *sql.DB) *Postgres {
 	return &Postgres{db: db}
 }
 
-func (p *Postgres) CreatePresence(ctx context.Context, memberID string) (*pb.Presence, error) {
-	checkinTime := time.Now()
-	presenceID := uuid.New().String()
+func (p *Postgres) CreatePresence(ctx context.Context, presence *pb.Presence) (*pb.Presence, error) {
+	var checkoutTime sql.Null[time.Time]
+
+	if presence.CheckoutTime != nil {
+		checkoutTime = sql.Null[time.Time]{V: presence.CheckoutTime.AsTime(), Valid: true}
+	}
 
 	_, err := p.db.ExecContext(ctx, `
-		insert into presences (id, member_id, checkin_time)
-		values ($1, $2, $3);
-	`, presenceID, memberID, checkinTime)
+		insert into presences (id, member_id, checkin_time, checkout_time)
+		values ($1, $2, $3, $4);
+	`, presence.Id, presence.MemberId, presence.CheckinTime.AsTime(), checkoutTime)
+	if database.IsUniqueViolation(err) {
+		return nil, ErrDuplicate
+	}
+
 	if err != nil {
 		return nil, err
 	}
 
-	return p.GetActivePresence(ctx, memberID)
+	return p.GetPresenceByID(ctx, presence.Id)
 }
 
 func (p *Postgres) GetActivePresence(ctx context.Context, memberID string) (*pb.Presence, error) {
@@ -97,7 +107,9 @@ func scanPresence(in scanner) (*pb.Presence, error) {
 	return presence, nil
 }
 
-func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fieldMask *fieldmaskpb.FieldMask) (*pb.Presence, error) {
+func (p *Postgres) UpdatePresence(
+	ctx context.Context, presence *pb.Presence, fieldMask *fieldmaskpb.FieldMask,
+) (*pb.Presence, error) {
 	var (
 		memberID       sql.Null[string]
 		checkinTime    sql.Null[time.Time]
@@ -121,7 +133,7 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 
 	_, err := p.db.ExecContext(ctx, `
 		update presences
-		set 
+		set
 			checkout_time = case when $5 is true then $3::timestamptz end,
 			checkin_time = coalesce($2, checkin_time),
 			member_id = coalesce($4, member_id)
@@ -134,9 +146,10 @@ func (p *Postgres) UpdatePresence(ctx context.Context, presence *pb.Presence, fi
 	return p.GetPresenceByID(ctx, presence.Id)
 }
 
-func (p *Postgres) CheckoutPresence(ctx context.Context, memberID string) (*pb.Presence, error) {
-	checkoutTime := timestamppb.New(time.Now())
-	presence := &pb.Presence{CheckoutTime: checkoutTime, MemberId: memberID}
+func (p *Postgres) CheckoutPresence(
+	ctx context.Context, memberID string, checkoutTime time.Time,
+) (*pb.Presence, error) {
+	presence := &pb.Presence{CheckoutTime: timestamppb.New(checkoutTime), MemberId: memberID}
 	mask := &fieldmaskpb.FieldMask{Paths: []string{"checkout_time"}}
 
 	return p.UpdatePresence(ctx, presence, mask)
@@ -151,7 +164,8 @@ type Filters struct {
 }
 
 func (p *Postgres) ListPresences(
-	ctx context.Context, pageSize int32, token *pb.PresencePageToken, filters *Filters, sortDirection pb.SortDirection, sortField pb.PresenceField,
+	ctx context.Context, pageSize int32, token *pb.PresencePageToken, filters *Filters, sortDirection pb.SortDirection,
+	sortField pb.PresenceField,
 ) ([]*pb.Presence, error) {
 	var (
 		checkinTimeBefore  = sql.Null[time.Time]{V: filters.CheckinTimeBefore, Valid: !filters.CheckinTimeBefore.IsZero()}
@@ -172,8 +186,8 @@ func (p *Postgres) ListPresences(
 	//nolint:gosec // safe SQL building, all dynamic data is passed through a lookup map of safe values
 	rows, err := p.db.QueryContext(ctx, `
 		select id, member_id, checkin_time, checkout_time from presences
-		where			    
-		($1::uuid is null OR member_id = $1) 
+		where
+		($1::uuid is null OR member_id = $1)
 		and	($2::timestamptz is null OR checkin_time < $2)
 		and ($3::timestamptz is null OR checkin_time > $3)
 		and ($4::timestamptz is null OR checkout_time < $4)

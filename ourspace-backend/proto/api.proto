@@ -632,6 +632,17 @@ service PresenceService {
       tags: "Presences"
     };
   }
+  rpc CreatePresence(CreatePresenceRequest) returns (Presence) {
+    option(google.api.http) = {
+      post: "/v1/presences"
+      body: "*"
+    };
+    option(gnostic.openapi.v3.operation) = {
+      summary: "Create presence"
+      description: "Create a presence entry"
+      tags: "Presences"
+    };
+  }
   rpc Checkin(CheckinRequest) returns (Presence) {
     option(google.api.http) = {
       post: "/v1/presences:checkin"
@@ -726,6 +737,11 @@ message PresencePageToken {
   string last_value = 2 [json_name="last_value"];
   SortDirection direction = 3;
   string last_id = 4 [json_name="last_id"];
+}
+
+message CreatePresenceRequest {
+  string presence_id = 1;
+  Presence presence = 2;
 }
 
 message CheckinRequest {

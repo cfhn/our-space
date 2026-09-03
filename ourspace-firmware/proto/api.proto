@@ -6,6 +6,7 @@ package ourspace_firmware.v1;
 import weak "gnostic/openapi/v3/annotations.proto"; // Will not import _ "" in the gen-go files
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "ourspace-backend/proto/api.proto";
 
 option go_package = "github.com/cfhn/our-space/ourspace-firmware/proto;pb";
 
@@ -46,6 +47,7 @@ message ListenForCardEventsResponse {
   string token = 1 [json_name="token"];
   Card card = 2 [json_name="card"];
   Member member = 3 [json_name="member"];
+  ourspace_backend.proto.Presence presence = 4 [json_name="presence"];
 }
 
 message Member {
@@ -55,6 +57,12 @@ message Member {
 
 message Card {
   string id = 1;
-  google.protobuf.Timestamp valid_from = 2;
-  google.protobuf.Timestamp valid_to = 3;
+  google.protobuf.Timestamp valid_from = 2 [json_name="valid_from"];
+  google.protobuf.Timestamp valid_to = 3 [json_name="valid_to"];
+}
+
+message LocalPresence {
+  ourspace_backend.proto.Presence presence = 1;
+  google.protobuf.Timestamp synchronized_at = 2;
+  google.protobuf.Timestamp modified_at = 3;
 }

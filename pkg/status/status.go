@@ -50,3 +50,7 @@ func Unauthenticated() error {
 func PermissionDenied() error {
 	return status.Error(codes.PermissionDenied, "permission denied")
 }
+
+func Conflict() error {
+	return status.Error(codes.AlreadyExists, "resource already exists")
+}

@@ -9,14 +9,20 @@ type Member = {
 
 type Card = {
   id: string
-  validFrom: string
-  validTo: string
+  valid_from: string
+  valid_to: string
+}
+
+type Presence = {
+  checkin_time: string
+  checkout_time: string
 }
 
 type Update = {
   token: string
   card: Card
   member: Member
+  presence: Presence
 }
 
 const { data } = useEventSource<string[], string>('http://localhost:8081/card-events', ['data'], {
@@ -24,6 +30,7 @@ const { data } = useEventSource<string[], string>('http://localhost:8081/card-ev
 })
 const member = ref<Member>()
 const card = ref<Card>()
+const activePresence = ref<Presence>()
 const backgroundColor = ref<string>('green')
 const cardValidTo = ref<string>('')
 const countdown = ref<boolean>(false)
@@ -49,8 +56,9 @@ watch(data, () => {
 
   member.value = update.member
   card.value = update.card
+  activePresence.value = update.presence
 
-  const cardExpires = new Date(update.card.validTo)
+  const cardExpires = new Date(update.card.valid_to)
 
   console.log(cardExpires.getTime(), Date.now())
   console.log((cardExpires.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -82,9 +90,12 @@ watch(data, () => {
     }"
   >
     <p v-if="!member && !card" class="text-big">Karte auflegen</p>
-    <div v-if="member && card">
+    <div v-if="member && card && activePresence && !activePresence.checkout_time">
       <p class="text-medium">Hallo {{ member.name }}</p>
       <p class="text-small">Deine Karte ist gültig bis zum {{ cardValidTo }}</p>
+    </div>
+    <div v-if="member && card && activePresence && activePresence.checkout_time">
+      <p class="text-medium">Bis bald {{ member.name }}</p>
     </div>
   </div>
 </template>

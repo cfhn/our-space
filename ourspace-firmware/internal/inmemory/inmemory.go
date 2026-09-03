@@ -2,14 +2,21 @@ package inmemory
 
 import (
 	"bytes"
+	"sync"
 	"sync/atomic"
 
+	"google.golang.org/protobuf/proto"
+
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
+	pb "github.com/cfhn/our-space/ourspace-firmware/proto"
 )
 
 type Repository struct {
-	members atomic.Pointer[map[string]*pbBackend.Member]
-	cards   atomic.Pointer[map[string]*pbBackend.Card]
+	members        atomic.Pointer[map[string]*pbBackend.Member]
+	cards          atomic.Pointer[map[string]*pbBackend.Card]
+	localPresences []*pb.LocalPresence
+
+	mu sync.RWMutex
 }
 
 func NewRepository() *Repository {
@@ -58,4 +65,60 @@ func (r *Repository) FindMemberByID(id string) *pbBackend.Member {
 	}
 
 	return (*members)[id]
+}
+
+func (r *Repository) CreatePresence(presence *pb.LocalPresence) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	r.localPresences = append(r.localPresences, presence)
+}
+
+func (r *Repository) UpdatePresence(presence *pb.LocalPresence) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for i, p := range r.localPresences {
+		if p.Presence.Id == presence.Presence.Id {
+			r.localPresences[i] = presence
+			break
+		}
+	}
+}
+
+func (r *Repository) ListPresences() []*pb.LocalPresence {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	result := make([]*pb.LocalPresence, 0, len(r.localPresences))
+	for _, p := range r.localPresences {
+		result = append(result, proto.CloneOf(p))
+	}
+
+	return result
+}
+
+func (r *Repository) FindActivePresence(memberID string) *pb.LocalPresence {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	for _, p := range r.localPresences {
+		if p.Presence.MemberId == memberID && p.Presence.CheckoutTime == nil {
+			return proto.CloneOf(p)
+		}
+	}
+
+	return nil
+}
+
+func (r *Repository) DeletePresence(id string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for i, p := range r.localPresences {
+		if p.Presence.Id == id {
+			r.localPresences = append(r.localPresences[:i], r.localPresences[i+1:]...)
+			break
+		}
+	}
 }

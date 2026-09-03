@@ -7,6 +7,7 @@
 package pb
 
 import (
+	proto "github.com/cfhn/our-space/ourspace-backend/proto"
 	_ "github.com/google/gnostic/openapiv3"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -153,6 +154,7 @@ type ListenForCardEventsResponse struct {
 	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Card          *Card                  `protobuf:"bytes,2,opt,name=card,proto3" json:"card,omitempty"`
 	Member        *Member                `protobuf:"bytes,3,opt,name=member,proto3" json:"member,omitempty"`
+	Presence      *proto.Presence        `protobuf:"bytes,4,opt,name=presence,proto3" json:"presence,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -204,6 +206,13 @@ func (x *ListenForCardEventsResponse) GetCard() *Card {
 func (x *ListenForCardEventsResponse) GetMember() *Member {
 	if x != nil {
 		return x.Member
+	}
+	return nil
+}
+
+func (x *ListenForCardEventsResponse) GetPresence() *proto.Presence {
+	if x != nil {
+		return x.Presence
 	}
 	return nil
 }
@@ -263,8 +272,8 @@ func (x *Member) GetName() string {
 type Card struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ValidFrom     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=valid_from,json=validFrom,proto3" json:"valid_from,omitempty"`
-	ValidTo       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=valid_to,json=validTo,proto3" json:"valid_to,omitempty"`
+	ValidFrom     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=valid_from,proto3" json:"valid_from,omitempty"`
+	ValidTo       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=valid_to,proto3" json:"valid_to,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -320,28 +329,95 @@ func (x *Card) GetValidTo() *timestamppb.Timestamp {
 	return nil
 }
 
+type LocalPresence struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Presence       *proto.Presence        `protobuf:"bytes,1,opt,name=presence,proto3" json:"presence,omitempty"`
+	SynchronizedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=synchronized_at,json=synchronizedAt,proto3" json:"synchronized_at,omitempty"`
+	ModifiedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=modified_at,json=modifiedAt,proto3" json:"modified_at,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *LocalPresence) Reset() {
+	*x = LocalPresence{}
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LocalPresence) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LocalPresence) ProtoMessage() {}
+
+func (x *LocalPresence) ProtoReflect() protoreflect.Message {
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LocalPresence.ProtoReflect.Descriptor instead.
+func (*LocalPresence) Descriptor() ([]byte, []int) {
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *LocalPresence) GetPresence() *proto.Presence {
+	if x != nil {
+		return x.Presence
+	}
+	return nil
+}
+
+func (x *LocalPresence) GetSynchronizedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.SynchronizedAt
+	}
+	return nil
+}
+
+func (x *LocalPresence) GetModifiedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ModifiedAt
+	}
+	return nil
+}
+
 var File_ourspace_firmware_proto_api_proto protoreflect.FileDescriptor
 
 const file_ourspace_firmware_proto_api_proto_rawDesc = "" +
 	"\n" +
-	"!ourspace-firmware/proto/api.proto\x12\x14ourspace_firmware.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"3\n" +
+	"!ourspace-firmware/proto/api.proto\x12\x14ourspace_firmware.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a ourspace-backend/proto/api.proto\"3\n" +
 	"\x0fScanCardRequest\x12 \n" +
 	"\vcard_serial\x18\x01 \x01(\tR\vcard_serial\",\n" +
 	"\x10ScanCardResponse\x12\x18\n" +
 	"\aoutcome\x18\x01 \x01(\tR\aoutcome\"\x1c\n" +
-	"\x1aListenForCardEventsRequest\"\x99\x01\n" +
+	"\x1aListenForCardEventsRequest\"\xd7\x01\n" +
 	"\x1bListenForCardEventsResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12.\n" +
 	"\x04card\x18\x02 \x01(\v2\x1a.ourspace_firmware.v1.CardR\x04card\x124\n" +
-	"\x06member\x18\x03 \x01(\v2\x1c.ourspace_firmware.v1.MemberR\x06member\",\n" +
+	"\x06member\x18\x03 \x01(\v2\x1c.ourspace_firmware.v1.MemberR\x06member\x12<\n" +
+	"\bpresence\x18\x04 \x01(\v2 .ourspace_backend.proto.PresenceR\bpresence\",\n" +
 	"\x06Member\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"\x88\x01\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\x8a\x01\n" +
 	"\x04Card\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12:\n" +
 	"\n" +
-	"valid_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tvalidFrom\x125\n" +
-	"\bvalid_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\avalidTo2\x81\x02\n" +
+	"valid_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"valid_from\x126\n" +
+	"\bvalid_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bvalid_to\"\xcf\x01\n" +
+	"\rLocalPresence\x12<\n" +
+	"\bpresence\x18\x01 \x01(\v2 .ourspace_backend.proto.PresenceR\bpresence\x12C\n" +
+	"\x0fsynchronized_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0esynchronizedAt\x12;\n" +
+	"\vmodified_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"modifiedAt2\x81\x02\n" +
 	"\x0fFirmwareService\x12n\n" +
 	"\bScanCard\x12%.ourspace_firmware.v1.ScanCardRequest\x1a&.ourspace_firmware.v1.ScanCardResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*\"\b/v1/card\x12~\n" +
 	"\x13ListenForCardEvents\x120.ourspace_firmware.v1.ListenForCardEventsRequest\x1a1.ourspace_firmware.v1.ListenForCardEventsResponse\"\x000\x01B\xab\x01\xbaGr\x12J\n" +
@@ -360,7 +436,7 @@ func file_ourspace_firmware_proto_api_proto_rawDescGZIP() []byte {
 	return file_ourspace_firmware_proto_api_proto_rawDescData
 }
 
-var file_ourspace_firmware_proto_api_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_ourspace_firmware_proto_api_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_ourspace_firmware_proto_api_proto_goTypes = []any{
 	(*ScanCardRequest)(nil),             // 0: ourspace_firmware.v1.ScanCardRequest
 	(*ScanCardResponse)(nil),            // 1: ourspace_firmware.v1.ScanCardResponse
@@ -368,22 +444,28 @@ var file_ourspace_firmware_proto_api_proto_goTypes = []any{
 	(*ListenForCardEventsResponse)(nil), // 3: ourspace_firmware.v1.ListenForCardEventsResponse
 	(*Member)(nil),                      // 4: ourspace_firmware.v1.Member
 	(*Card)(nil),                        // 5: ourspace_firmware.v1.Card
-	(*timestamppb.Timestamp)(nil),       // 6: google.protobuf.Timestamp
+	(*LocalPresence)(nil),               // 6: ourspace_firmware.v1.LocalPresence
+	(*proto.Presence)(nil),              // 7: ourspace_backend.proto.Presence
+	(*timestamppb.Timestamp)(nil),       // 8: google.protobuf.Timestamp
 }
 var file_ourspace_firmware_proto_api_proto_depIdxs = []int32{
-	5, // 0: ourspace_firmware.v1.ListenForCardEventsResponse.card:type_name -> ourspace_firmware.v1.Card
-	4, // 1: ourspace_firmware.v1.ListenForCardEventsResponse.member:type_name -> ourspace_firmware.v1.Member
-	6, // 2: ourspace_firmware.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
-	6, // 3: ourspace_firmware.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
-	0, // 4: ourspace_firmware.v1.FirmwareService.ScanCard:input_type -> ourspace_firmware.v1.ScanCardRequest
-	2, // 5: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:input_type -> ourspace_firmware.v1.ListenForCardEventsRequest
-	1, // 6: ourspace_firmware.v1.FirmwareService.ScanCard:output_type -> ourspace_firmware.v1.ScanCardResponse
-	3, // 7: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:output_type -> ourspace_firmware.v1.ListenForCardEventsResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	5,  // 0: ourspace_firmware.v1.ListenForCardEventsResponse.card:type_name -> ourspace_firmware.v1.Card
+	4,  // 1: ourspace_firmware.v1.ListenForCardEventsResponse.member:type_name -> ourspace_firmware.v1.Member
+	7,  // 2: ourspace_firmware.v1.ListenForCardEventsResponse.presence:type_name -> ourspace_backend.proto.Presence
+	8,  // 3: ourspace_firmware.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
+	8,  // 4: ourspace_firmware.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
+	7,  // 5: ourspace_firmware.v1.LocalPresence.presence:type_name -> ourspace_backend.proto.Presence
+	8,  // 6: ourspace_firmware.v1.LocalPresence.synchronized_at:type_name -> google.protobuf.Timestamp
+	8,  // 7: ourspace_firmware.v1.LocalPresence.modified_at:type_name -> google.protobuf.Timestamp
+	0,  // 8: ourspace_firmware.v1.FirmwareService.ScanCard:input_type -> ourspace_firmware.v1.ScanCardRequest
+	2,  // 9: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:input_type -> ourspace_firmware.v1.ListenForCardEventsRequest
+	1,  // 10: ourspace_firmware.v1.FirmwareService.ScanCard:output_type -> ourspace_firmware.v1.ScanCardResponse
+	3,  // 11: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:output_type -> ourspace_firmware.v1.ListenForCardEventsResponse
+	10, // [10:12] is the sub-list for method output_type
+	8,  // [8:10] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_ourspace_firmware_proto_api_proto_init() }
@@ -397,7 +479,7 @@ func file_ourspace_firmware_proto_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ourspace_firmware_proto_api_proto_rawDesc), len(file_ourspace_firmware_proto_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
