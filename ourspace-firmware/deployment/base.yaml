@@ -18,6 +18,7 @@ actions:
       - adduser
       - ca-certificates
       - cage
+      - chrony
       - chromium
       - grub-common
       - grub-efi

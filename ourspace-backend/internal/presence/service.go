@@ -121,7 +121,7 @@ func validateCreatePresenceRequest(request *pb.CreatePresenceRequest) []*errdeta
 		request.Presence.CheckoutTime.AsTime().Before(request.Presence.CheckinTime.AsTime()) {
 		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
 			Field:       "presence.checkout_time",
-			Description: "checkout_time must be before the checkin_time",
+			Description: "checkout_time must not be before the checkin_time",
 			Reason:      "INVALID_VALUE",
 		})
 	}
