@@ -30,6 +30,8 @@ service FirmwareService {
     };
   }
   rpc ListenForCardEvents(ListenForCardEventsRequest) returns (stream ListenForCardEventsResponse) {}
+
+  rpc CreateConfiguration(CreateConfigurationRequest) returns (CreateConfigurationResponse) {}
 }
 
 message ScanCardRequest {
@@ -66,3 +68,15 @@ message LocalPresence {
   google.protobuf.Timestamp synchronized_at = 2;
   google.protobuf.Timestamp modified_at = 3;
 }
+
+message CreateConfigurationRequest {
+  Configuration configuration = 1;
+}
+
+message Configuration {
+  string backend_url = 1 [json_name="backend_url"];
+  bool backend_tls = 2 [json_name="backend_tls"];
+  string api_key = 3 [json_name="api_key"];
+}
+
+message CreateConfigurationResponse {}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
+	"sync/atomic"
 	"time"
 
 	"google.golang.org/grpc"
@@ -29,25 +30,34 @@ type Repository interface {
 }
 
 type BackendSynchronizer struct {
-	AuthClient     pbBackend.AuthServiceClient
-	MemberClient   pbBackend.MemberServiceClient
-	CardClient     pbBackend.CardServiceClient
-	PresenceClient pbBackend.PresenceServiceClient
+	BackendConn atomic.Pointer[grpc.ClientConn]
+	APIKey      atomic.Pointer[string]
 
 	Repository Repository
 	Logger     *slog.Logger
-
-	APIKey string
 }
 
 func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
+	conn := b.BackendConn.Load()
+	apiKey := b.APIKey.Load()
+	if conn == nil || apiKey == nil {
+		b.Logger.InfoContext(ctx, "no backend connection, skipping run")
+
+		return nil
+	}
+
+	authClient := pbBackend.NewAuthServiceClient(conn)
+	memberClient := pbBackend.NewMemberServiceClient(conn)
+	cardClient := pbBackend.NewCardServiceClient(conn)
+	presenceClient := pbBackend.NewPresenceServiceClient(conn)
+
 	b.Logger.InfoContext(ctx, "starting sync")
 
 	backendAuth, err := setup.NewBearerTokenAuth(func(ctx context.Context) (string, error) {
-		loginResp, err := b.AuthClient.Login(ctx, &pbBackend.LoginRequest{
+		loginResp, err := authClient.Login(ctx, &pbBackend.LoginRequest{
 			Credentials: &pbBackend.LoginRequest_ApiKey{
 				ApiKey: &pbBackend.LoginApiKey{
-					ApiKey: b.APIKey,
+					ApiKey: *apiKey,
 				},
 			},
 		})
@@ -67,7 +77,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 	}
 
 	members, err := collect(pageIterator(func(pageToken string) (*pbBackend.ListMembersResponse, error) {
-		return b.MemberClient.ListMembers(ctx, &pbBackend.ListMembersRequest{
+		return memberClient.ListMembers(ctx, &pbBackend.ListMembersRequest{
 			PageToken: pageToken,
 			PageSize:  100,
 		}, grpc.PerRPCCredentials(backendAuth))
@@ -77,7 +87,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 	}
 
 	cards, err := collect(pageIterator(func(pageToken string) (*pbBackend.ListCardsResponse, error) {
-		return b.CardClient.ListCards(ctx, &pbBackend.ListCardsRequest{
+		return cardClient.ListCards(ctx, &pbBackend.ListCardsRequest{
 			PageSize:  100,
 			PageToken: pageToken,
 		}, grpc.PerRPCCredentials(backendAuth))
@@ -97,7 +107,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 
 	for _, p := range b.Repository.ListPresences() {
 		if p.SynchronizedAt == nil {
-			_, err := b.PresenceClient.CreatePresence(ctx, &pbBackend.CreatePresenceRequest{
+			_, err := presenceClient.CreatePresence(ctx, &pbBackend.CreatePresenceRequest{
 				PresenceId: p.Presence.Id,
 				Presence:   p.Presence,
 			}, grpc.PerRPCCredentials(backendAuth))
@@ -119,7 +129,7 @@ func (b *BackendSynchronizer) Synchronize(ctx context.Context) error {
 			presenceCreated++
 			p.SynchronizedAt = timestamppb.Now()
 		} else if p.SynchronizedAt.AsTime().Before(p.ModifiedAt.AsTime()) {
-			_, err := b.PresenceClient.UpdatePresence(ctx, &pbBackend.UpdatePresenceRequest{
+			_, err := presenceClient.UpdatePresence(ctx, &pbBackend.UpdatePresenceRequest{
 				Presence:  p.Presence,
 				FieldMask: &fieldmaskpb.FieldMask{Paths: []string{"checkin_time", "checkout_time"}},
 			}, grpc.PerRPCCredentials(backendAuth))

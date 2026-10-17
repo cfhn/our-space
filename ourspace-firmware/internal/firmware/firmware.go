@@ -3,11 +3,16 @@ package firmware
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 	"log/slog"
+	"net/url"
+	"os"
+	"path/filepath"
 
 	"github.com/google/uuid"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
@@ -30,13 +35,16 @@ type Service struct {
 
 	notifier *Notifier[pb.ListenForCardEventsResponse]
 	repo     Repository
+
+	dataDirectory string
 }
 
-func NewService(logger *slog.Logger, repo Repository) *Service {
+func NewService(logger *slog.Logger, repo Repository, dataDirectory string) *Service {
 	svc := &Service{
-		logger:   logger,
-		notifier: NewNotifier[pb.ListenForCardEventsResponse](),
-		repo:     repo,
+		logger:        logger,
+		notifier:      NewNotifier[pb.ListenForCardEventsResponse](),
+		repo:          repo,
+		dataDirectory: dataDirectory,
 	}
 
 	return svc
@@ -131,4 +139,59 @@ func (svc *Service) ListenForCardEvents(
 			return err
 		}
 	}
+}
+
+func (svc *Service) CreateConfiguration(
+	ctx context.Context, req *pb.CreateConfigurationRequest,
+) (*pb.CreateConfigurationResponse, error) {
+	if fieldViolations := validateCreateConfigurationRequest(req); fieldViolations != nil {
+		return nil, status.FieldViolations(fieldViolations)
+	}
+
+	f, err := os.Create(filepath.Join(svc.dataDirectory, "config.json"))
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	configBytes, err := protojson.Marshal(req.Configuration)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = f.Write(configBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.CreateConfigurationResponse{}, nil
+}
+
+func validateCreateConfigurationRequest(req *pb.CreateConfigurationRequest) []*errdetails.BadRequest_FieldViolation {
+	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0)
+
+	if req.Configuration == nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "configuration",
+			Description: "field must not be nil",
+		})
+
+		return fieldViolations
+	}
+
+	if _, err := url.ParseRequestURI(req.Configuration.BackendUrl); err != nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "backend_url",
+			Description: fmt.Sprintf("invalid backend url: %v", err),
+		})
+	}
+
+	if _, err := uuid.Parse(req.Configuration.ApiKey); err != nil {
+		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       "api_key",
+			Description: fmt.Sprintf("invalid api key, must be a valid UUID: %v", err),
+		})
+	}
+
+	return fieldViolations
 }

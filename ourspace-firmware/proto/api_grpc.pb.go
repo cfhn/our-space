@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	FirmwareService_ScanCard_FullMethodName            = "/ourspace_firmware.v1.FirmwareService/ScanCard"
 	FirmwareService_ListenForCardEvents_FullMethodName = "/ourspace_firmware.v1.FirmwareService/ListenForCardEvents"
+	FirmwareService_CreateConfiguration_FullMethodName = "/ourspace_firmware.v1.FirmwareService/CreateConfiguration"
 )
 
 // FirmwareServiceClient is the client API for FirmwareService service.
@@ -29,6 +30,7 @@ const (
 type FirmwareServiceClient interface {
 	ScanCard(ctx context.Context, in *ScanCardRequest, opts ...grpc.CallOption) (*ScanCardResponse, error)
 	ListenForCardEvents(ctx context.Context, in *ListenForCardEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ListenForCardEventsResponse], error)
+	CreateConfiguration(ctx context.Context, in *CreateConfigurationRequest, opts ...grpc.CallOption) (*CreateConfigurationResponse, error)
 }
 
 type firmwareServiceClient struct {
@@ -68,12 +70,23 @@ func (c *firmwareServiceClient) ListenForCardEvents(ctx context.Context, in *Lis
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type FirmwareService_ListenForCardEventsClient = grpc.ServerStreamingClient[ListenForCardEventsResponse]
 
+func (c *firmwareServiceClient) CreateConfiguration(ctx context.Context, in *CreateConfigurationRequest, opts ...grpc.CallOption) (*CreateConfigurationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateConfigurationResponse)
+	err := c.cc.Invoke(ctx, FirmwareService_CreateConfiguration_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FirmwareServiceServer is the server API for FirmwareService service.
 // All implementations must embed UnimplementedFirmwareServiceServer
 // for forward compatibility.
 type FirmwareServiceServer interface {
 	ScanCard(context.Context, *ScanCardRequest) (*ScanCardResponse, error)
 	ListenForCardEvents(*ListenForCardEventsRequest, grpc.ServerStreamingServer[ListenForCardEventsResponse]) error
+	CreateConfiguration(context.Context, *CreateConfigurationRequest) (*CreateConfigurationResponse, error)
 	mustEmbedUnimplementedFirmwareServiceServer()
 }
 
@@ -89,6 +102,9 @@ func (UnimplementedFirmwareServiceServer) ScanCard(context.Context, *ScanCardReq
 }
 func (UnimplementedFirmwareServiceServer) ListenForCardEvents(*ListenForCardEventsRequest, grpc.ServerStreamingServer[ListenForCardEventsResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method ListenForCardEvents not implemented")
+}
+func (UnimplementedFirmwareServiceServer) CreateConfiguration(context.Context, *CreateConfigurationRequest) (*CreateConfigurationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateConfiguration not implemented")
 }
 func (UnimplementedFirmwareServiceServer) mustEmbedUnimplementedFirmwareServiceServer() {}
 func (UnimplementedFirmwareServiceServer) testEmbeddedByValue()                         {}
@@ -140,6 +156,24 @@ func _FirmwareService_ListenForCardEvents_Handler(srv interface{}, stream grpc.S
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type FirmwareService_ListenForCardEventsServer = grpc.ServerStreamingServer[ListenForCardEventsResponse]
 
+func _FirmwareService_CreateConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateConfigurationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FirmwareServiceServer).CreateConfiguration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FirmwareService_CreateConfiguration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FirmwareServiceServer).CreateConfiguration(ctx, req.(*CreateConfigurationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FirmwareService_ServiceDesc is the grpc.ServiceDesc for FirmwareService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -150,6 +184,10 @@ var FirmwareService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ScanCard",
 			Handler:    _FirmwareService_ScanCard_Handler,
+		},
+		{
+			MethodName: "CreateConfiguration",
+			Handler:    _FirmwareService_CreateConfiguration_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

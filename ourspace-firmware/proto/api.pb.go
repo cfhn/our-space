@@ -389,6 +389,146 @@ func (x *LocalPresence) GetModifiedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type CreateConfigurationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Configuration *Configuration         `protobuf:"bytes,1,opt,name=configuration,proto3" json:"configuration,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateConfigurationRequest) Reset() {
+	*x = CreateConfigurationRequest{}
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateConfigurationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateConfigurationRequest) ProtoMessage() {}
+
+func (x *CreateConfigurationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateConfigurationRequest.ProtoReflect.Descriptor instead.
+func (*CreateConfigurationRequest) Descriptor() ([]byte, []int) {
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CreateConfigurationRequest) GetConfiguration() *Configuration {
+	if x != nil {
+		return x.Configuration
+	}
+	return nil
+}
+
+type Configuration struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BackendUrl    string                 `protobuf:"bytes,1,opt,name=backend_url,proto3" json:"backend_url,omitempty"`
+	BackendTls    bool                   `protobuf:"varint,2,opt,name=backend_tls,proto3" json:"backend_tls,omitempty"`
+	ApiKey        string                 `protobuf:"bytes,3,opt,name=api_key,proto3" json:"api_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Configuration) Reset() {
+	*x = Configuration{}
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Configuration) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Configuration) ProtoMessage() {}
+
+func (x *Configuration) ProtoReflect() protoreflect.Message {
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Configuration.ProtoReflect.Descriptor instead.
+func (*Configuration) Descriptor() ([]byte, []int) {
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *Configuration) GetBackendUrl() string {
+	if x != nil {
+		return x.BackendUrl
+	}
+	return ""
+}
+
+func (x *Configuration) GetBackendTls() bool {
+	if x != nil {
+		return x.BackendTls
+	}
+	return false
+}
+
+func (x *Configuration) GetApiKey() string {
+	if x != nil {
+		return x.ApiKey
+	}
+	return ""
+}
+
+type CreateConfigurationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateConfigurationResponse) Reset() {
+	*x = CreateConfigurationResponse{}
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateConfigurationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateConfigurationResponse) ProtoMessage() {}
+
+func (x *CreateConfigurationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateConfigurationResponse.ProtoReflect.Descriptor instead.
+func (*CreateConfigurationResponse) Descriptor() ([]byte, []int) {
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{9}
+}
+
 var File_ourspace_firmware_proto_api_proto protoreflect.FileDescriptor
 
 const file_ourspace_firmware_proto_api_proto_rawDesc = "" +
@@ -417,10 +557,18 @@ const file_ourspace_firmware_proto_api_proto_rawDesc = "" +
 	"\bpresence\x18\x01 \x01(\v2 .ourspace_backend.proto.PresenceR\bpresence\x12C\n" +
 	"\x0fsynchronized_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0esynchronizedAt\x12;\n" +
 	"\vmodified_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"modifiedAt2\x81\x02\n" +
+	"modifiedAt\"g\n" +
+	"\x1aCreateConfigurationRequest\x12I\n" +
+	"\rconfiguration\x18\x01 \x01(\v2#.ourspace_firmware.v1.ConfigurationR\rconfiguration\"m\n" +
+	"\rConfiguration\x12 \n" +
+	"\vbackend_url\x18\x01 \x01(\tR\vbackend_url\x12 \n" +
+	"\vbackend_tls\x18\x02 \x01(\bR\vbackend_tls\x12\x18\n" +
+	"\aapi_key\x18\x03 \x01(\tR\aapi_key\"\x1d\n" +
+	"\x1bCreateConfigurationResponse2\xff\x02\n" +
 	"\x0fFirmwareService\x12n\n" +
 	"\bScanCard\x12%.ourspace_firmware.v1.ScanCardRequest\x1a&.ourspace_firmware.v1.ScanCardResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*\"\b/v1/card\x12~\n" +
-	"\x13ListenForCardEvents\x120.ourspace_firmware.v1.ListenForCardEventsRequest\x1a1.ourspace_firmware.v1.ListenForCardEventsResponse\"\x000\x01B\xab\x01\xbaGr\x12J\n" +
+	"\x13ListenForCardEvents\x120.ourspace_firmware.v1.ListenForCardEventsRequest\x1a1.ourspace_firmware.v1.ListenForCardEventsResponse\"\x000\x01\x12|\n" +
+	"\x13CreateConfiguration\x120.ourspace_firmware.v1.CreateConfigurationRequest\x1a1.ourspace_firmware.v1.CreateConfigurationResponse\"\x00B\xab\x01\xbaGr\x12J\n" +
 	"\x15ourspace-firmware-api\x12,Local API for the Terminal frontend firmware2\x031.0\x1a$\n" +
 	"\x15http://localhost:8080\x12\vHost ServerZ4github.com/cfhn/our-space/ourspace-firmware/proto;pbX\x00b\x06proto3"
 
@@ -436,7 +584,7 @@ func file_ourspace_firmware_proto_api_proto_rawDescGZIP() []byte {
 	return file_ourspace_firmware_proto_api_proto_rawDescData
 }
 
-var file_ourspace_firmware_proto_api_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_ourspace_firmware_proto_api_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_ourspace_firmware_proto_api_proto_goTypes = []any{
 	(*ScanCardRequest)(nil),             // 0: ourspace_firmware.v1.ScanCardRequest
 	(*ScanCardResponse)(nil),            // 1: ourspace_firmware.v1.ScanCardResponse
@@ -445,27 +593,33 @@ var file_ourspace_firmware_proto_api_proto_goTypes = []any{
 	(*Member)(nil),                      // 4: ourspace_firmware.v1.Member
 	(*Card)(nil),                        // 5: ourspace_firmware.v1.Card
 	(*LocalPresence)(nil),               // 6: ourspace_firmware.v1.LocalPresence
-	(*proto.Presence)(nil),              // 7: ourspace_backend.proto.Presence
-	(*timestamppb.Timestamp)(nil),       // 8: google.protobuf.Timestamp
+	(*CreateConfigurationRequest)(nil),  // 7: ourspace_firmware.v1.CreateConfigurationRequest
+	(*Configuration)(nil),               // 8: ourspace_firmware.v1.Configuration
+	(*CreateConfigurationResponse)(nil), // 9: ourspace_firmware.v1.CreateConfigurationResponse
+	(*proto.Presence)(nil),              // 10: ourspace_backend.proto.Presence
+	(*timestamppb.Timestamp)(nil),       // 11: google.protobuf.Timestamp
 }
 var file_ourspace_firmware_proto_api_proto_depIdxs = []int32{
 	5,  // 0: ourspace_firmware.v1.ListenForCardEventsResponse.card:type_name -> ourspace_firmware.v1.Card
 	4,  // 1: ourspace_firmware.v1.ListenForCardEventsResponse.member:type_name -> ourspace_firmware.v1.Member
-	7,  // 2: ourspace_firmware.v1.ListenForCardEventsResponse.presence:type_name -> ourspace_backend.proto.Presence
-	8,  // 3: ourspace_firmware.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
-	8,  // 4: ourspace_firmware.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
-	7,  // 5: ourspace_firmware.v1.LocalPresence.presence:type_name -> ourspace_backend.proto.Presence
-	8,  // 6: ourspace_firmware.v1.LocalPresence.synchronized_at:type_name -> google.protobuf.Timestamp
-	8,  // 7: ourspace_firmware.v1.LocalPresence.modified_at:type_name -> google.protobuf.Timestamp
-	0,  // 8: ourspace_firmware.v1.FirmwareService.ScanCard:input_type -> ourspace_firmware.v1.ScanCardRequest
-	2,  // 9: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:input_type -> ourspace_firmware.v1.ListenForCardEventsRequest
-	1,  // 10: ourspace_firmware.v1.FirmwareService.ScanCard:output_type -> ourspace_firmware.v1.ScanCardResponse
-	3,  // 11: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:output_type -> ourspace_firmware.v1.ListenForCardEventsResponse
-	10, // [10:12] is the sub-list for method output_type
-	8,  // [8:10] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	10, // 2: ourspace_firmware.v1.ListenForCardEventsResponse.presence:type_name -> ourspace_backend.proto.Presence
+	11, // 3: ourspace_firmware.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
+	11, // 4: ourspace_firmware.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
+	10, // 5: ourspace_firmware.v1.LocalPresence.presence:type_name -> ourspace_backend.proto.Presence
+	11, // 6: ourspace_firmware.v1.LocalPresence.synchronized_at:type_name -> google.protobuf.Timestamp
+	11, // 7: ourspace_firmware.v1.LocalPresence.modified_at:type_name -> google.protobuf.Timestamp
+	8,  // 8: ourspace_firmware.v1.CreateConfigurationRequest.configuration:type_name -> ourspace_firmware.v1.Configuration
+	0,  // 9: ourspace_firmware.v1.FirmwareService.ScanCard:input_type -> ourspace_firmware.v1.ScanCardRequest
+	2,  // 10: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:input_type -> ourspace_firmware.v1.ListenForCardEventsRequest
+	7,  // 11: ourspace_firmware.v1.FirmwareService.CreateConfiguration:input_type -> ourspace_firmware.v1.CreateConfigurationRequest
+	1,  // 12: ourspace_firmware.v1.FirmwareService.ScanCard:output_type -> ourspace_firmware.v1.ScanCardResponse
+	3,  // 13: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:output_type -> ourspace_firmware.v1.ListenForCardEventsResponse
+	9,  // 14: ourspace_firmware.v1.FirmwareService.CreateConfiguration:output_type -> ourspace_firmware.v1.CreateConfigurationResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_ourspace_firmware_proto_api_proto_init() }
@@ -479,7 +633,7 @@ func file_ourspace_firmware_proto_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ourspace_firmware_proto_api_proto_rawDesc), len(file_ourspace_firmware_proto_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

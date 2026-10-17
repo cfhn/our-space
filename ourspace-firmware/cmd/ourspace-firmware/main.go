@@ -5,10 +5,13 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"io"
+	"log/slog"
 	"math"
 	"net/http"
 	"os"
-	"strconv"
+	"path/filepath"
+	"sync/atomic"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -16,8 +19,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/encoding/protojson"
 
-	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/firmware"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/frontend"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/inmemory"
@@ -41,38 +44,16 @@ func run() error {
 		log.WithSource(),
 	)
 
-	useTLS, err := strconv.ParseBool(os.Getenv("BACKEND_TLS"))
-	if err != nil {
-		useTLS = false
-	}
-
-	var creds credentials.TransportCredentials
-	if useTLS {
-		creds = credentials.NewTLS(&tls.Config{})
-	} else {
-		creds = insecure.NewCredentials()
-	}
-
-	backendAddress := os.Getenv("BACKEND_ADDRESS")
-
-	backendClient, err := grpc.NewClient(backendAddress, grpc.WithTransportCredentials(creds))
-	if err != nil {
-		return err
-	}
-
+	dataDirectory := os.Getenv("DATA_DIRECTORY")
 	repo := inmemory.NewRepository()
-	firmwareService := firmware.NewService(logger, repo)
+	firmwareService := firmware.NewService(logger, repo, dataDirectory)
 
 	synchronizer := &sync.BackendSynchronizer{
-		AuthClient:     pbBackend.NewAuthServiceClient(backendClient),
-		MemberClient:   pbBackend.NewMemberServiceClient(backendClient),
-		CardClient:     pbBackend.NewCardServiceClient(backendClient),
-		PresenceClient: pbBackend.NewPresenceServiceClient(backendClient),
-		Repository:     repo,
-		Logger:         logger.With("module", "sync"),
-
-		APIKey: os.Getenv("API_KEY"),
+		Repository: repo,
+		Logger:     logger.With("module", "sync"),
 	}
+
+	reloadBackendConnection(dataDirectory, &synchronizer.BackendConn, &synchronizer.APIKey, logger)
 
 	frontendServer := http.Server{
 		Handler:     frontend.ServeFrontend(),
@@ -128,4 +109,57 @@ func run() error {
 	}
 
 	return server.Run()
+}
+
+func loadConfig(dataDirectory string) *pb.Configuration {
+	f, err := os.Open(filepath.Join(dataDirectory, "config.json"))
+	if err != nil {
+		return nil
+	}
+
+	defer f.Close()
+
+	configBytes, err := io.ReadAll(f)
+	if err != nil {
+		return nil
+	}
+
+	config := &pb.Configuration{}
+	if err := protojson.Unmarshal(configBytes, config); err != nil {
+		return nil
+	}
+
+	return config
+}
+
+func reloadBackendConnection(
+	dataDirectory string, backendConn *atomic.Pointer[grpc.ClientConn], apiKey *atomic.Pointer[string],
+	logger *slog.Logger,
+) {
+	config := loadConfig(dataDirectory)
+	if config == nil {
+		return
+	}
+
+	var creds credentials.TransportCredentials
+	if config.BackendTls {
+		creds = credentials.NewTLS(&tls.Config{})
+	} else {
+		creds = insecure.NewCredentials()
+	}
+
+	clientConn, err := grpc.NewClient(config.BackendUrl, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		logger.Error("failed to connect to backend", slog.Any("error", err))
+
+		return
+	}
+
+	oldConn := backendConn.Swap(clientConn)
+	apiKey.Store(new(config.ApiKey))
+
+	err = oldConn.Close()
+	if err != nil {
+		logger.Warn("error closing old connection", slog.Any("error", err))
+	}
 }
