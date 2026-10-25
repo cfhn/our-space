@@ -30,7 +30,7 @@ docker-push:
 build: out/firmware out/ourspace.raucb
 
 ../bin/golangci-lint:
-	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b ../bin v2.11.4
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b ../bin v2.15.0
 
 lint: fmt download ../bin/golangci-lint ## Lints all code with golangci-lint
 	../bin/golangci-lint --config ../.golangci.yml run
