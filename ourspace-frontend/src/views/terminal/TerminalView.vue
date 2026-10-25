@@ -25,7 +25,7 @@ type PlaceCardUpdate = {
   presence: Presence
 }
 
-type RemoveCardUpdate = {}
+type RemoveCardUpdate = object
 
 type Update = {
   placeCard: PlaceCardUpdate
