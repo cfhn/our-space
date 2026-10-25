@@ -99,7 +99,6 @@ func run() error {
 			pb.RegisterFirmwareServiceServer(server, firmwareService)
 
 			return errors.Join(
-				pb.RegisterFirmwareServiceHandler(context.Background(), mux, conn),
 				mux.HandlePath(http.MethodGet, "/card-events", sse.GrpcProxy[*pb.ListenForCardEventsRequest, *pb.ListenForCardEventsResponse](conn, pb.FirmwareService_ServiceDesc.Streams[0], pb.FirmwareService_ListenForCardEvents_FullMethodName)),
 			)
 		},
