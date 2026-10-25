@@ -363,93 +363,91 @@ func (m *ListenForCardEventsResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Token
+	switch v := m.Event.(type) {
+	case *ListenForCardEventsResponse_PlaceCard:
+		if v == nil {
+			err := ListenForCardEventsResponseValidationError{
+				field:  "Event",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
-	if all {
-		switch v := interface{}(m.GetCard()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ListenForCardEventsResponseValidationError{
-					field:  "Card",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+		if all {
+			switch v := interface{}(m.GetPlaceCard()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListenForCardEventsResponseValidationError{
+						field:  "PlaceCard",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListenForCardEventsResponseValidationError{
+						field:  "PlaceCard",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetPlaceCard()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ListenForCardEventsResponseValidationError{
-					field:  "Card",
+				return ListenForCardEventsResponseValidationError{
+					field:  "PlaceCard",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetCard()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListenForCardEventsResponseValidationError{
-				field:  "Card",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
 
-	if all {
-		switch v := interface{}(m.GetMember()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ListenForCardEventsResponseValidationError{
-					field:  "Member",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	case *ListenForCardEventsResponse_RemoveCard:
+		if v == nil {
+			err := ListenForCardEventsResponseValidationError{
+				field:  "Event",
+				reason: "oneof value cannot be a typed-nil",
 			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, ListenForCardEventsResponseValidationError{
-					field:  "Member",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+			if !all {
+				return err
 			}
+			errors = append(errors, err)
 		}
-	} else if v, ok := interface{}(m.GetMember()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListenForCardEventsResponseValidationError{
-				field:  "Member",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
 
-	if all {
-		switch v := interface{}(m.GetPresence()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ListenForCardEventsResponseValidationError{
-					field:  "Presence",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+		if all {
+			switch v := interface{}(m.GetRemoveCard()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListenForCardEventsResponseValidationError{
+						field:  "RemoveCard",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListenForCardEventsResponseValidationError{
+						field:  "RemoveCard",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetRemoveCard()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ListenForCardEventsResponseValidationError{
-					field:  "Presence",
+				return ListenForCardEventsResponseValidationError{
+					field:  "RemoveCard",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetPresence()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListenForCardEventsResponseValidationError{
-				field:  "Presence",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -532,6 +530,295 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListenForCardEventsResponseValidationError{}
+
+// Validate checks the field values on PlaceCardEvent with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PlaceCardEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PlaceCardEvent with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PlaceCardEventMultiError,
+// or nil if none found.
+func (m *PlaceCardEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PlaceCardEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Token
+
+	if all {
+		switch v := interface{}(m.GetCard()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PlaceCardEventValidationError{
+					field:  "Card",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PlaceCardEventValidationError{
+					field:  "Card",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCard()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PlaceCardEventValidationError{
+				field:  "Card",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetMember()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PlaceCardEventValidationError{
+					field:  "Member",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PlaceCardEventValidationError{
+					field:  "Member",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetMember()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PlaceCardEventValidationError{
+				field:  "Member",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetPresence()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PlaceCardEventValidationError{
+					field:  "Presence",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PlaceCardEventValidationError{
+					field:  "Presence",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPresence()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PlaceCardEventValidationError{
+				field:  "Presence",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return PlaceCardEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// PlaceCardEventMultiError is an error wrapping multiple validation errors
+// returned by PlaceCardEvent.ValidateAll() if the designated constraints
+// aren't met.
+type PlaceCardEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PlaceCardEventMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PlaceCardEventMultiError) AllErrors() []error { return m }
+
+// PlaceCardEventValidationError is the validation error returned by
+// PlaceCardEvent.Validate if the designated constraints aren't met.
+type PlaceCardEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PlaceCardEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PlaceCardEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PlaceCardEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PlaceCardEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PlaceCardEventValidationError) ErrorName() string { return "PlaceCardEventValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PlaceCardEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPlaceCardEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PlaceCardEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PlaceCardEventValidationError{}
+
+// Validate checks the field values on RemoveCardEvent with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *RemoveCardEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveCardEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RemoveCardEventMultiError, or nil if none found.
+func (m *RemoveCardEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveCardEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return RemoveCardEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// RemoveCardEventMultiError is an error wrapping multiple validation errors
+// returned by RemoveCardEvent.ValidateAll() if the designated constraints
+// aren't met.
+type RemoveCardEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveCardEventMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveCardEventMultiError) AllErrors() []error { return m }
+
+// RemoveCardEventValidationError is the validation error returned by
+// RemoveCardEvent.Validate if the designated constraints aren't met.
+type RemoveCardEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveCardEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveCardEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveCardEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveCardEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveCardEventValidationError) ErrorName() string { return "RemoveCardEventValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RemoveCardEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveCardEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveCardEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveCardEventValidationError{}
 
 // Validate checks the field values on Member with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

@@ -2,17 +2,15 @@ package firmware
 
 import (
 	"context"
-	"encoding/hex"
 	"log/slog"
 
 	"github.com/google/uuid"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
+	"github.com/cfhn/our-space/ourspace-firmware/internal/cardreader"
 	pb "github.com/cfhn/our-space/ourspace-firmware/proto"
-	"github.com/cfhn/our-space/pkg/status"
 )
 
 type Repository interface {
@@ -32,80 +30,27 @@ type Service struct {
 	repo     Repository
 }
 
-func NewService(logger *slog.Logger, repo Repository) *Service {
+func NewService(
+	ctx context.Context, logger *slog.Logger, repo Repository, readerEvents <-chan cardreader.CardEvent,
+) *Service {
 	svc := &Service{
 		logger:   logger,
 		notifier: NewNotifier[pb.ListenForCardEventsResponse](),
 		repo:     repo,
 	}
 
-	return svc
-}
-
-func (svc *Service) ScanCard(ctx context.Context, req *pb.ScanCardRequest) (*pb.ScanCardResponse, error) {
-	rfidBytes, err := hex.DecodeString(req.CardSerial)
-	if err != nil {
-		return nil, status.FieldViolations([]*errdetails.BadRequest_FieldViolation{
-			{
-				Field:       "card_serial",
-				Description: "invalid encoding",
-			},
-		})
-	}
-
-	card := svc.repo.FindCardByRFID(rfidBytes)
-	if card == nil {
-		return &pb.ScanCardResponse{
-			Outcome: "card-not-found",
-		}, nil
-	}
-
-	member := svc.repo.FindMemberByID(card.MemberId)
-	if member == nil {
-		return &pb.ScanCardResponse{
-			Outcome: "member-not-found",
-		}, nil
-	}
-
-	activePresence := svc.repo.FindActivePresence(member.Id)
-	if activePresence == nil {
-		activePresence = &pb.LocalPresence{
-			Presence: &pbBackend.Presence{
-				Id:           uuid.NewString(),
-				MemberId:     member.Id,
-				CheckinTime:  timestamppb.Now(),
-				CheckoutTime: nil,
-			},
-			SynchronizedAt: nil,
-			ModifiedAt:     timestamppb.Now(),
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case event := <-readerEvents:
+				svc.processCardEvent(event)
+			}
 		}
+	}()
 
-		svc.repo.CreatePresence(activePresence)
-	} else {
-		activePresence.Presence.CheckoutTime = timestamppb.Now()
-		activePresence.ModifiedAt = timestamppb.Now()
-
-		svc.repo.UpdatePresence(activePresence)
-	}
-
-	scanCardEvent := &pb.ListenForCardEventsResponse{
-		Member: &pb.Member{
-			Id:   member.Id,
-			Name: member.Name,
-		},
-		Card: &pb.Card{
-			Id:        card.Id,
-			ValidFrom: card.ValidFrom,
-			ValidTo:   card.ValidTo,
-		},
-		Presence: activePresence.Presence,
-	}
-
-	svc.notifier.Notify(scanCardEvent)
-
-	return &pb.ScanCardResponse{
-		Outcome: "checkin",
-	}, nil
+	return svc
 }
 
 func (svc *Service) ListenForCardEvents(
@@ -130,5 +75,68 @@ func (svc *Service) ListenForCardEvents(
 		if err != nil {
 			return err
 		}
+	}
+}
+
+func (svc *Service) processCardEvent(event cardreader.CardEvent) {
+	switch event.Type {
+	case cardreader.CardEventTypeAdd:
+		card := svc.repo.FindCardByRFID(event.Uid)
+		if card == nil {
+			return
+		}
+
+		member := svc.repo.FindMemberByID(card.MemberId)
+		if member == nil {
+			return
+		}
+
+		activePresence := svc.repo.FindActivePresence(member.Id)
+		if activePresence == nil {
+			activePresence = &pb.LocalPresence{
+				Presence: &pbBackend.Presence{
+					Id:           uuid.NewString(),
+					MemberId:     member.Id,
+					CheckinTime:  timestamppb.Now(),
+					CheckoutTime: nil,
+				},
+				SynchronizedAt: nil,
+				ModifiedAt:     timestamppb.Now(),
+			}
+
+			svc.repo.CreatePresence(activePresence)
+		} else {
+			activePresence.Presence.CheckoutTime = timestamppb.Now()
+			activePresence.ModifiedAt = timestamppb.Now()
+
+			svc.repo.UpdatePresence(activePresence)
+		}
+
+		response := &pb.ListenForCardEventsResponse{
+			Event: &pb.ListenForCardEventsResponse_PlaceCard{
+				PlaceCard: &pb.PlaceCardEvent{
+					Member: &pb.Member{
+						Id:   member.Id,
+						Name: member.Name,
+					},
+					Card: &pb.Card{
+						Id:        card.Id,
+						ValidFrom: card.ValidFrom,
+						ValidTo:   card.ValidTo,
+					},
+					Presence: activePresence.Presence,
+				},
+			},
+		}
+
+		svc.notifier.Notify(response)
+	case cardreader.CardEventTypeRemove:
+		response := &pb.ListenForCardEventsResponse{
+			Event: &pb.ListenForCardEventsResponse_RemoveCard{
+				RemoveCard: &pb.RemoveCardEvent{},
+			},
+		}
+
+		svc.notifier.Notify(response)
 	}
 }

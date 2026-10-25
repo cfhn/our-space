@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	pbBackend "github.com/cfhn/our-space/ourspace-backend/proto"
+	"github.com/cfhn/our-space/ourspace-firmware/internal/cardreader"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/firmware"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/frontend"
 	"github.com/cfhn/our-space/ourspace-firmware/internal/inmemory"
@@ -59,9 +60,19 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	defer backendClient.Close()
+
+	cardReader, err := cardreader.New(logger)
+	if err != nil {
+		return err
+	}
 
 	repo := inmemory.NewRepository()
-	firmwareService := firmware.NewService(logger, repo)
+
+	serverCtx, stopServer := context.WithCancel(context.Background())
+	defer stopServer()
+
+	firmwareService := firmware.NewService(serverCtx, logger, repo, cardReader.Events)
 
 	synchronizer := &sync.BackendSynchronizer{
 		AuthClient:     pbBackend.NewAuthServiceClient(backendClient),
@@ -109,6 +120,12 @@ func run() error {
 
 					return err
 				}),
+				Interval:  math.MaxInt,
+				Immediate: true,
+			},
+			{
+				Name:      "CardReader",
+				Job:       setup.JobFunc(cardReader.StartScanning),
 				Interval:  math.MaxInt,
 				Immediate: true,
 			},
