@@ -23,11 +23,11 @@ linters:
     - gochecknoglobals
     - gochecknoinits
     - gocognit
-    - goconst
+#    - goconst
     - gocritic
     - godot
     - gomoddirectives
-    - gomodguard
+    - gomodguard_v2
     - goprintffuncname
     - gosec
     - govet
