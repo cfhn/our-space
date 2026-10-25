@@ -12,6 +12,8 @@ import (
 	"paepcke.de/pcscid/pcsc"
 )
 
+var ErrShortUID = errors.New("response shorter than uid length")
+
 type CardType int
 
 const (
@@ -21,7 +23,7 @@ const (
 )
 
 type CardInfo struct {
-	UidLength uint32
+	UIDLength uint32
 }
 
 type CardEventType int
@@ -33,9 +35,10 @@ const (
 
 type CardEvent struct {
 	Type CardEventType
-	Uid  []byte
+	UID  []byte
 }
 
+//nolint:gochecknoglobals // quasi-constants, since Go does not allow slice/map consts
 var (
 	mifareClassicATR = []byte{
 		0x3B, 0x8F, 0x80, 0x01, 0x80, 0x4F, 0x0C, 0xA0, 0x00, 0x00, 0x03, 0x06, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x6A,
@@ -49,13 +52,13 @@ var (
 
 	cardInfo = map[CardType]CardInfo{
 		cardTypeMifareClassic1K: {
-			UidLength: 4,
+			UIDLength: 4,
 		},
 		cardTypeMifareDesfireEv1: {
-			UidLength: 7,
+			UIDLength: 7,
 		},
 		cardTypeMifareUltralight: {
-			UidLength: 7,
+			UIDLength: 7,
 		},
 	}
 )
@@ -126,6 +129,7 @@ func (r *Reader) StartScanning(ctx context.Context) error {
 
 				if readerState.State&pcsc.ReaderPresent != 0 {
 					var cardType CardType
+
 					switch {
 					case bytes.Equal(readerState.ATR, mifareClassicATR):
 						cardType = cardTypeMifareClassic1K
@@ -145,17 +149,20 @@ func (r *Reader) StartScanning(ctx context.Context) error {
 					}
 
 					notificationSent[readerState.Reader] = true
+
 					r.eventsPublisher <- CardEvent{
 						Type: CardEventTypeAdd,
-						Uid:  cardSerial,
+						UID:  cardSerial,
 					}
 				}
+
 				if readerState.State&pcsc.ReaderAbsent != 0 {
 					if !notificationSent[readerState.Reader] {
 						continue
 					}
 
 					notificationSent[readerState.Reader] = false
+
 					r.eventsPublisher <- CardEvent{
 						Type: CardEventTypeRemove,
 					}
@@ -172,16 +179,16 @@ func (r *Reader) readCardSerial(reader string, cardType CardType) ([]byte, error
 	if err != nil {
 		return nil, err
 	}
-	defer card.Disconnect(pcsc.ResetCard)
+	defer card.Disconnect(pcsc.ResetCard) //nolint:errcheck // can't do anything about this anyway
 
 	resp, err := card.Transmit([]byte{0xFF, 0xCA, 0x00, 0x00, 0x00}, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	if uint32(len(resp)) < info.UidLength {
-		return nil, fmt.Errorf("response shorter than uid length: %d < %d", len(resp), info.UidLength)
+	if uint64(len(resp)) < uint64(info.UIDLength) {
+		return nil, fmt.Errorf("%w: %d < %d", ErrShortUID, len(resp), info.UIDLength)
 	}
 
-	return resp[:info.UidLength], nil
+	return resp[:info.UIDLength], nil
 }

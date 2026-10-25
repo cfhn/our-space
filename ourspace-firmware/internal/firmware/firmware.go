@@ -81,7 +81,7 @@ func (svc *Service) ListenForCardEvents(
 func (svc *Service) processCardEvent(event cardreader.CardEvent) {
 	switch event.Type {
 	case cardreader.CardEventTypeAdd:
-		card := svc.repo.FindCardByRFID(event.Uid)
+		card := svc.repo.FindCardByRFID(event.UID)
 		if card == nil {
 			return
 		}

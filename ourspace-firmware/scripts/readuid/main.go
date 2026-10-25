@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/hex"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -14,9 +15,7 @@ import (
 	"github.com/cfhn/our-space/ourspace-firmware/internal/cardreader"
 )
 
-var (
-	flagMode = flag.String("mode", "oneshot", "oneshot|listen: oneshot waits for one card to be scanned, prints the uid and exits. listen keeps waiting until stopped via ctrl+c")
-)
+var ErrInvalidParameter = errors.New("invalid value")
 
 func main() {
 	if err := run(); err != nil {
@@ -26,8 +25,11 @@ func main() {
 
 func run() error {
 	flag.Parse()
+
+	flagMode := flag.String("mode", "oneshot", "oneshot|listen: oneshot waits for one card to be scanned, prints the uid and exits. listen keeps waiting until stopped via ctrl+c")
+
 	if *flagMode != "oneshot" && *flagMode != "listen" {
-		return fmt.Errorf("invalid value for -mode: %s", flagMode)
+		return fmt.Errorf("%w for -mode: %s", ErrInvalidParameter, *flagMode)
 	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{}))
@@ -52,7 +54,7 @@ func run() error {
 			return nil
 		case event := <-reader.Events:
 			if event.Type == cardreader.CardEventTypeAdd {
-				fmt.Printf("%s", strings.ToUpper(hex.EncodeToString(event.Uid)))
+				fmt.Printf("%s", strings.ToUpper(hex.EncodeToString(event.UID)))
 
 				if *flagMode == "oneshot" {
 					return nil
