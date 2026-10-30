@@ -25,94 +25,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ScanCardRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CardSerial    string                 `protobuf:"bytes,1,opt,name=card_serial,proto3" json:"card_serial,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ScanCardRequest) Reset() {
-	*x = ScanCardRequest{}
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ScanCardRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ScanCardRequest) ProtoMessage() {}
-
-func (x *ScanCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ScanCardRequest.ProtoReflect.Descriptor instead.
-func (*ScanCardRequest) Descriptor() ([]byte, []int) {
-	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *ScanCardRequest) GetCardSerial() string {
-	if x != nil {
-		return x.CardSerial
-	}
-	return ""
-}
-
-type ScanCardResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Outcome       string                 `protobuf:"bytes,1,opt,name=outcome,proto3" json:"outcome,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ScanCardResponse) Reset() {
-	*x = ScanCardResponse{}
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ScanCardResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ScanCardResponse) ProtoMessage() {}
-
-func (x *ScanCardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ScanCardResponse.ProtoReflect.Descriptor instead.
-func (*ScanCardResponse) Descriptor() ([]byte, []int) {
-	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *ScanCardResponse) GetOutcome() string {
-	if x != nil {
-		return x.Outcome
-	}
-	return ""
-}
-
 type ListenForCardEventsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -121,7 +33,7 @@ type ListenForCardEventsRequest struct {
 
 func (x *ListenForCardEventsRequest) Reset() {
 	*x = ListenForCardEventsRequest{}
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[2]
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -133,7 +45,7 @@ func (x *ListenForCardEventsRequest) String() string {
 func (*ListenForCardEventsRequest) ProtoMessage() {}
 
 func (x *ListenForCardEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[2]
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -146,22 +58,23 @@ func (x *ListenForCardEventsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListenForCardEventsRequest.ProtoReflect.Descriptor instead.
 func (*ListenForCardEventsRequest) Descriptor() ([]byte, []int) {
-	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{2}
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{0}
 }
 
 type ListenForCardEventsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Card          *Card                  `protobuf:"bytes,2,opt,name=card,proto3" json:"card,omitempty"`
-	Member        *Member                `protobuf:"bytes,3,opt,name=member,proto3" json:"member,omitempty"`
-	Presence      *proto.Presence        `protobuf:"bytes,4,opt,name=presence,proto3" json:"presence,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Event:
+	//
+	//	*ListenForCardEventsResponse_PlaceCard
+	//	*ListenForCardEventsResponse_RemoveCard
+	Event         isListenForCardEventsResponse_Event `protobuf_oneof:"event"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListenForCardEventsResponse) Reset() {
 	*x = ListenForCardEventsResponse{}
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[3]
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -173,7 +86,7 @@ func (x *ListenForCardEventsResponse) String() string {
 func (*ListenForCardEventsResponse) ProtoMessage() {}
 
 func (x *ListenForCardEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[3]
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -186,35 +99,152 @@ func (x *ListenForCardEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListenForCardEventsResponse.ProtoReflect.Descriptor instead.
 func (*ListenForCardEventsResponse) Descriptor() ([]byte, []int) {
-	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{3}
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListenForCardEventsResponse) GetToken() string {
+func (x *ListenForCardEventsResponse) GetEvent() isListenForCardEventsResponse_Event {
+	if x != nil {
+		return x.Event
+	}
+	return nil
+}
+
+func (x *ListenForCardEventsResponse) GetPlaceCard() *PlaceCardEvent {
+	if x != nil {
+		if x, ok := x.Event.(*ListenForCardEventsResponse_PlaceCard); ok {
+			return x.PlaceCard
+		}
+	}
+	return nil
+}
+
+func (x *ListenForCardEventsResponse) GetRemoveCard() *RemoveCardEvent {
+	if x != nil {
+		if x, ok := x.Event.(*ListenForCardEventsResponse_RemoveCard); ok {
+			return x.RemoveCard
+		}
+	}
+	return nil
+}
+
+type isListenForCardEventsResponse_Event interface {
+	isListenForCardEventsResponse_Event()
+}
+
+type ListenForCardEventsResponse_PlaceCard struct {
+	PlaceCard *PlaceCardEvent `protobuf:"bytes,1,opt,name=place_card,json=placeCard,proto3,oneof"`
+}
+
+type ListenForCardEventsResponse_RemoveCard struct {
+	RemoveCard *RemoveCardEvent `protobuf:"bytes,2,opt,name=remove_card,json=removeCard,proto3,oneof"`
+}
+
+func (*ListenForCardEventsResponse_PlaceCard) isListenForCardEventsResponse_Event() {}
+
+func (*ListenForCardEventsResponse_RemoveCard) isListenForCardEventsResponse_Event() {}
+
+type PlaceCardEvent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Card          *Card                  `protobuf:"bytes,2,opt,name=card,proto3" json:"card,omitempty"`
+	Member        *Member                `protobuf:"bytes,3,opt,name=member,proto3" json:"member,omitempty"`
+	Presence      *proto.Presence        `protobuf:"bytes,4,opt,name=presence,proto3" json:"presence,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlaceCardEvent) Reset() {
+	*x = PlaceCardEvent{}
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlaceCardEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlaceCardEvent) ProtoMessage() {}
+
+func (x *PlaceCardEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlaceCardEvent.ProtoReflect.Descriptor instead.
+func (*PlaceCardEvent) Descriptor() ([]byte, []int) {
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PlaceCardEvent) GetToken() string {
 	if x != nil {
 		return x.Token
 	}
 	return ""
 }
 
-func (x *ListenForCardEventsResponse) GetCard() *Card {
+func (x *PlaceCardEvent) GetCard() *Card {
 	if x != nil {
 		return x.Card
 	}
 	return nil
 }
 
-func (x *ListenForCardEventsResponse) GetMember() *Member {
+func (x *PlaceCardEvent) GetMember() *Member {
 	if x != nil {
 		return x.Member
 	}
 	return nil
 }
 
-func (x *ListenForCardEventsResponse) GetPresence() *proto.Presence {
+func (x *PlaceCardEvent) GetPresence() *proto.Presence {
 	if x != nil {
 		return x.Presence
 	}
 	return nil
+}
+
+type RemoveCardEvent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveCardEvent) Reset() {
+	*x = RemoveCardEvent{}
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveCardEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveCardEvent) ProtoMessage() {}
+
+func (x *RemoveCardEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_ourspace_firmware_proto_api_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveCardEvent.ProtoReflect.Descriptor instead.
+func (*RemoveCardEvent) Descriptor() ([]byte, []int) {
+	return file_ourspace_firmware_proto_api_proto_rawDescGZIP(), []int{3}
 }
 
 type Member struct {
@@ -393,17 +423,20 @@ var File_ourspace_firmware_proto_api_proto protoreflect.FileDescriptor
 
 const file_ourspace_firmware_proto_api_proto_rawDesc = "" +
 	"\n" +
-	"!ourspace-firmware/proto/api.proto\x12\x14ourspace_firmware.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a ourspace-backend/proto/api.proto\"3\n" +
-	"\x0fScanCardRequest\x12 \n" +
-	"\vcard_serial\x18\x01 \x01(\tR\vcard_serial\",\n" +
-	"\x10ScanCardResponse\x12\x18\n" +
-	"\aoutcome\x18\x01 \x01(\tR\aoutcome\"\x1c\n" +
-	"\x1aListenForCardEventsRequest\"\xd7\x01\n" +
-	"\x1bListenForCardEventsResponse\x12\x14\n" +
+	"!ourspace-firmware/proto/api.proto\x12\x14ourspace_firmware.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a ourspace-backend/proto/api.proto\"\x1c\n" +
+	"\x1aListenForCardEventsRequest\"\xb7\x01\n" +
+	"\x1bListenForCardEventsResponse\x12E\n" +
+	"\n" +
+	"place_card\x18\x01 \x01(\v2$.ourspace_firmware.v1.PlaceCardEventH\x00R\tplaceCard\x12H\n" +
+	"\vremove_card\x18\x02 \x01(\v2%.ourspace_firmware.v1.RemoveCardEventH\x00R\n" +
+	"removeCardB\a\n" +
+	"\x05event\"\xca\x01\n" +
+	"\x0ePlaceCardEvent\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12.\n" +
 	"\x04card\x18\x02 \x01(\v2\x1a.ourspace_firmware.v1.CardR\x04card\x124\n" +
 	"\x06member\x18\x03 \x01(\v2\x1c.ourspace_firmware.v1.MemberR\x06member\x12<\n" +
-	"\bpresence\x18\x04 \x01(\v2 .ourspace_backend.proto.PresenceR\bpresence\",\n" +
+	"\bpresence\x18\x04 \x01(\v2 .ourspace_backend.proto.PresenceR\bpresence\"\x11\n" +
+	"\x0fRemoveCardEvent\",\n" +
 	"\x06Member\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\x8a\x01\n" +
@@ -417,9 +450,8 @@ const file_ourspace_firmware_proto_api_proto_rawDesc = "" +
 	"\bpresence\x18\x01 \x01(\v2 .ourspace_backend.proto.PresenceR\bpresence\x12C\n" +
 	"\x0fsynchronized_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0esynchronizedAt\x12;\n" +
 	"\vmodified_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"modifiedAt2\x81\x02\n" +
-	"\x0fFirmwareService\x12n\n" +
-	"\bScanCard\x12%.ourspace_firmware.v1.ScanCardRequest\x1a&.ourspace_firmware.v1.ScanCardResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*\"\b/v1/card\x12~\n" +
+	"modifiedAt2\x91\x01\n" +
+	"\x0fFirmwareService\x12~\n" +
 	"\x13ListenForCardEvents\x120.ourspace_firmware.v1.ListenForCardEventsRequest\x1a1.ourspace_firmware.v1.ListenForCardEventsResponse\"\x000\x01B\xab\x01\xbaGr\x12J\n" +
 	"\x15ourspace-firmware-api\x12,Local API for the Terminal frontend firmware2\x031.0\x1a$\n" +
 	"\x15http://localhost:8080\x12\vHost ServerZ4github.com/cfhn/our-space/ourspace-firmware/proto;pbX\x00b\x06proto3"
@@ -438,10 +470,10 @@ func file_ourspace_firmware_proto_api_proto_rawDescGZIP() []byte {
 
 var file_ourspace_firmware_proto_api_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_ourspace_firmware_proto_api_proto_goTypes = []any{
-	(*ScanCardRequest)(nil),             // 0: ourspace_firmware.v1.ScanCardRequest
-	(*ScanCardResponse)(nil),            // 1: ourspace_firmware.v1.ScanCardResponse
-	(*ListenForCardEventsRequest)(nil),  // 2: ourspace_firmware.v1.ListenForCardEventsRequest
-	(*ListenForCardEventsResponse)(nil), // 3: ourspace_firmware.v1.ListenForCardEventsResponse
+	(*ListenForCardEventsRequest)(nil),  // 0: ourspace_firmware.v1.ListenForCardEventsRequest
+	(*ListenForCardEventsResponse)(nil), // 1: ourspace_firmware.v1.ListenForCardEventsResponse
+	(*PlaceCardEvent)(nil),              // 2: ourspace_firmware.v1.PlaceCardEvent
+	(*RemoveCardEvent)(nil),             // 3: ourspace_firmware.v1.RemoveCardEvent
 	(*Member)(nil),                      // 4: ourspace_firmware.v1.Member
 	(*Card)(nil),                        // 5: ourspace_firmware.v1.Card
 	(*LocalPresence)(nil),               // 6: ourspace_firmware.v1.LocalPresence
@@ -449,29 +481,33 @@ var file_ourspace_firmware_proto_api_proto_goTypes = []any{
 	(*timestamppb.Timestamp)(nil),       // 8: google.protobuf.Timestamp
 }
 var file_ourspace_firmware_proto_api_proto_depIdxs = []int32{
-	5,  // 0: ourspace_firmware.v1.ListenForCardEventsResponse.card:type_name -> ourspace_firmware.v1.Card
-	4,  // 1: ourspace_firmware.v1.ListenForCardEventsResponse.member:type_name -> ourspace_firmware.v1.Member
-	7,  // 2: ourspace_firmware.v1.ListenForCardEventsResponse.presence:type_name -> ourspace_backend.proto.Presence
-	8,  // 3: ourspace_firmware.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
-	8,  // 4: ourspace_firmware.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
-	7,  // 5: ourspace_firmware.v1.LocalPresence.presence:type_name -> ourspace_backend.proto.Presence
-	8,  // 6: ourspace_firmware.v1.LocalPresence.synchronized_at:type_name -> google.protobuf.Timestamp
-	8,  // 7: ourspace_firmware.v1.LocalPresence.modified_at:type_name -> google.protobuf.Timestamp
-	0,  // 8: ourspace_firmware.v1.FirmwareService.ScanCard:input_type -> ourspace_firmware.v1.ScanCardRequest
-	2,  // 9: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:input_type -> ourspace_firmware.v1.ListenForCardEventsRequest
-	1,  // 10: ourspace_firmware.v1.FirmwareService.ScanCard:output_type -> ourspace_firmware.v1.ScanCardResponse
-	3,  // 11: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:output_type -> ourspace_firmware.v1.ListenForCardEventsResponse
-	10, // [10:12] is the sub-list for method output_type
-	8,  // [8:10] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	2,  // 0: ourspace_firmware.v1.ListenForCardEventsResponse.place_card:type_name -> ourspace_firmware.v1.PlaceCardEvent
+	3,  // 1: ourspace_firmware.v1.ListenForCardEventsResponse.remove_card:type_name -> ourspace_firmware.v1.RemoveCardEvent
+	5,  // 2: ourspace_firmware.v1.PlaceCardEvent.card:type_name -> ourspace_firmware.v1.Card
+	4,  // 3: ourspace_firmware.v1.PlaceCardEvent.member:type_name -> ourspace_firmware.v1.Member
+	7,  // 4: ourspace_firmware.v1.PlaceCardEvent.presence:type_name -> ourspace_backend.proto.Presence
+	8,  // 5: ourspace_firmware.v1.Card.valid_from:type_name -> google.protobuf.Timestamp
+	8,  // 6: ourspace_firmware.v1.Card.valid_to:type_name -> google.protobuf.Timestamp
+	7,  // 7: ourspace_firmware.v1.LocalPresence.presence:type_name -> ourspace_backend.proto.Presence
+	8,  // 8: ourspace_firmware.v1.LocalPresence.synchronized_at:type_name -> google.protobuf.Timestamp
+	8,  // 9: ourspace_firmware.v1.LocalPresence.modified_at:type_name -> google.protobuf.Timestamp
+	0,  // 10: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:input_type -> ourspace_firmware.v1.ListenForCardEventsRequest
+	1,  // 11: ourspace_firmware.v1.FirmwareService.ListenForCardEvents:output_type -> ourspace_firmware.v1.ListenForCardEventsResponse
+	11, // [11:12] is the sub-list for method output_type
+	10, // [10:11] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_ourspace_firmware_proto_api_proto_init() }
 func file_ourspace_firmware_proto_api_proto_init() {
 	if File_ourspace_firmware_proto_api_proto != nil {
 		return
+	}
+	file_ourspace_firmware_proto_api_proto_msgTypes[1].OneofWrappers = []any{
+		(*ListenForCardEventsResponse_PlaceCard)(nil),
+		(*ListenForCardEventsResponse_RemoveCard)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

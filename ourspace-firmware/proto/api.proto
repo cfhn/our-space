@@ -23,32 +23,27 @@ option (gnostic.openapi.v3.document) = {
 };
 
 service FirmwareService {
-  rpc ScanCard(ScanCardRequest) returns (ScanCardResponse) {
-    option (google.api.http) = {
-      post: "/v1/card"
-      body: "*"
-    };
-  }
   rpc ListenForCardEvents(ListenForCardEventsRequest) returns (stream ListenForCardEventsResponse) {}
-}
-
-message ScanCardRequest {
-  string card_serial = 1 [json_name="card_serial"];
-}
-
-message ScanCardResponse {
-  string outcome = 1;
 }
 
 message ListenForCardEventsRequest {
 }
 
 message ListenForCardEventsResponse {
+  oneof event {
+    PlaceCardEvent place_card = 1;
+    RemoveCardEvent remove_card = 2;
+  }
+}
+
+message PlaceCardEvent {
   string token = 1 [json_name="token"];
   Card card = 2 [json_name="card"];
   Member member = 3 [json_name="member"];
   ourspace_backend.proto.Presence presence = 4 [json_name="presence"];
 }
+
+message RemoveCardEvent {}
 
 message Member {
   string id = 1;

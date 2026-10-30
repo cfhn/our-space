@@ -18,11 +18,18 @@ type Presence = {
   checkout_time: string
 }
 
-type Update = {
+type PlaceCardUpdate = {
   token: string
   card: Card
   member: Member
   presence: Presence
+}
+
+type RemoveCardUpdate = object
+
+type Update = {
+  placeCard: PlaceCardUpdate
+  removeCard: RemoveCardUpdate
 }
 
 const { data } = useEventSource<string[], string>('http://localhost:8081/card-events', ['data'], {
@@ -50,30 +57,30 @@ watch(data, () => {
     return
   }
 
+  countdown.value = false
   stop()
 
   const update: Update = JSON.parse(data.value)
 
-  member.value = update.member
-  card.value = update.card
-  activePresence.value = update.presence
+  if (update.placeCard !== undefined) {
+    member.value = update.placeCard.member
+    card.value = update.placeCard.card
+    activePresence.value = update.placeCard.presence
 
-  const cardExpires = new Date(update.card.valid_to)
+    const cardExpires = new Date(update.placeCard.card.valid_to)
+    if (cardExpires.getTime() - Date.now() <= 0) {
+      backgroundColor.value = 'red'
+    } else if ((cardExpires.getTime() - Date.now()) / (1000 * 60 * 60 * 24) <= 14) {
+      backgroundColor.value = 'orange'
+    } else {
+      backgroundColor.value = 'green'
+    }
 
-  console.log(cardExpires.getTime(), Date.now())
-  console.log((cardExpires.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-
-  if (cardExpires.getTime() - Date.now() <= 0) {
-    backgroundColor.value = 'red'
-  } else if ((cardExpires.getTime() - Date.now()) / (1000 * 60 * 60 * 24) <= 14) {
-    backgroundColor.value = 'orange'
-  } else {
-    backgroundColor.value = 'green'
+    cardValidTo.value = `${('00' + cardExpires.getDate()).slice(-2)}.${('00' + (cardExpires.getMonth() + 1)).slice(-2)}.${cardExpires.getFullYear()}`
+  } else if (update.removeCard) {
+    countdown.value = true
+    start()
   }
-
-  cardValidTo.value = `${('00' + cardExpires.getDate()).slice(-2)}.${('00' + (cardExpires.getMonth() + 1)).slice(-2)}.${cardExpires.getFullYear()}`
-  countdown.value = true
-  start()
 })
 </script>
 

@@ -23,11 +23,11 @@ linters:
     - gochecknoglobals
     - gochecknoinits
     - gocognit
-    - goconst
+#    - goconst
     - gocritic
     - godot
     - gomoddirectives
-    - gomodguard
+    - gomodguard_v2
     - goprintffuncname
     - gosec
     - govet
@@ -236,6 +236,9 @@ linters:
       - linters:
           - govet
         text: declaration of "err" shadows declaration
+      - linters:
+          - forbidigo
+        path: .*/scripts/.* # Allow scripts to print
     paths:
       - third_party$
       - builtin$

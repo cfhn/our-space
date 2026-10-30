@@ -1,6 +1,6 @@
 module github.com/cfhn/our-space
 
-go 1.26.2
+go 1.27.3
 
 require (
 	github.com/XSAM/otelsql v0.38.0
@@ -28,6 +28,7 @@ require (
 	google.golang.org/grpc v1.71.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1
 	google.golang.org/protobuf v1.36.10
+	paepcke.de/pcscid v0.0.165
 )
 
 require (

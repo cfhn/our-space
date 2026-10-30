@@ -19,7 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	FirmwareService_ScanCard_FullMethodName            = "/ourspace_firmware.v1.FirmwareService/ScanCard"
 	FirmwareService_ListenForCardEvents_FullMethodName = "/ourspace_firmware.v1.FirmwareService/ListenForCardEvents"
 )
 
@@ -27,7 +26,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FirmwareServiceClient interface {
-	ScanCard(ctx context.Context, in *ScanCardRequest, opts ...grpc.CallOption) (*ScanCardResponse, error)
 	ListenForCardEvents(ctx context.Context, in *ListenForCardEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ListenForCardEventsResponse], error)
 }
 
@@ -37,16 +35,6 @@ type firmwareServiceClient struct {
 
 func NewFirmwareServiceClient(cc grpc.ClientConnInterface) FirmwareServiceClient {
 	return &firmwareServiceClient{cc}
-}
-
-func (c *firmwareServiceClient) ScanCard(ctx context.Context, in *ScanCardRequest, opts ...grpc.CallOption) (*ScanCardResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ScanCardResponse)
-	err := c.cc.Invoke(ctx, FirmwareService_ScanCard_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *firmwareServiceClient) ListenForCardEvents(ctx context.Context, in *ListenForCardEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ListenForCardEventsResponse], error) {
@@ -72,7 +60,6 @@ type FirmwareService_ListenForCardEventsClient = grpc.ServerStreamingClient[List
 // All implementations must embed UnimplementedFirmwareServiceServer
 // for forward compatibility.
 type FirmwareServiceServer interface {
-	ScanCard(context.Context, *ScanCardRequest) (*ScanCardResponse, error)
 	ListenForCardEvents(*ListenForCardEventsRequest, grpc.ServerStreamingServer[ListenForCardEventsResponse]) error
 	mustEmbedUnimplementedFirmwareServiceServer()
 }
@@ -84,9 +71,6 @@ type FirmwareServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedFirmwareServiceServer struct{}
 
-func (UnimplementedFirmwareServiceServer) ScanCard(context.Context, *ScanCardRequest) (*ScanCardResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ScanCard not implemented")
-}
 func (UnimplementedFirmwareServiceServer) ListenForCardEvents(*ListenForCardEventsRequest, grpc.ServerStreamingServer[ListenForCardEventsResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method ListenForCardEvents not implemented")
 }
@@ -111,24 +95,6 @@ func RegisterFirmwareServiceServer(s grpc.ServiceRegistrar, srv FirmwareServiceS
 	s.RegisterService(&FirmwareService_ServiceDesc, srv)
 }
 
-func _FirmwareService_ScanCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ScanCardRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FirmwareServiceServer).ScanCard(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: FirmwareService_ScanCard_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FirmwareServiceServer).ScanCard(ctx, req.(*ScanCardRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _FirmwareService_ListenForCardEvents_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(ListenForCardEventsRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -146,12 +112,7 @@ type FirmwareService_ListenForCardEventsServer = grpc.ServerStreamingServer[List
 var FirmwareService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "ourspace_firmware.v1.FirmwareService",
 	HandlerType: (*FirmwareServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ScanCard",
-			Handler:    _FirmwareService_ScanCard_Handler,
-		},
-	},
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "ListenForCardEvents",
