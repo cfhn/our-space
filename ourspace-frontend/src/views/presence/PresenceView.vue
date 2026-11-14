@@ -13,7 +13,7 @@ import {
   type DateRange,
   type SelectOption,
 } from 'sit-onyx'
-import { computed, h, ref, warn, watch } from 'vue'
+import { computed, h, ref, watch } from 'vue'
 import PresenceActions from '@/views/presence/components/PresenceActions.vue'
 import {
   memberServiceGetMember,
@@ -103,7 +103,7 @@ const presenceOptions: SelectOption<PresenceOption>[] = [
   { label: 'Checked Out', value: 'checked_out' },
 ]
 
-const filterToPresenceOption = computed(() => {
+const filterToPresenceOption = computed((): PresenceOption => {
   switch (filters.value.checkedOut) {
     case undefined:
       return 'all'
@@ -112,6 +112,9 @@ const filterToPresenceOption = computed(() => {
     case true:
       return 'checked_out'
   }
+
+  // unreachable, to satisfy vue/return-in-computed-property
+  return 'all'
 })
 
 const presenceOptionToFilter = (option: PresenceOption): boolean | undefined => {

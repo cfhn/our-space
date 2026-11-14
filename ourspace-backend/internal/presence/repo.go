@@ -178,7 +178,8 @@ func (p *Postgres) ListPresences(
 		checkedOut         = sql.Null[bool]{V: filters.CheckedOut != nil && *filters.CheckedOut, Valid: filters.CheckedOut != nil}
 	)
 
-	values := []any{
+	values := make([]any, 0, 9)
+	values = append(values,
 		pageSize,
 		memberID,
 		checkinTimeBefore,
@@ -186,7 +187,7 @@ func (p *Postgres) ListPresences(
 		checkoutTimeBefore,
 		checkoutTimeAfter,
 		checkedOut,
-	}
+	)
 
 	paginationCondition, paginationValues := generatePaginationQuery(token, len(values)+1)
 
