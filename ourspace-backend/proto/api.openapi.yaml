@@ -1031,6 +1031,10 @@ paths:
                   schema:
                     type: string
                     format: date-time
+                - name: checked_out
+                  in: query
+                  schema:
+                    type: boolean
             responses:
                 "200":
                     description: OK

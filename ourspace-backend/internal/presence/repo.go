@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -15,10 +16,10 @@ import (
 
 //nolint:gochecknoglobals // static lookup map
 var presenceFields = map[pb.PresenceField]string{
-	pb.PresenceField_PRESENCE_FIELD_ID:            "presence.id",
-	pb.PresenceField_PRESENCE_FIELD_MEMBER_ID:     "presence.memberId",
-	pb.PresenceField_PRESENCE_FIELD_CHECKIN_TIME:  "presence.checkinTime",
-	pb.PresenceField_PRESENCE_FIELD_CHECKOUT_TIME: "presence.checkoutTime",
+	pb.PresenceField_PRESENCE_FIELD_ID:            "presences.id",
+	pb.PresenceField_PRESENCE_FIELD_MEMBER_ID:     "presences.member_id",
+	pb.PresenceField_PRESENCE_FIELD_CHECKIN_TIME:  "presences.checkin_time",
+	pb.PresenceField_PRESENCE_FIELD_CHECKOUT_TIME: "presences.checkout_time",
 }
 
 var ErrDuplicate = fmt.Errorf("presence id already exists")
@@ -161,6 +162,7 @@ type Filters struct {
 	CheckoutTimeBefore time.Time
 	CheckoutTimeAfter  time.Time
 	MemberID           string
+	CheckedOut         *bool
 }
 
 func (p *Postgres) ListPresences(
@@ -173,27 +175,37 @@ func (p *Postgres) ListPresences(
 		checkoutTimeBefore = sql.Null[time.Time]{V: filters.CheckoutTimeBefore, Valid: !filters.CheckoutTimeBefore.IsZero()}
 		checkoutTimeAfter  = sql.Null[time.Time]{V: filters.CheckoutTimeAfter, Valid: !filters.CheckinTimeAfter.IsZero()}
 		memberID           = sql.Null[string]{V: filters.MemberID, Valid: filters.MemberID != ""}
+		checkedOut         = sql.Null[bool]{V: filters.CheckedOut != nil && *filters.CheckedOut, Valid: filters.CheckedOut != nil}
 	)
 
-	values := []any{
+	values := make([]any, 0, 9)
+	values = append(values,
+		pageSize,
 		memberID,
 		checkinTimeBefore,
 		checkinTimeAfter,
 		checkoutTimeBefore,
 		checkoutTimeAfter,
-		pageSize,
-	}
+		checkedOut,
+	)
+
+	paginationCondition, paginationValues := generatePaginationQuery(token, len(values)+1)
+
+	values = append(values, paginationValues...)
+
 	//nolint:gosec // safe SQL building, all dynamic data is passed through a lookup map of safe values
 	rows, err := p.db.QueryContext(ctx, `
 		select id, member_id, checkin_time, checkout_time from presences
 		where
-		($1::uuid is null OR member_id = $1)
-		and	($2::timestamptz is null OR checkin_time < $2)
-		and ($3::timestamptz is null OR checkin_time > $3)
-		and ($4::timestamptz is null OR checkout_time < $4)
-		and ($5::timestamptz is null OR checkout_time > $5)
+		($2::uuid is null OR member_id = $2)
+		and	($3::timestamptz is null OR checkin_time < $3)
+		and ($4::timestamptz is null OR checkin_time > $4)
+		and ($5::timestamptz is null OR checkout_time < $5)
+		and ($6::timestamptz is null OR checkout_time > $6)
+		and ($7::bool is null OR (checkout_time is not null) = $7::bool)
+		`+paginationCondition+`
 		order by `+getSort(sortField, sortDirection, token)+`
-		limit $6
+		limit $1
 	`, values...)
 	if err != nil {
 		return nil, err
@@ -236,6 +248,37 @@ func getSort(sortField pb.PresenceField, direction pb.SortDirection, token *pb.P
 	}
 
 	return fieldName + order + ", id" + order
+}
+
+func generatePaginationQuery(token *pb.PresencePageToken, offset int) (string, []any) {
+	fields := make([]string, 0, 2)
+	values := make([]any, 0, 2)
+	placeholders := make([]string, 0, 2)
+
+	fieldName, ok := presenceFields[token.Field]
+	if !ok {
+		return "", nil
+	}
+
+	fields = append(fields, fieldName)
+	values = append(values, token.LastValue)
+
+	if token.Field != pb.PresenceField_PRESENCE_FIELD_ID {
+		fields = append(fields, "presences.id")
+		values = append(values, token.LastId)
+	}
+
+	for i := range len(fields) {
+		placeholders = append(placeholders, fmt.Sprintf("$%d", i+offset))
+	}
+
+	sort := ">"
+	if token.Direction == pb.SortDirection_SORT_DIRECTION_DESCENDING {
+		sort = "<"
+	}
+
+	return "and (" + strings.Join(fields, ",") + ")" +
+		sort + "(" + strings.Join(placeholders, ",") + ")", values
 }
 
 func (p *Postgres) DeletePresence(ctx context.Context, id string) error {

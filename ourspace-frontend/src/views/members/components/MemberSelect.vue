@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { OnyxSelect, OnyxSkeleton, type SelectOption } from 'sit-onyx'
+import {
+  type FormElementV2LabelOptions,
+  OnyxSelect,
+  OnyxSkeleton,
+  type SelectOption,
+} from 'sit-onyx'
 import { computed, ref, watch } from 'vue'
 import { type MemberReadable, memberServiceGetMember, memberServiceListMembers } from '@/client'
 
 const props = defineProps<{
-  label: string
+  label: string | FormElementV2LabelOptions
   isEdit: boolean
 }>()
 const model = defineModel<string>()

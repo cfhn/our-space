@@ -1021,6 +1021,7 @@ export type PresenceServiceListPresencesData = {
         checkin_time_before?: string;
         checkout_time_after?: string;
         checkout_time_before?: string;
+        checked_out?: boolean;
     };
     url: '/v1/presences';
 };

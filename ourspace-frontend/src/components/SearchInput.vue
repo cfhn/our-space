@@ -60,19 +60,21 @@ watch(model, () => {
     class="search-button"
   />
   <Transition>
-    <OnyxInput
-      v-if="extended"
-      label="Search"
-      type="search"
-      v-model="model"
-      density="compact"
-      hideLabel
-      hideClearIcon
-      autofocus
-      @blur="onBlur"
-      class="search-input"
-      :placeholder="placeholder"
-    />
+    <slot v-if="extended" class="search-input">
+      <OnyxInput
+        v-if="extended"
+        label="Search"
+        type="search"
+        v-model="model"
+        density="compact"
+        hideLabel
+        hideClearIcon
+        autofocus
+        @blur="onBlur"
+        class="search-input"
+        :placeholder="placeholder"
+      />
+    </slot>
   </Transition>
 </template>
 
