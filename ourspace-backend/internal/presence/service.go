@@ -207,7 +207,10 @@ func (s Service) ListPresences(
 		return nil, err
 	}
 
-	filters := &Filters{}
+	filters := &Filters{
+		CheckedOut: request.CheckedOut,
+	}
+
 	if request.CheckinTimeBefore != nil {
 		filters.CheckinTimeBefore = request.CheckinTimeBefore.AsTime()
 	}
@@ -248,7 +251,7 @@ func (s Service) ListPresences(
 			field = pageToken.Field
 		}
 
-		direction := pb.SortDirection_SORT_DIRECTION_ASCENDING
+		direction := request.SortDirection
 		if pageToken.Direction != pb.SortDirection_SORT_DIRECTION_DEFAULT {
 			direction = pageToken.Direction
 		}

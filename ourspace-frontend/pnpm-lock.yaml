@@ -24,8 +24,8 @@ importers:
         specifier: ^13.9.0
         version: 13.9.0(vue@3.5.30(typescript@5.8.3))
       sit-onyx:
-        specifier: 1.13.0
-        version: 1.13.0(@sit-onyx/icons@1.9.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3))
+        specifier: 1.22.0
+        version: 1.22.0(@sit-onyx/icons@1.9.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3))
       vue:
         specifier: ^3.5.30
         version: 3.5.30(typescript@5.8.3)
@@ -2018,11 +2018,11 @@ packages:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
 
-  sit-onyx@1.13.0:
-    resolution: {integrity: sha512-vyjFAELzUwTM0fxdmBZg9xqlY5kygi5ZD+yAYKZeRwV8QboTzSae8jrwE1pDnDjlJIkR7+Mn5iJiMJVJXy/1Hw==}
+  sit-onyx@1.22.0:
+    resolution: {integrity: sha512-adypQuZnEI48Ie4qARteOvFt5mcX/4zvba2l0/vRJCS0AC7MKtwKm4w2xZXbM/P4gHs3tLXiwh4nZO+Rn5WjMA==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@sit-onyx/icons': ^1.9.0
+      '@sit-onyx/icons': ^1.13.0
       typescript: '>= 5.2.2'
       vue: '>= 3.5.0'
 
@@ -4336,7 +4336,7 @@ snapshots:
       mrmime: 2.0.1
       totalist: 3.0.1
 
-  sit-onyx@1.13.0(@sit-onyx/icons@1.9.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3)):
+  sit-onyx@1.22.0(@sit-onyx/icons@1.9.0)(typescript@5.8.3)(vue@3.5.30(typescript@5.8.3)):
     dependencies:
       '@sit-onyx/icons': 1.9.0
       typescript: 5.8.3

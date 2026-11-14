@@ -5718,6 +5718,10 @@ func (m *ListPresencesRequest) validate(all bool) error {
 
 	}
 
+	if m.CheckedOut != nil {
+		// no validation rules for CheckedOut
+	}
+
 	if len(errors) > 0 {
 		return ListPresencesRequestMultiError(errors)
 	}

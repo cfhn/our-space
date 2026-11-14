@@ -2859,6 +2859,7 @@ type ListPresencesRequest struct {
 	CheckinTimeBefore  *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=checkin_time_before,proto3,oneof" json:"checkin_time_before,omitempty"`
 	CheckoutTimeAfter  *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=checkout_time_after,proto3,oneof" json:"checkout_time_after,omitempty"`
 	CheckoutTimeBefore *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=checkout_time_before,proto3,oneof" json:"checkout_time_before,omitempty"`
+	CheckedOut         *bool                  `protobuf:"varint,10,opt,name=checked_out,proto3,oneof" json:"checked_out,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -2954,6 +2955,13 @@ func (x *ListPresencesRequest) GetCheckoutTimeBefore() *timestamppb.Timestamp {
 		return x.CheckoutTimeBefore
 	}
 	return nil
+}
+
+func (x *ListPresencesRequest) GetCheckedOut() bool {
+	if x != nil && x.CheckedOut != nil {
+		return *x.CheckedOut
+	}
+	return false
 }
 
 type ListPresencesResponse struct {
@@ -4066,7 +4074,7 @@ const file_ourspace_backend_proto_api_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
 	"\tmember_id\x18\x02 \x01(\tR\tmember_id\x12>\n" +
 	"\fcheckin_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fcheckin_time\x12@\n" +
-	"\rcheckout_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\rcheckout_time:3\xbaG0\xba\x01\x02id\xba\x01\tmember_id\xba\x01\fcheckin_time\xba\x01\rcheckout_time\"\xc1\x05\n" +
+	"\rcheckout_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\rcheckout_time:3\xbaG0\xba\x01\x02id\xba\x01\tmember_id\xba\x01\fcheckin_time\xba\x01\rcheckout_time\"\xf8\x05\n" +
 	"\x14ListPresencesRequest\x12\x1c\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\tpage_size\x12\x1e\n" +
 	"\n" +
@@ -4078,13 +4086,16 @@ const file_ourspace_backend_proto_api_proto_rawDesc = "" +
 	"\x12checkin_time_after\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\x12checkin_time_after\x88\x01\x01\x12Q\n" +
 	"\x13checkin_time_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x13checkin_time_before\x88\x01\x01\x12Q\n" +
 	"\x13checkout_time_after\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x13checkout_time_after\x88\x01\x01\x12S\n" +
-	"\x14checkout_time_before\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x04R\x14checkout_time_before\x88\x01\x01B\f\n" +
+	"\x14checkout_time_before\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x04R\x14checkout_time_before\x88\x01\x01\x12%\n" +
+	"\vchecked_out\x18\n" +
+	" \x01(\bH\x05R\vchecked_out\x88\x01\x01B\f\n" +
 	"\n" +
 	"_member_idB\x15\n" +
 	"\x13_checkin_time_afterB\x16\n" +
 	"\x14_checkin_time_beforeB\x16\n" +
 	"\x14_checkout_time_afterB\x17\n" +
-	"\x15_checkout_time_before\"\xa1\x01\n" +
+	"\x15_checkout_time_beforeB\x0e\n" +
+	"\f_checked_out\"\xa1\x01\n" +
 	"\x15ListPresencesResponse\x12<\n" +
 	"\bpresence\x18\x01 \x03(\v2 .ourspace_backend.proto.PresenceR\bpresence\x12(\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\x0fnext_page_token: \xbaG\x1d\xba\x01\bpresence\xba\x01\x0fnext_page_token\"\xcf\x01\n" +
